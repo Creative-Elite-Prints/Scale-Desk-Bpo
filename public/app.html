@@ -103,7 +103,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
         <div class="out" id="ai_o" hidden></div><p class="note" id="ai_m" role="status"></p></div>
       <div id="sendc" hidden style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
         <b>Send this offer to your client in the app</b>
-        <div class="sg"><div><label for="cc">Client name</label><input id="cc"></div><div><label for="ce">Client email</label><input id="ce" type="email"></div><div><label for="cq">Your price</label><input id="cq" type="number" min="1" step="0.01"></div><div><label for="cu">Currency</label><input id="cu" value="USD" maxlength="3"></div><div><label for="csp">Payment plan</label><select id="csp"><option value="30,40,30">30% start, 40% midpoint, 30% delivery</option><option value="50,50">50% start, 50% delivery</option><option value="100">100% before final files</option></select></div></div>
+        <div class="sg"><div><label for="cc">Client name</label><input id="cc"></div><div><label for="ce">Client email</label><input id="ce" type="email"></div><div><label for="cq">Your price</label><input id="cq" type="number" min="1" step="0.01"></div><div><label for="cu">Currency (ZAR: PayFast. USD, EUR, GBP and more: PayPal)</label><input id="cu" value="ZAR" maxlength="3"></div><div><label for="csp">Payment plan</label><select id="csp"><option value="30,40,30">30% start, 40% midpoint, 30% delivery</option><option value="50,50">50% start, 50% delivery</option><option value="100">100% before final files</option></select></div></div>
         <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="csend" type="button">Send offer to client</button><button class="btn alt" id="copen" type="button" hidden>Open chat with this client</button></p>
         <p class="note" id="cs" role="status"></p><input id="clink" readonly hidden onclick="this.select()" aria-label="Private link for your client">
       </div>
@@ -631,7 +631,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     if(b.id==='aout'||b.id==='lout')signOut();
     if(b.id==='aplan'){$('add').open=false;showLock(me,planInfo,true)}
     if(b.id==='lback')$('lock').hidden=true;
-    if(b.id==='lpay'||b.id==='lmanage'){sApi(b.id==='lpay'?'/api/billing/subscribe':'/api/billing/portal',{method:'POST'}).then(function(d){location.href=d.url}).catch(function(er){$('lm').textContent=er.message})}
+    if(b.id==='lpay'||b.id==='lmanage'){sApi(b.id==='lpay'?'/api/billing/subscribe':'/api/billing/portal',{method:'POST',body:{}}).then(function(d){if(d.fields){var f=document.createElement('form');f.method='POST';f.action=d.url;Object.keys(d.fields).forEach(function(k){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=d.fields[k];f.appendChild(i)});document.body.appendChild(f);f.submit()}else location.href=d.url}).catch(function(er){$('lm').textContent=er.message})}
     if(b.id==='csend'){
       var cj=find(+$('pj').value);if(!cj)return;
       var cprice=+$('cq').value,cem=$('ce').value.trim(),cnm=$('cc').value.trim();

@@ -107,7 +107,7 @@ function render(){
   $('note').textContent=open?'Open until '+day(r.expiresAt)+'.'+(qk?'':' The room closes after the client approves the work and the full payment is received.'):'Closed ('+r.reason+'). Files can be downloaded until '+day(r.downloadsUntil)+', then they are deleted.';
   $('money').textContent=qk?'':'Paid '+money(r.paidCents,r.currency)+' of '+money(r.amountCents,r.currency);
   $('ms').innerHTML=qk?'':(r.milestones||[]).map(function(m){return '<div class="f"><span>'+esc(m.label)+' · '+m.pct+'%</span><span><b>'+money(m.cents,r.currency)+'</b><span class="tag '+m.status+'">'+({paid:'Paid ✓',due:'Due now',upcoming:'Not requested yet'})[m.status]+'</span></span></div>'}).join('');
-  $('acts').innerHTML=qk?'':(r.canPay?'<button id="paycard" type="button">Pay '+money(r.dueCents,r.currency)+' with card</button> ':'')+(r.canRelease?'<button id="rel" type="button" class="alt">Request next payment</button> ':'')+'<button id="inv" type="button" class="alt">Invoice (PDF)</button> '+(r.canApprove?'<button id="appr" type="button">I am happy with the work: approve</button> ':'')+(client&&r.payUrl?'<a class="b" href="'+esc(r.payUrl)+'" target="_blank" rel="noopener noreferrer">Pay now</a>':'');
+  $('acts').innerHTML=qk?'':(r.canPay?(r.payMethods||[]).map(function(m){return '<button class="paycard" data-p="'+m+'" type="button">'+(m==='payfast'?'Pay '+money(r.dueCents,r.currency)+' with PayFast (card or EFT)':m==='paypal'?'Pay '+money(r.dueCents,r.currency)+' with PayPal (PayPal or card)':'Pay '+money(r.dueCents,r.currency)+' with card')+'</button> '}).join(''):'')+(r.canRelease?'<button id="rel" type="button" class="alt">Request next payment</button> ':'')+'<button id="inv" type="button" class="alt">Invoice (PDF)</button> '+(r.canApprove?'<button id="appr" type="button">I am happy with the work: approve</button> ':'')+(client&&r.payUrl?'<a class="b" href="'+esc(r.payUrl)+'" target="_blank" rel="noopener noreferrer">Pay now</a>':'');
   $('ocard').hidden=!r.offer;
   if(r.offer){$('otext').textContent=r.offer.text;$('oacts').innerHTML=r.canAccept?'<button id="oacc" type="button">Accept this offer ('+money(r.amountCents,r.currency)+')</button> <button class="alt" id="odec" type="button">Decline</button>':'<b>'+(r.offer.accepted?'Offer accepted':r.status==='open'?'Waiting for the client to accept':'Offer declined')+'</b>'}
   $('qcard').hidden=!qk;
@@ -138,6 +138,12 @@ function showWm(id){
   }).catch(fail);
 }
 $('wmc').addEventListener('contextmenu',function(e){e.preventDefault()});
+function go(d){
+  if(d.fields){var f=document.createElement('form');f.method='POST';f.action=d.url;
+    Object.keys(d.fields).forEach(function(k){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=d.fields[k];f.appendChild(i)});
+    document.body.appendChild(f);f.submit()}
+  else location.href=d.url;
+}
 function loadRoom(){return api('').then(function(d){room=d;render()}).catch(fail)}
 function loadMsgs(){
   return api('/messages?since='+last).then(function(a){
@@ -157,7 +163,7 @@ document.addEventListener('click',function(e){
   if(b.dataset.v)showWm(b.dataset.v);
   if(b.id==='rel'&&confirm('Ask the client to pay the next milestone now?'))post('/release').then(function(d){room=d;render();loadMsgs()}).catch(fail);
   if(b.id==='inv')fetch('/api/rooms/'+ID+'/invoice',{headers:H()}).then(function(r){if(!r.ok)return r.json().then(function(d){throw new Error(d.error)});return r.blob()}).then(function(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='invoice.pdf';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}).catch(fail);
-  if(b.id==='paycard')post('/checkout').then(function(d){location.href=d.url}).catch(fail);
+  if(b.classList.contains('paycard')){b.disabled=true;post('/checkout',{provider:b.dataset.p}).then(go).catch(function(e){fail(e);b.disabled=false})}
   if(b.id==='send'){var t=$('txt').value.trim();if(t)post('/messages',{body:t}).then(function(){$('txt').value='';loadMsgs()}).catch(fail)}
   if(b.id==='upb'){
     var f=$('pick').files[0];if(!f){$('err').textContent='Choose a file first';return}
