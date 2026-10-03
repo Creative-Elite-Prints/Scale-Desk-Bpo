@@ -1,0 +1,52 @@
+# Optional one-click setup for Render (render.com). Check Render's current documentation,
+# because plan names and disk rules can change. A persistent disk needs a paid plan.
+services:
+  - type: web
+    name: scaledesk-server
+    runtime: node
+    plan: starter
+    buildCommand: echo "nothing to build"
+    startCommand: node server.js
+    disk:
+      name: scaledesk-data
+      mountPath: /var/data
+      sizeGB: 1
+    envVars:
+      - key: DATA_DIR
+        value: /var/data
+      - key: SOURCES
+        value: freelancer,remoteok
+      - key: ACCESS_KEY
+        generateValue: true
+      - key: ADMIN_KEY
+        generateValue: true
+      - key: PAYMENT_WEBHOOK_SECRET
+        generateValue: true
+      - key: TRIAL_DAYS
+        value: "7"
+      - key: OWNER_EMAILS
+        sync: false
+      - key: PLAN_PRICE_TEXT
+        sync: false
+      - key: SUBSCRIBE_URL
+        sync: false
+      - key: SUPPORT_EMAIL
+        sync: false
+      - key: PUBLIC_URL
+        sync: false
+      - key: STRIPE_SECRET_KEY
+        sync: false
+      - key: STRIPE_WEBHOOK_SECRET
+        sync: false
+      - key: STRIPE_PRICE_ID
+        sync: false
+      - key: EMAIL_API_KEY
+        sync: false
+      - key: EMAIL_FROM
+        sync: false
+      - key: ANTHROPIC_API_KEY
+        sync: false
+      - key: BUSINESS_NAME
+        value: "Scale Desk"
+      - key: LEGAL_COUNTRY
+        value: "South Africa"
