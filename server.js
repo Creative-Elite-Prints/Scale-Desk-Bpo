@@ -6,8 +6,11 @@ const accounts = require('./accounts');
 const billing = require('./billing');
 const rooms = require('./rooms');
 const ai = require('./ai');
+const payfast = require('./payfast');
+const paypal = require('./paypal');
 billing.onRoomPaid(rooms.recordPayment);
 accounts.setBilling(billing.subscriptionsEnabled);
+accounts.setProviders(billing.providers);
 
 const PORT = process.env.PORT || 3000;
 const ACCESS_KEY = process.env.ACCESS_KEY || '';          // optional password for the feed
@@ -193,6 +196,8 @@ http.createServer((req, res) => {
   }
   if (accounts.handle(req, res, u)) return;              // sign up, sign in, plans
   if (ai.handle(req, res, u)) return;                    // AI writing helper
+  if (paypal.handle(req, res, u)) return;                // PayPal returns
+  if (payfast.handle(req, res, u)) return;               // PayFast payment notifications
   if (billing.handle(req, res, u)) return;               // card payments
   if (rooms.handle(req, res, u)) return;                 // project rooms have their own logins
   const sess = accounts.userFrom(req);

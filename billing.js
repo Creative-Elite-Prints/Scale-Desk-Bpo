@@ -2,6 +2,8 @@
 // Card details are typed on Stripe's own page and never reach this server.
 const crypto = require('crypto');
 const accounts = require('./accounts');
+const payfast = require('./payfast');
+const paypal = require('./paypal');
 
 const KEY = process.env.STRIPE_SECRET_KEY || '';
 const WEBHOOK_SECRET = process.env.STRIPE_WEBHOOK_SECRET || '';
@@ -10,12 +12,14 @@ const API = process.env.STRIPE_API_BASE || 'https://api.stripe.com';
 const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store' };
 
 exports.enabled = () => !!KEY;
-exports.subscriptionsEnabled = () => !!(KEY && PRICE);
+exports.stripeSubscriptions = () => !!(KEY && PRICE);
+exports.subscriptionsEnabled = () => !!(KEY && PRICE) || payfast.subscriptionsEnabled();
+exports.providers = () => [].concat(exports.stripeSubscriptions() ? ['stripe'] : [], payfast.subscriptionsEnabled() ? ['payfast'] : []);
 exports.baseUrl = req => (process.env.PUBLIC_URL || '').replace(/\/+$/, '') ||
   ((req.headers['x-forwarded-proto'] || 'http').split(',')[0] + '://' + req.headers.host);
 
 let roomPaid = () => false;
-exports.onRoomPaid = f => { roomPaid = f; };
+exports.onRoomPaid = f => { roomPaid = f; payfast.onRoomPaid(f); paypal.onRoomPaid(f); };
 
 async function stripe(path, params) {
   const body = new URLSearchParams();
@@ -97,8 +101,15 @@ exports.handle = (req, res, u) => {
     const s = accounts.userFrom(req);
     if (!s) return send(res, 401, { error: 'Please sign in' });
     if (!exports.subscriptionsEnabled()) return send(res, 503, { error: 'Card payments are not set up yet' });
+    let body = {}; try { body = JSON.parse((await readBody(req, 2000)) || '{}'); } catch (e) { /* no body */ }
+    const provs = exports.providers(), prov = provs.includes(body.provider) ? body.provider : provs[0];
     try {
-      const url = p === '/api/billing/subscribe' ? await exports.subscribeUrl(s.user, exports.baseUrl(req)) : await exports.portalUrl(s.user, exports.baseUrl(req));
+      if (p === '/api/billing/subscribe') {
+        if (prov === 'payfast') return send(res, 200, payfast.subscribeForm(s.user, exports.baseUrl(req)));
+        return send(res, 200, { url: await exports.subscribeUrl(s.user, exports.baseUrl(req)) });
+      }
+      if (!s.user.stripeCustomer && s.user.payfastToken) return send(res, 200, { url: payfast.updateUrl(s.user.payfastToken, exports.baseUrl(req)) });
+      const url = await exports.portalUrl(s.user, exports.baseUrl(req));
       return send(res, 200, { url });
     } catch (e) { console.error('billing:', e.message); return send(res, 502, { error: p.endsWith('portal') ? e.message : 'Could not start checkout' }); }
   })().catch(e => { console.error('billing:', e.message); if (!res.headersSent) send(res, 500, { error: 'Server error' }); });

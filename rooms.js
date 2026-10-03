@@ -2,7 +2,7 @@
 // A room stays open until the client approves AND the full payment is recorded, then it closes.
 const fs = require('fs'), path = require('path'), crypto = require('crypto');
 const accounts = require('./accounts');
-const mailer = require('./mailer'), billing = require('./billing');
+const mailer = require('./mailer'), billing = require('./billing'), payfast = require('./payfast'), paypal = require('./paypal');
 
 const DATA = process.env.DATA_DIR || path.join(__dirname, 'data');
 const ADMIN_KEY = process.env.ADMIN_KEY || '';
@@ -46,6 +46,7 @@ const blocked = ip => recent(ip).length >= 15;
 const fail = ip => fails.set(ip, recent(ip).concat(now()));
 
 // ---- Room rules ----
+const payMethods = r => [].concat(billing.enabled() ? ['stripe'] : [], payfast.enabled() && r.currency === 'ZAR' ? ['payfast'] : [], paypal.enabled() && paypal.currencies.includes(r.currency) ? ['paypal'] : []);
 const paidFull = r => r.paidCents >= r.amountCents;
 // Payments are split into milestones (default 30% start, 40% midpoint, 30% delivery).
 // A milestone counts as paid once the total paid reaches its running total, so part and manual payments work too.
@@ -104,7 +105,8 @@ function view(r, role) {
     downloadsUntil: r.status === 'closed' ? r.closedAt + DOWNLOAD_DAYS * DAY : 0,
     canApprove: role === 'client' && r.kind !== 'quote' && r.status === 'open' && !r.approved && (!r.offer || r.offer.accepted),
     canAccept: role === 'client' && r.status === 'open' && !!r.offer && !r.offer.accepted,
-    canPay: role === 'client' && r.kind !== 'quote' && r.status === 'open' && (!r.offer || r.offer.accepted) && !paidFull(r) && dueCents(r) > 0 && billing.enabled(),
+    canPay: role === 'client' && r.kind !== 'quote' && r.status === 'open' && (!r.offer || r.offer.accepted) && !paidFull(r) && dueCents(r) > 0 && payMethods(r).length > 0,
+    payMethods: role === 'client' ? payMethods(r) : [],
     milestones: r.kind === 'quote' ? [] : steps(r).map((s, i) => ({ label: s.label, pct: s.pct, cents: s.cents, status: r.paidCents >= s.cum ? 'paid' : i < releasedN(r) ? 'due' : 'upcoming' })),
     dueCents: r.kind === 'quote' ? 0 : dueCents(r),
     canRelease: role === 'owner' && r.kind !== 'quote' && r.status === 'open' && releasedN(r) < planOf(r).length,
@@ -333,7 +335,13 @@ async function run(req, res, u) {
     if (r.offer && !r.offer.accepted) return send(res, 403, { error: 'Accept the offer first' });
     if (paidFull(r)) return send(res, 400, { error: 'This is already paid' });
     if (dueCents(r) <= 0) return send(res, 400, { error: 'No payment is due right now' });
-    if (!billing.enabled()) return send(res, 503, { error: 'Card payments are not set up' });
+    const ms = payMethods(r), body0 = (await json(req)) || {}, prov = ms.includes(body0.provider) ? body0.provider : ms[0];
+    if (!prov) return send(res, 503, { error: payfast.enabled() && r.currency !== 'ZAR' ? 'This room is priced in ' + r.currency + ', which no payment option on this server takes. PayFast takes rand only.' : 'Card payments are not set up' });
+    if (prov === 'payfast') return send(res, 200, payfast.roomForm(r, billing.baseUrl(req), dueCents(r)));
+    if (prov === 'paypal') {
+      try { return send(res, 200, { url: await paypal.roomCheckout(r, billing.baseUrl(req), dueCents(r)) }); }
+      catch (e) { console.error('paypal checkout:', e.message); return send(res, 502, { error: 'Could not start the PayPal payment' }); }
+    }
     try { return send(res, 200, { url: await billing.projectCheckout(r, billing.baseUrl(req), dueCents(r)) }); }
     catch (e) { console.error('checkout:', e.message); return send(res, 502, { error: 'Could not start the payment' }); }
   }
@@ -392,9 +400,10 @@ async function run(req, res, u) {
   return send(res, 404, { error: 'Not found' });
 }
 
-exports.recordPayment = (roomId, amount, ref) => {
+exports.recordPayment = (roomId, amount, ref, currency) => {
   const r = db.rooms[roomId];
   if (!r || r.status === 'purged' || r.kind === 'quote') return false;
+  if (currency && currency !== r.currency) return false;     // never count rand as dollars, or the reverse
   pay(r, amount, ref); return true;
 };
 exports.handle = (req, res, u) => {

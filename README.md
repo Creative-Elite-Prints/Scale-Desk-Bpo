@@ -86,7 +86,37 @@ Open your address on the phone and choose **Add to Home Screen** (iPhone Safari:
 - No email set up: copy the private link shown in the thread and send it by WhatsApp.
 - **New private link** in a thread replaces a lost link; the old one stops working.
 
-## Card payments (worldwide) with Stripe
+## Card and EFT payments with PayFast (South Africa)
+
+PayFast takes the payment on its own page, so card and bank details never reach your server. It works in rand only.
+
+1. Open a merchant account at payfast.co.za. You need a South African bank account and PayFast's business verification.
+2. In your PayFast dashboard, open the integration settings. Copy your **Merchant ID** and **Merchant Key**, and set a **passphrase** (a long phrase only you know). Subscriptions need the passphrase. If the dashboard has a switch for Instant Transaction Notifications, make sure it is on.
+3. In your server settings add: `PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY`, `PAYFAST_PASSPHRASE`, `PAYFAST_SUB_AMOUNT` (your monthly price in rand, for example `349`) and `PUBLIC_URL` (your real `https://` address; PayFast must be able to reach it).
+4. **Test first** in PayFast's sandbox: create a sandbox account, use its Merchant ID, Key and passphrase, and add `PAYFAST_SANDBOX=true`. Make a test subscription and a test room payment. Then switch to your live details and remove `PAYFAST_SANDBOX`.
+5. Subscriptions are recurring billing. PayFast may need to switch that on for your account, so ask them if the subscription button fails.
+
+What this turns on:
+- **Subscribe** on the plan screen: a monthly charge in rand. Each successful charge adds a month (plus 2 days of grace). **Manage billing** opens PayFast's page where the customer can change their card. To cancel, the customer uses the link in PayFast's emails or their PayFast account, or you cancel in your PayFast dashboard. The plan stays active until the paid month ends.
+- **Pay with PayFast (card or EFT)** in a project room, for the milestone that is due. **Only rooms priced in ZAR show it.** A client in another country pays the rand amount and their bank converts it. Whether PayFast accepts a given foreign card is up to PayFast's settings, so ask them.
+- Every PayFast message is checked three ways before it counts: its signature, a confirmation call back to PayFast, and a repeat check so the same payment is never counted twice.
+
+Stripe stays in the package as an option for anyone you sell ScaleDesk to in a country Stripe supports. You do not need it.
+
+## PayPal (clients paying in other currencies)
+
+PayFast takes rand only. For a room priced in dollars, euros, pounds and other currencies, the client gets a **Pay with PayPal (PayPal or card)** button. They pay on PayPal's own page, so card details never reach your server. When they come back, ScaleDesk asks PayPal what happened and records only a payment PayPal confirms for that room, in that room's currency.
+
+1. Open a PayPal **Business** account (paypal.com) and make sure it can receive payments and be withdrawn to your South African bank. Check this with PayPal for your account, as rules for South African accounts have changed over time.
+2. On developer.paypal.com open **Apps & Credentials**, create a **Live** app, and copy the **Client ID** and **Secret**. (Use the Sandbox tab for testing.)
+3. Add to your server settings: `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, and make sure `PUBLIC_URL` is your real `https://` address.
+4. **Test first** with the sandbox: use the sandbox Client ID and Secret and add `PAYPAL_SANDBOX=true`. Pay a test room with a sandbox buyer account. Then switch to live details and delete `PAYPAL_SANDBOX`.
+
+Currencies: USD, EUR, GBP, AUD, CAD, NZD, SGD, HKD, CHF, SEK, NOK, DKK, PLN. PayPal cannot charge rand or dirham, so ZAR rooms use PayFast and AED rooms have no online payment option (record those by hand in `/admin`). PayPal charges its own fees and may hold or convert funds, so check its terms. The monthly **subscription** for your own customers stays with PayFast, in rand.
+
+## Stripe (optional: only for countries Stripe supports)
+
+Stripe is not available to South African businesses, so skip this section unless you run ScaleDesk from a country where Stripe works.
 
 Stripe takes the card details on its own page, so they never touch your server. It supports many countries and currencies. Check that Stripe is available in your country and which payout options you get.
 
@@ -128,6 +158,8 @@ A project room created with **Send offer to client** shows your proposal and pri
 | `ROOM_DAYS` | How long a room may stay open if never finished. Default 60. |
 | `DOWNLOAD_DAYS_AFTER_CLOSE` | Days to download files after a room closes. Default 7. |
 | `ACCESS_KEY` | Optional key for the job feed, for your own scripts. Signed-in users do not need it. |
+| `PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY`, `PAYFAST_PASSPHRASE`, `PAYFAST_SUB_AMOUNT`, `PAYFAST_SANDBOX` | PayFast payments and subscriptions (see above). |
+| `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_SANDBOX` | PayPal payments in other currencies (see above). |
 | `SOURCES`, `FREELANCER_TOKEN` | Job sources, and an optional Freelancer.com token. |
 | `BUSINESS_NAME`, `LEGAL_COUNTRY` | Names used in the Terms, Privacy Policy and emails. |
 | `ANTHROPIC_API_KEY`, `AI_DAILY_LIMIT`, `ANTHROPIC_MODEL` | Turns on the AI assistant, its daily limit per account, and the model. |
@@ -152,7 +184,7 @@ If Freelancer jobs stop appearing, check Freelancer's developer documentation. B
 - **Legal pages:** add terms of service and a privacy policy, and follow your country's data protection law (for example POPIA in South Africa or GDPR in Europe). You will store customers' names, emails and business data.
 - **Terms and Privacy are templates.** Get them reviewed locally before selling.
 - **Without email set up** there are no confirmation or reset emails. Use **Set password** in `/admin` to help someone who is locked out.
-- **Not escrow:** clients pay you (through Stripe). Final files unlock only after full payment is recorded. Paying your developers is separate.
+- **Not escrow:** clients pay you (through PayFast, or Stripe if you use it). Final files unlock only after full payment is recorded. Paying your developers is separate.
 - **Backups:** everything is saved in files under `DATA_DIR`, and the server must run as one copy. Back that folder up.
 - Sign-in attempts and sign-ups are rate limited.
 

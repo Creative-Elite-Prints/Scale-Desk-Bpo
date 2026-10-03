@@ -85,7 +85,7 @@ async function run(req, res, u) {
   const p = u.pathname, m = req.method;
 
   if (p === '/api/plan' && m === 'GET') {
-    return send(res, 200, { price: PRICE_TEXT, trialDays: TRIAL_DAYS, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY });
+    return send(res, 200, { price: PRICE_TEXT, trialDays: TRIAL_DAYS, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY });
   }
 
   if (p === '/api/auth/signup' && m === 'POST') {
@@ -177,7 +177,7 @@ async function run(req, res, u) {
     const s = userFrom(req);
     if (!s) return send(res, 401, { error: 'Please sign in' });
     return send(res, 200, { user: pub(s.user), data: s.active ? s.user.data : null,
-      plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY } });
+      plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY } });
   }
   if (p === '/api/me/data' && m === 'PUT') {
     const s = userFrom(req);
@@ -254,6 +254,8 @@ function sendVerify(us, base) {
     .catch(e => console.error('verify mail:', e.message));
 }
 let billingOn = () => false;
+let providersOn = () => [];
+exports.setProviders = f => { providersOn = f; };
 exports.setBilling = f => { billingOn = f; };
 exports.seenEvent = id => (db.events || []).includes(id);
 exports.markEvent = id => { db.events = (db.events || []).concat(id).slice(-500); save(); };
@@ -261,6 +263,14 @@ exports.stripeLink = (uid, customer, sub) => {
   const u = db.users[uid]; if (!u) return false;
   u.stripeCustomer = customer; u.stripeSub = sub; save(); return true;
 };
+exports.payfastPaid = (uid, token) => {
+  const u = db.users[uid]; if (!u) return false;
+  if (token) u.payfastToken = token;
+  const n = now();
+  u.paidUntil = (u.paidUntil || 0) > n ? u.paidUntil + 30 * DAY : n + 32 * DAY;   // a month, with 2 days of grace when starting or restarting
+  save(); return true;
+};
+exports.getUser = uid => db.users[uid] || null;
 exports.stripePaid = (customer, email, endMs) => {
   const u = Object.values(db.users).find(x => (customer && x.stripeCustomer === customer) || (email && x.email === String(email).toLowerCase()));
   if (!u) return false;
