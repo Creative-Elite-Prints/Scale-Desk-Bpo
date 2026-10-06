@@ -92,7 +92,7 @@ function loadRooms(){
       '<button class="alt" data-a="relink" data-r="'+(q?'developer':'client')+'" data-id="'+r.id+'" type="button">New '+(q?'freelancer':'client')+' link</button>'+(q?'':'<button class="alt" data-a="relink" data-r="developer" data-id="'+r.id+'" type="button">New developer link</button>')+
       '<button class="alt" data-a="purge" data-id="'+r.id+'" type="button">Delete files now</button></div><div id="l'+r.id+'"></div></div>';
     }).join(''):'<p class="m">Nothing yet.</p>';
-    if(K)loadCust();
+    loadCust();
   }).catch(function(e){$('login').hidden=false;$('main').hidden=true;fail(e)});
 }
 function loadCust(){
@@ -103,7 +103,7 @@ function loadCust(){
       return '<div class="r"><b>'+esc(u.name)+'</b> <span class="pill '+u.access+'">'+u.access+'</span><br><span class="m">'+esc(u.email)+(u.business?' · '+esc(u.business):'')+' · '+plan+' · joined '+day(u.createdAt)+'</span>'+
       '<div class="bt"><button data-u="grant" data-id="'+u.id+'" type="button">Give trial days</button><button class="alt" data-u="paid" data-id="'+u.id+'" type="button">Add paid month</button><button class="alt" data-u="cancel" data-id="'+u.id+'" type="button">End plan</button><button class="alt" data-u="block" data-b="'+(u.access==='blocked'?'0':'1')+'" data-id="'+u.id+'" type="button">'+(u.access==='blocked'?'Unpause':'Pause')+'</button><button class="alt" data-u="password" data-id="'+u.id+'" type="button">Set password</button><button class="alt" data-u="delete" data-id="'+u.id+'" type="button">Delete</button></div></div>';
     }).join(''):'<p class="m">No customers yet.</p>';
-  }).catch(fail);
+  }).catch(function(e){if(!K){$('cust').hidden=true}else fail(e)});
   call('/api/admin/invites').then(function(o){
     var k=Object.keys(o);$('inv').innerHTML=k.length?k.map(function(c){return '<p><b>'+esc(c)+'</b> <span class="m">'+o[c].days+' days, '+o[c].uses+' use'+(o[c].uses===1?'':'s')+' left</span></p>'}).join(''):'<p class="m">No codes yet.</p>';
   }).catch(fail);

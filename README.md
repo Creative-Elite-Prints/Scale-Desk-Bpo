@@ -191,3 +191,9 @@ If Freelancer jobs stop appearing, check Freelancer's developer documentation. B
 ## Try it on your computer
 
 Run `ADMIN_KEY=choose-a-password OWNER_EMAILS=you@example.com node server.js`, then open `http://localhost:3000/`.
+
+## Owner sign-in (no admin key needed)
+Put your own email in `OWNER_EMAILS`, sign up with it, and you stay signed in for a year. A "Back office" button appears under your name in the app and opens /admin using that sign-in. `ADMIN_KEY` still works as a backup.
+
+## How customers get paid (current behaviour)
+Client card payments (PayFast / PayPal) go to the ONE merchant account set in the server settings (yours). Other customers can record payments by hand in the Payouts tab or paste their own payment link into a room ("Pay now" link). Per-customer merchant accounts are not built yet.

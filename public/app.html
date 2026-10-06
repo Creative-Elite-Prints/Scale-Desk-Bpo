@@ -57,7 +57,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 <header><span><span class="logo">ScaleDesk</span> <span class="tagl">Jobs, proposals and clients in one place</span></span>
   <span class="hr">
     <details class="dd" id="gdd"><summary>Guides</summary><div class="ddp" id="gl"></div></details>
-    <details class="dd" id="add" hidden><summary id="asum">Account</summary><div class="ddp"><p class="note" id="ainfo" style="margin:4px 8px 10px"></p><div style="display:flex;gap:6px;padding:0 6px 6px"><button class="btn alt sm" id="aplan" type="button">Plan</button><button class="btn alt sm" id="aout" type="button">Sign out</button></div></div></details>
+    <details class="dd" id="add" hidden><summary id="asum">Account</summary><div class="ddp"><p class="note" id="ainfo" style="margin:4px 8px 10px"></p><div style="display:flex;gap:6px;padding:0 6px 6px"><button class="btn alt sm" id="abo" type="button" hidden>Back office</button><button class="btn alt sm" id="aplan" type="button">Plan</button><button class="btn alt sm" id="aout" type="button">Sign out</button></div></div></details>
   </span></header>
 
 <div class="stats">
@@ -559,7 +559,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
   function enter(d){
     me=d.user;planInfo=d.plan||{};
     document.body.classList.add('app');document.body.classList.remove('pre');
-    $('add').hidden=false;$('asum').textContent=me.name||me.email;$('ainfo').textContent=me.email+' · '+planText(me);
+    $('abo').hidden=me.access!=='owner';$('add').hidden=false;$('asum').textContent=me.name||me.email;$('ainfo').textContent=me.email+' · '+planText(me);
     $('auth').hidden=true;
     $('vbar').hidden=me.verified||!planInfo.email;
     $('aib').hidden=!planInfo.ai;$('mg_ai').hidden=$('mg_sum').hidden=!planInfo.ai;
@@ -629,6 +629,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     if(b.id==='au_up')authMode('up');
     if(b.id==='au_go')submitAuth();
     if(b.id==='aout'||b.id==='lout')signOut();
+    if(b.id==='abo'){location.href='/admin';return}
     if(b.id==='aplan'){$('add').open=false;showLock(me,planInfo,true)}
     if(b.id==='lback')$('lock').hidden=true;
     if(b.id==='lpay'||b.id==='lmanage'){sApi(b.id==='lpay'?'/api/billing/subscribe':'/api/billing/portal',{method:'POST',body:{}}).then(function(d){if(d.fields){var f=document.createElement('form');f.method='POST';f.action=d.url;Object.keys(d.fields).forEach(function(k){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=d.fields[k];f.appendChild(i)});document.body.appendChild(f);f.submit()}else location.href=d.url}).catch(function(er){$('lm').textContent=er.message})}

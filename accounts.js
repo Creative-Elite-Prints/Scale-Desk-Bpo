@@ -42,7 +42,8 @@ const pub = u => ({ id: u.id, email: u.email, name: u.name, business: u.business
 // ---- Sessions ----
 function newSession(uid) {
   const t = crypto.randomBytes(32).toString('base64url');
-  db.sessions[sha(t)] = { uid, exp: now() + SESSION_DAYS * DAY };
+  const u = db.users[uid], days = u && OWNERS.includes(u.email) ? 365 : SESSION_DAYS;
+  db.sessions[sha(t)] = { uid, exp: now() + days * DAY };
   save(); return t;
 }
 function userFrom(req) {
@@ -215,9 +216,10 @@ async function run(req, res, u) {
 
   // ---- Owner tools (ADMIN_KEY) ----
   if (p.startsWith('/api/admin/')) {
-    const ak = req.headers['x-admin-key'];
+    const ak = req.headers['x-admin-key'], os = ak ? null : userFrom(req);
     if (count('af' + ip, 600000) >= 15) return send(res, 429, { error: 'Too many attempts' });
-    if (!ak || !ADMIN_KEY || !same(ak, ADMIN_KEY)) { mark('af' + ip); return send(res, 401, { error: 'Not authorised' }); }
+    const isOwnerSession = !!(os && os.access === 'owner');
+    if (!isOwnerSession && (!ak || !ADMIN_KEY || !same(ak, ADMIN_KEY))) { mark('af' + ip); return send(res, 401, { error: 'Not authorised' }); }
     if (p === '/api/admin/users' && m === 'GET') return send(res, 200, Object.values(db.users).map(pub));
     if (p === '/api/admin/invites' && m === 'GET') return send(res, 200, db.invites);
     if (p === '/api/admin/invites' && m === 'POST') {
