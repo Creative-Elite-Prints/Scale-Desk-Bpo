@@ -6,6 +6,7 @@ const accounts = require('./accounts');
 const billing = require('./billing');
 const rooms = require('./rooms');
 const ai = require('./ai');
+const profile = require('./profile');
 const payfast = require('./payfast');
 const paypal = require('./paypal');
 billing.onRoomPaid(rooms.recordPayment);
@@ -195,6 +196,7 @@ http.createServer((req, res) => {
     return res.end(APP_PAGE);
   }
   if (accounts.handle(req, res, u)) return;              // sign up, sign in, plans
+  if (profile.handle(req, res, u)) return;               // public profile pages and editor
   if (ai.handle(req, res, u)) return;                    // AI writing helper
   if (paypal.handle(req, res, u)) return;                // PayPal returns
   if (payfast.handle(req, res, u)) return;               // PayFast payment notifications

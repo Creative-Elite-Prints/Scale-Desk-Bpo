@@ -12,6 +12,11 @@ const TASKS = {
   reply: 'Draft a short, friendly, professional reply to the latest message in this conversation, from the sender named below. If the other person is a freelancer, ask for a quotation and NEVER mention or hint at how much the sender can pay. Output only the reply text.',
   proposal: 'Rewrite or improve this freelance proposal as the instruction asks. Keep it honest: do not invent skills, past work, prices or deadlines that are not in the text. Output only the proposal text.',
   summary: 'Summarise this conversation in 3 to 5 plain bullet points: what was agreed, what is still open, and the next step. Output only the summary.',
+  about: 'Write a warm, honest, first-person "About me" paragraph (80 to 140 words) for a freelancer or small business profile from the notes below. Use only facts in the notes; do not invent years of experience, clients, awards or numbers.',
+  headline: 'Write one short professional headline (under 12 words) for a freelancer profile from the notes below. Use only facts in the notes. Output one line.',
+  services: 'Turn the notes below into a clean list of 4 to 8 services the person offers, one per line, each under 8 words, no bullets or numbering. Use only what the notes say.',
+  work: 'Write a clear 2 to 4 sentence description of this past project for a portfolio, covering the problem, what was done and the result. Use only facts in the notes; do not invent numbers or client names.',
+  polish: 'Fix spelling and grammar and improve the wording of the text below, keeping the meaning, facts and first-person voice. Do not add new claims.',
   free: 'Help with the request. Keep the answer practical and short.'
 };
 

@@ -197,3 +197,6 @@ Put your own email in `OWNER_EMAILS`, sign up with it, and you stay signed in fo
 
 ## How customers get paid (current behaviour)
 Client card payments (PayFast / PayPal) go to the ONE merchant account set in the server settings (yours). Other customers can record payments by hand in the Payouts tab or paste their own payment link into a room ("Pay now" link). Per-customer merchant accounts are not built yet.
+
+## Profiles
+Every signed-in user (you included) has a "My profile" tab: name, headline, about, services, rates, contact email and up to 6 examples of work (title, description, link, picture). "Write with AI" buttons (need ANTHROPIC_API_KEY) draft or tidy the wording, and the person can undo and must read it before saving. Nothing is public until they tick "Make my profile page public"; the page is then at /p/<name>. Pictures are shrunk in the browser and stored in the account data on the disk, so keep an eye on disk size if you have many customers.

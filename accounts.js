@@ -273,6 +273,9 @@ exports.payfastPaid = (uid, token) => {
   save(); return true;
 };
 exports.getUser = uid => db.users[uid] || null;
+exports.allUsers = () => Object.values(db.users);
+exports.activeUser = u => isActive(access(u));
+exports.saveProfile = (uid, prof) => { if (db.users[uid]) { db.users[uid].profile = prof; save(); } };
 exports.stripePaid = (customer, email, endMs) => {
   const u = Object.values(db.users).find(x => (customer && x.stripeCustomer === customer) || (email && x.email === String(email).toLowerCase()));
   if (!u) return false;

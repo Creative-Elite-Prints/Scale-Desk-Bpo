@@ -48,6 +48,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 .lead{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;font-size:14px}
 .lead b{display:block;font-weight:700}
 .lead div{display:flex;gap:6px;margin-top:8px}
+.pfr{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}.pfs{margin:0}.pfw{border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0}.pfw img{max-width:160px;max-height:110px;border-radius:6px;display:block;margin:6px 0}
 .note{font-size:13px;color:var(--muted);margin-top:18px}
 @media (max-width:820px){.stats{grid-template-columns:1fr 1fr}.two,.board{grid-template-columns:1fr}.job{grid-template-columns:1fr}.side{text-align:left}.acts{justify-content:flex-start}.bar{grid-template-columns:1fr}}
 </style>
@@ -74,6 +75,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
   <button class="tab" role="tab" data-t="pipe" aria-selected="false">Clients</button>
   <button class="tab" role="tab" data-t="free" aria-selected="false">Freelancers</button>
   <button class="tab" role="tab" data-t="pout" aria-selected="false">Payouts</button>
+  <button class="tab" role="tab" data-t="prof" aria-selected="false">My profile</button>
   <button class="tab" role="tab" data-t="msg" aria-selected="false">Messages <span class="badge2" id="mbadge" hidden></span></button>
 </div>
 
@@ -123,6 +125,31 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
   </div>
   <p style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" id="po_add" type="button">Add to payouts</button><button class="btn alt" id="po_csv" type="button">Download as spreadsheet (CSV)</button><span class="note" id="po_err" role="alert" style="margin:0;color:#c0392b"></span></p>
   <div id="po_list"></div>
+</div>
+
+<div id="prof" hidden>
+  <p class="note" id="pf_off" style="margin:0">Your profile page works in the signed-in app on your own server. This preview page cannot save or publish one.</p>
+  <div id="pf_on" hidden>
+    <p class="note" style="margin:0 0 10px">Tell people what you do and show examples of your work. You get your own web page to share. Nothing is public until you tick the box at the bottom.</p>
+    <div class="sg">
+      <div><label for="pf_name">Name or business</label><input id="pf_name" maxlength="80"></div>
+      <div><label for="pf_loc">Location</label><input id="pf_loc" maxlength="80" placeholder="For example: Cape Town, South Africa"></div>
+      <div><label for="pf_rate">Rates or availability</label><input id="pf_rate" maxlength="80" placeholder="For example: From $25 an hour"></div>
+      <div><label for="pf_mail">Contact email shown on your page (optional)</label><input id="pf_mail" type="email" maxlength="120"></div>
+    </div>
+    <label for="pf_head">Headline</label><input id="pf_head" maxlength="140" placeholder="One line: what you do and who for">
+    <p class="pfr"><button class="btn alt sm pfai" data-f="pf_head" data-task="headline" type="button">Write with AI</button><span class="note pfs" id="pf_head_s"></span></p>
+    <label for="pf_about">About you</label><textarea id="pf_about" maxlength="2500" placeholder="Type rough notes about you: your skills, years of experience, the kind of clients you like. The AI can turn them into a proper paragraph."></textarea>
+    <p class="pfr"><button class="btn alt sm pfai" data-f="pf_about" data-task="about" type="button">Write with AI</button><button class="btn alt sm pfai" data-f="pf_about" data-task="polish" type="button">Fix wording</button><span class="note pfs" id="pf_about_s"></span></p>
+    <label for="pf_serv">What you can do (one service per line)</label><textarea id="pf_serv" style="min-height:90px" placeholder="Websites for small businesses&#10;Logo and brand design&#10;Monthly bookkeeping"></textarea>
+    <p class="pfr"><button class="btn alt sm pfai" data-f="pf_serv" data-task="services" type="button">Tidy into a list with AI</button><span class="note pfs" id="pf_serv_s"></span></p>
+    <h3 style="margin:18px 0 4px">Examples of your work (up to 6)</h3>
+    <div id="pf_work"></div>
+    <p><button class="btn alt sm" id="pf_addw" type="button">Add an example</button></p>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:600;margin-top:14px"><input type="checkbox" id="pf_pub" style="width:auto"> Make my profile page public</label>
+    <p style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" id="pf_save" type="button">Save profile</button><a class="btn alt" id="pf_view" href="#" target="_blank" rel="noopener" hidden>Open my page</a><button class="btn alt" id="pf_copy" type="button" hidden>Copy page link</button><span class="note" id="pf_msg" role="status" style="margin:0"></span></p>
+    <p class="note" id="pf_aino" hidden>AI writing help is not switched on for this site yet.</p>
+  </div>
 </div>
 
 <div id="msg" hidden>
@@ -369,8 +396,9 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     if(find(+v))$('pj').value=v;
   }
   function tab(n){
-    ['jobs','prop','pipe','free','pout','msg'].forEach(function(x){$(x).hidden=x!==n});
+    ['jobs','prop','pipe','free','pout','prof','msg'].forEach(function(x){$(x).hidden=x!==n});
     if(n==='pout')renderPays();
+    if(n==='prof')profOpen();
     if(n==='msg'){$('mg_off').hidden=!!APP;$('mg_on').hidden=!APP;if(APP){mgLoadList().then(function(){if(mg.cur)mgPoll()})}}
     if(n==='jobs')list(true);
     Array.prototype.forEach.call(document.querySelectorAll('.tab'),function(b){b.setAttribute('aria-selected',b.dataset.t===n)});
@@ -698,6 +726,72 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
         '<div style="margin-top:6px">'+(done?'':'<button class="btn alt sm" data-pp="pay:'+p.id+'" type="button">Record a payment</button> ')+'<button class="btn alt sm" data-pp="del:'+p.id+'" type="button">Delete</button></div></div>';
     }).join('');
   }
+
+  var pfW=[],pfSlug='',pfPrev={},pfLoaded=false;
+  function pfEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function pfSnap(){Array.prototype.forEach.call(document.querySelectorAll('#pf_work .pfw'),function(el){var i=+el.dataset.i;if(!pfW[i])return;pfW[i].title=el.querySelector('.wt').value;pfW[i].desc=el.querySelector('.wd').value;pfW[i].link=el.querySelector('.wl').value})}
+  function pfDraw(){
+    $('pf_work').innerHTML=pfW.map(function(w,i){
+      var src=w.img||(w.keep&&pfSlug?'/p/'+pfSlug+'/img/'+i+'?'+Date.now():'');
+      return '<div class="pfw" data-i="'+i+'"><label>Title</label><input class="wt" maxlength="100" value="'+pfEsc(w.title)+'" placeholder="For example: Website for a bakery">'+
+      '<label>What you did and the result</label><textarea class="wd" maxlength="800" style="min-height:80px" placeholder="Rough notes are fine. The AI can tidy them.">'+pfEsc(w.desc)+'</textarea>'+
+      '<p class="pfr"><button class="btn alt sm pfai" data-w="'+i+'" data-task="work" type="button">Write with AI</button><span class="note pfs"></span></p>'+
+      '<label>Link to the live project (optional, https only)</label><input class="wl" maxlength="300" value="'+pfEsc(w.link)+'" placeholder="https://">'+
+      '<label>Picture (optional)</label><input class="wf" type="file" accept="image/*">'+(src?'<img src="'+pfEsc(src)+'" alt="Preview of this example">':'')+
+      '<p><button class="btn alt sm" data-wdel="'+i+'" type="button">Remove this example</button></p></div>'}).join('');
+    $('pf_addw').hidden=pfW.length>=6;
+  }
+  function pfFill(p){
+    p=p||{};pfSlug=p.slug||'';
+    $('pf_name').value=p.name||(me&&(me.business||me.name))||'';$('pf_loc').value=p.location||'';$('pf_rate').value=p.rate||'';$('pf_mail').value=p.email||'';
+    $('pf_head').value=p.headline||'';$('pf_about').value=p.about||'';$('pf_serv').value=(p.services||[]).join('\n');$('pf_pub').checked=!!p.public;
+    pfW=(p.work||[]).map(function(w){return {title:w.title,desc:w.desc,link:w.link,img:'',keep:!!w.hasImg}});pfDraw();pfLinks();
+  }
+  function pfLinks(){var on=!!pfSlug&&$('pf_pub').checked;$('pf_view').hidden=$('pf_copy').hidden=!on;if(on)$('pf_view').href='/p/'+pfSlug}
+  function profOpen(){
+    $('pf_off').hidden=!!APP;$('pf_on').hidden=!APP;if(!APP)return;
+    $('pf_aino').hidden=!!planInfo.ai;Array.prototype.forEach.call(document.querySelectorAll('.pfai'),function(b){b.hidden=!planInfo.ai});
+    if(pfLoaded)return;
+    sApi('/api/me/profile').then(function(d){pfLoaded=true;pfFill(d.profile)}).catch(function(e){$('pf_msg').textContent=e.message});
+  }
+  function pfShrink(file,cb){
+    var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
+      var m=900,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);var q=.8,u=c.toDataURL('image/jpeg',q);while(u.length>380000&&q>.35){q-=.1;u=c.toDataURL('image/jpeg',q)}
+      cb(u.length<=400000?u:'')};im.onerror=function(){cb('')};im.src=r.result};r.onerror=function(){cb('')};r.readAsDataURL(file);
+  }
+  document.addEventListener('change',function(e){
+    var t=e.target;if(t.id==='pf_pub'){pfLinks();return}
+    if(!t.classList||!t.classList.contains('wf')||!t.files[0])return;
+    var box=t.closest('.pfw'),i=+box.dataset.i;pfSnap();
+    pfShrink(t.files[0],function(u){if(!u){$('pf_msg').textContent='That picture could not be used. Try a JPG or PNG.';return}pfW[i].img=u;pfW[i].keep=false;pfDraw();$('pf_msg').textContent=''});
+  });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b||!APP)return;
+    if(b.id==='pf_addw'){pfSnap();if(pfW.length<6){pfW.push({title:'',desc:'',link:'',img:'',keep:false});pfDraw()}return}
+    if(b.dataset.wdel!==undefined){pfSnap();pfW.splice(+b.dataset.wdel,1);pfDraw();return}
+    if(b.dataset.undo){var f=$(b.dataset.undo);if(f&&pfPrev[b.dataset.undo]!==undefined){f.value=pfPrev[b.dataset.undo];b.parentNode.textContent='Undone.'}return}
+    if(b.classList.contains('pfai')){
+      var fld,st,key;
+      if(b.dataset.w!==undefined){pfSnap();var el=document.querySelector('#pf_work .pfw[data-i="'+b.dataset.w+'"]');fld=el.querySelector('.wd');st=b.parentNode.querySelector('.pfs');key=null}
+      else{fld=$(b.dataset.f);st=$(b.dataset.f+'_s');key=b.dataset.f}
+      var notes=fld.value.trim();
+      if(!notes&&b.dataset.task!=='headline'){st.textContent='Type a few rough notes first, then press the button.';return}
+      if(b.dataset.task==='headline')notes=($('pf_about').value+'\n'+$('pf_serv').value+'\n'+fld.value).trim();
+      if(!notes){st.textContent='Fill in the About box or services first.';return}
+      var prev=fld.value;st.textContent='Writing…';b.disabled=true;
+      sApi('/api/ai',{method:'POST',body:{task:b.dataset.task,text:notes}}).then(function(d){
+        if(key)pfPrev[key]=prev;fld.value=d.text;st.innerHTML='AI draft added. Read it and make sure it is true. '+(key?'<button class="btn alt sm" data-undo="'+key+'" type="button">Undo</button>':'')}).catch(function(er){st.textContent=er.message}).then(function(){b.disabled=false});
+      return;
+    }
+    if(b.id==='pf_copy'){var u=location.origin+'/p/'+pfSlug;if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){$('pf_msg').textContent='Link copied.'});else $('pf_msg').textContent=u;return}
+    if(b.id==='pf_save'){
+      pfSnap();$('pf_msg').textContent='Saving…';
+      var body={name:$('pf_name').value,location:$('pf_loc').value,rate:$('pf_rate').value,email:$('pf_mail').value,headline:$('pf_head').value,about:$('pf_about').value,
+        services:$('pf_serv').value.split('\n'),public:$('pf_pub').checked,work:pfW.map(function(w){return {title:w.title,desc:w.desc,link:w.link,img:w.img,keep:w.keep}})};
+      sApi('/api/me/profile',{method:'PUT',body:body}).then(function(d){pfFill(d.profile);$('pf_msg').textContent=d.profile.public?'Saved. Your page is public.':'Saved. Your page is private until you tick the box.'}).catch(function(er){$('pf_msg').textContent=er.message});
+    }
+  });
   document.addEventListener('click',function(e){
     var b=e.target.closest('button');if(!b)return;
     if(b.id==='po_add'){
