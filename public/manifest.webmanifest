@@ -2,7 +2,7 @@
   "name": "ScaleDesk",
   "short_name": "ScaleDesk",
   "description": "Find freelance jobs, write proposals, chat with freelancers and clients, and get paid.",
-  "start_url": "/",
+  "start_url": "/app",
   "scope": "/",
   "display": "standalone",
   "background_color": "#0e1220",

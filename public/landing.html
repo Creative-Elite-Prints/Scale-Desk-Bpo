@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ScaleDesk | Jobs, proposals and clients in one place</title>
+<meta name="description" content="ScaleDesk collects live freelance jobs, writes your proposals, organises your clients and gives every project a safe payment room. $19 a month.">
+<meta name="theme-color" content="#5b3df5">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="icon" href="/icon-192.png">
+<style>
+:root{--bg:#eef1f6;--surface:#fff;--ink:#0e1424;--muted:#55607a;--accent:#5b3df5;--on:#fff;--line:#d9deea;--tag:#e7e3ff}
+@media(prefers-color-scheme:dark){:root{--bg:#0b0f1c;--surface:#151b2e;--ink:#eaeefb;--muted:#9aa5c4;--accent:#8b78ff;--on:#0b0f1c;--line:#262e48;--tag:#262050}}
+*{box-sizing:border-box}html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Manrope,system-ui,-apple-system,Segoe UI,sans-serif}
+h1,h2,h3{font-family:Sora,"Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;margin:0}
+a{color:inherit}:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.w{max-width:1040px;margin:0 auto;padding:0 20px}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 0}
+.logo{font:800 22px Sora,sans-serif;text-decoration:none}
+nav{display:flex;align-items:center;gap:18px;font-weight:700;font-size:14px}nav a.t{color:var(--muted);text-decoration:none}nav a.t:hover{text-decoration:underline}
+.btn{display:inline-flex;align-items:center;justify-content:center;font:700 15px Sora,sans-serif;background:var(--accent);color:var(--on);border:0;border-radius:8px;padding:14px 24px;text-decoration:none;cursor:pointer}
+.btn:hover{filter:brightness(1.08)}.btn.sm{padding:9px 16px;font-size:14px}
+.btn.alt{background:none;color:var(--ink);border:1.5px solid var(--line)}.btn.alt:hover{border-color:var(--accent)}
+.hero{text-align:center;padding:48px 0 56px}
+.pill{display:inline-block;background:var(--tag);color:var(--accent);font-weight:700;font-size:12px;border-radius:999px;padding:5px 12px}
+h1{font-size:clamp(32px,6vw,52px);line-height:1.1;font-weight:800;max-width:780px;margin:20px auto 0}
+.lead{font-size:18px;color:var(--muted);max-width:640px;margin:18px auto 0}
+.row{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-top:30px}
+.small{font-size:13px;color:var(--muted);margin-top:12px}
+section{padding:52px 0}h2{font-size:30px;font-weight:800;text-align:center}.sub{text-align:center;color:var(--muted);margin:8px auto 0;max-width:520px}
+.steps{list-style:none;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));padding:0;margin:36px 0 0}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px}
+.n{display:grid;place-items:center;width:40px;height:40px;border-radius:50%;background:var(--tag);color:var(--accent);font:800 18px Sora,sans-serif}
+.steps h3{font-size:20px;margin:14px 0 6px}.steps p{margin:0;color:var(--muted);font-size:15px}
+.plan{max-width:430px;margin:32px auto 0;border:2px solid var(--accent);padding:32px;box-shadow:0 10px 30px rgba(91,61,245,.15)}
+.price{display:flex;align-items:flex-end;gap:8px;margin:14px 0 2px}.price b{font:800 52px Sora,sans-serif;line-height:1}.price span{color:var(--muted);padding-bottom:6px}
+.plan ul{list-style:none;padding:0;margin:22px 0 26px;display:grid;gap:16px}
+.plan li{display:flex;gap:12px}.plan li svg{flex:none;width:20px;height:20px;margin-top:2px;color:var(--accent)}
+.plan li b{display:block}.plan li span{font-size:14px;color:var(--muted)}.plan .btn{width:100%}
+.band{background:var(--accent);color:var(--on);border-radius:16px;text-align:center;padding:48px 20px}
+.band p{opacity:.9;margin:8px 0 0}.band .btn{background:var(--surface);color:var(--accent);margin-top:22px}
+footer{padding:30px 0 90px;color:var(--muted);font-size:13px;text-align:center}footer a{margin:0 8px}
+.bar{display:none}
+@media(max-width:640px){nav a.t{display:none}.bar{display:block;position:fixed;left:0;right:0;bottom:0;background:var(--surface);border-top:1px solid var(--line);padding:10px 14px;z-index:5}.bar .btn{width:100%}}
+</style>
+</head>
+<body>
+<div class="w">
+  <header>
+    <a class="logo" href="/">ScaleDesk</a>
+    <nav><a class="t" href="#how">How it works</a><a class="t" href="#pricing">Pricing</a><a class="t" href="/app">Sign in</a><a class="btn sm go" href="/app#signup">Start free trial</a></nav>
+  </header>
+
+  <div class="hero">
+    <span class="pill">Jobs, proposals and clients in one place</span>
+    <h1>Find the work, win the client, get paid. All from one desk.</h1>
+    <p class="lead">ScaleDesk collects live freelance jobs, writes your proposals, keeps your clients organised and gives every project a private, safe payment room.</p>
+    <div class="row"><a class="btn go" href="/app#signup">Get started for $19/mo</a><a class="btn alt" href="#how">See how it works</a></div>
+    <p class="small"><span class="td">7</span>-day free trial. Cancel any time.</p>
+  </div>
+
+  <section id="how">
+    <h2>How ScaleDesk works</h2>
+    <p class="sub">From sign-up to your first paid job in three steps.</p>
+    <ol class="steps">
+      <li class="card"><span class="n">1</span><h3>Find a live job</h3><p>Open Find jobs. Fresh listings are already collected and sorted. Pick one that fits you.</p></li>
+      <li class="card"><span class="n">2</span><h3>Send a proper proposal</h3><p>One click writes a professional proposal signed with your name. Tweak it, then copy it to the client.</p></li>
+      <li class="card"><span class="n">3</span><h3>Get paid safely</h3><p>Open a private project room. The client pays in stages and final files unlock when the last payment lands.</p></li>
+    </ol>
+    <div class="row"><a class="btn go" href="/app#signup">Start&nbsp;<span class="td">7</span>-day trial</a></div>
+  </section>
+
+  <section id="pricing">
+    <h2>Simple pricing</h2>
+    <p class="sub">One plan. Everything included. No hidden fees.</p>
+    <div class="card plan">
+      <span class="pill">Everything included</span>
+      <div class="price"><b>$19</b><span>/ month</span></div>
+      <div class="small" style="margin:0">Approx. R350/mo. Billed monthly, cancel any time.</div>
+      <ul id="feat"></ul>
+      <a class="btn go" href="/app#signup">Start&nbsp;<span class="td">7</span>-Day Trial</a>
+      <p class="small" style="text-align:center">Then $19/mo. Secure checkout.</p>
+    </div>
+  </section>
+
+  <section style="padding-top:12px">
+    <div class="band"><h2>Ready for your first job?</h2><p>Try everything free for <span class="td">7</span> days. Then $19/mo.</p><a class="btn go" href="/app#signup">Get started for $19/mo</a></div>
+  </section>
+
+  <footer><a href="/terms">Terms</a><a href="/privacy">Privacy</a><a href="/app">Sign in</a></footer>
+</div>
+<div class="bar"><a class="btn go" href="/app#signup">Start&nbsp;<span class="td">7</span>-Day Trial · $19/mo after</a></div>
+<script>
+(function(){
+  try{if(localStorage.getItem('sd_session')){location.replace('/app');return}}catch(e){}
+  var F=[["Full system access","Live jobs, proposals, clients, messages and project rooms."],["Automated lead capture","New jobs from Freelancer.com, RemoteOK and Remotive arrive on their own."],["Standard seat allocation","Your own login, with room to add people as you grow."],["Active support","A real person answers when you get stuck."]],
+  ck='<svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true"><path fill-rule="evenodd" d="M16.7 5.3a1 1 0 010 1.4l-7.5 7.5a1 1 0 01-1.4 0L3.3 9.7a1 1 0 111.4-1.4l3.8 3.8 6.8-6.8a1 1 0 011.4 0z" clip-rule="evenodd"/></svg>',ul=document.getElementById('feat');
+  F.forEach(function(f){var li=document.createElement('li');li.innerHTML=ck;var d=document.createElement('div'),b=document.createElement('b'),s=document.createElement('span');b.textContent=f[0];s.textContent=f[1];d.appendChild(b);d.appendChild(s);li.appendChild(d);ul.appendChild(li)});
+  fetch('/api/plan').then(function(r){return r.json()}).then(function(p){if(p&&p.trialDays){document.querySelectorAll('.td').forEach(function(e){e.textContent=p.trialDays})}}).catch(function(){});
+})();
+</script>
+</body>
+</html>

@@ -30,7 +30,8 @@ for (const [url, file, type, cache] of [['/manifest.webmanifest', 'manifest.webm
   try { STATIC[url] = { body: fs.readFileSync(path.join(__dirname, 'public', file)), type, cache }; } catch (e) { /* optional */ }
 }
 const LEGAL = { '/terms': legal('terms'), '/privacy': legal('privacy') };
-let APP_PAGE = null;
+let APP_PAGE = null, LANDING = null;
+try { LANDING = fs.readFileSync(path.join(__dirname, 'public', 'landing.html')); } catch (e) { /* optional */ }
 try { APP_PAGE = fs.readFileSync(path.join(__dirname, 'public', 'app.html')); } catch (e) { /* app page not installed */ }
 
 const CATS = [
@@ -190,6 +191,11 @@ http.createServer((req, res) => {
   if (u.pathname === '/api/health') return send(res, 200, { ok: true, jobs: jobs.size, sources: SOURCES, lastRun });
   if (STATIC[u.pathname]) { const f = STATIC[u.pathname]; res.writeHead(200, { 'Content-Type': f.type, 'Cache-Control': f.cache, 'X-Content-Type-Options': 'nosniff' }); return res.end(f.body); }
   if (LEGAL[u.pathname]) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'" }); return res.end(LEGAL[u.pathname]); }
+  if (u.pathname === '/' && LANDING) {
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Frame-Options': 'DENY',
+      'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none'" });
+    return res.end(LANDING);
+  }
   if ((u.pathname === '/' || u.pathname === '/app') && APP_PAGE) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY',
       'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' data:; frame-ancestors 'none'" });

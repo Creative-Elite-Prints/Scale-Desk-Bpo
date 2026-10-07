@@ -200,3 +200,6 @@ Client card payments (PayFast / PayPal) go to the ONE merchant account set in th
 
 ## Profiles
 Every signed-in user (you included) has a "My profile" tab: name, headline, about, services, rates, contact email and up to 6 examples of work (title, description, link, picture). "Write with AI" buttons (need ANTHROPIC_API_KEY) draft or tidy the wording, and the person can undo and must read it before saving. Nothing is public until they tick "Make my profile page public"; the page is then at /p/<name>. Pictures are shrunk in the browser and stored in the account data on the disk, so keep an eye on disk size if you have many customers.
+
+## Landing page
+Visitors who open your address see the landing page (`public/landing.html`: hero, how it works, $19/mo pricing). Its buttons go to `/app#signup`. Signed-in people are sent straight to `/app`. The trial length shown comes from `TRIAL_DAYS`. To change the wording, price or features, edit `public/landing.html` and upload it to GitHub like any other file. The $19 and the "Approx. R350" are typed text: if you change what you charge (PAYFAST_SUB_AMOUNT), change it there too.

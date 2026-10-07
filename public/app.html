@@ -886,6 +886,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
       $('au_price').textContent=(p.price?p.price+'. ':'')+(p.trialDays?p.trialDays+'-day free trial.':'Accounts are unlocked by invitation. Use an invite code to start.');
     }).catch(function(){});
     boot();
+    if(location.hash==='#signup')authMode('up');
   }
   $('q').oninput=$('cat').oninput=list;
   $('fq').oninput=$('fa').oninput=flist;
