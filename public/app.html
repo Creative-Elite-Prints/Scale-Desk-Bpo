@@ -519,7 +519,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     if(b.id==='fcp'){try{navigator.clipboard.writeText($('fo').textContent);b.textContent='Copied'}catch(x){b.textContent='Select and copy manually'}setTimeout(function(){b.textContent='Copy message'},1800)}
     if(b.dataset.rank){tab('free');fillMj(b.dataset.rank);flist();window.scrollTo(0,0)}
     if(b.dataset.st){var q=mine.filter(function(z){return z.id===b.dataset.st})[0];if(q){q.st={available:'busy',busy:'offline',offline:'available'}[stOf(q)];saveF();flist()}}
-    if(b.id==='rooms'){var ru=(base0||$('srv').value.trim()).replace(/\/+$/,'');if(/^https:\/\/|^http:\/\/localhost/i.test(ru))window.open(ru+'/admin','_blank','noopener');else $('rn').textContent='Enter your server address on the Find jobs tab first.'}
+    if(b.id==='rooms'){var ru=(base0||$('srv').value.trim()).replace(/\/+$/,'');if(/^https:\/\/|^http:\/\/localhost/i.test(ru))window.open(ru+'/rooms','_blank','noopener');else $('rn').textContent='Enter your server address on the Find jobs tab first.'}
     if(b.id==='cn')connect();
     if(b.dataset.bid)openBid(+b.dataset.bid);
     if(b.id==='bc')$('bd').close();

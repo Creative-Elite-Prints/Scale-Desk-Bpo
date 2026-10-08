@@ -35,6 +35,10 @@ function access(u) {
 }
 const isActive = a => a === 'owner' || a === 'active' || a === 'trial';
 const baseOf = req => (process.env.PUBLIC_URL || '').replace(/\/+$/, '') || ((req.headers['x-forwarded-proto'] || 'http').split(',')[0] + '://' + req.headers.host);
+// The /admin page is only served to a browser holding this cookie, and only owners are given it.
+const cookieFor = (req, token, on) => 'sd_admin=' + (on ? token : '') + '; Path=/admin; HttpOnly; SameSite=Strict; Max-Age=' + (on ? 365 * 86400 : 0) +
+  (((req.headers['x-forwarded-proto'] || '').split(',')[0] === 'https') ? '; Secure' : '');
+const giveCookie = (req, res, u, token) => { if (u && OWNERS.includes(u.email)) res.setHeader('Set-Cookie', cookieFor(req, token, true)); };
 const BIZ = process.env.BUSINESS_NAME || 'Scale Desk';
 const pub = u => ({ id: u.id, email: u.email, name: u.name, business: u.business, access: access(u), verified: !!u.verified || OWNERS.includes(u.email),
   trialUntil: u.trialUntil || 0, paidUntil: u.paidUntil || 0, createdAt: u.createdAt });
@@ -112,7 +116,8 @@ async function run(req, res, u) {
       createdAt: now(), trialUntil: days > 0 ? now() + days * DAY : 0, paidUntil: 0, refs: [], data: {} };
     save();
     sendVerify(db.users[id], baseOf(req));
-    return send(res, 201, { token: newSession(id), user: pub(db.users[id]) });
+    const tk0 = newSession(id); giveCookie(req, res, db.users[id], tk0);
+    return send(res, 201, { token: tk0, user: pub(db.users[id]) });
   }
 
   if (p === '/api/auth/login' && m === 'POST') {
@@ -121,7 +126,8 @@ async function run(req, res, u) {
     const us = Object.values(db.users).find(x => x.email === email);
     const good = us && crypto.timingSafeEqual(Buffer.from(await scrypt(String((d && d.password) || ''), us.salt), 'hex'), Buffer.from(us.hash, 'hex'));
     if (!good) { mark(key); mark('lf' + ip); return send(res, 401, { error: 'Wrong email or password' }); }
-    return send(res, 200, { token: newSession(us.id), user: pub(us) });
+    const tk1 = newSession(us.id); giveCookie(req, res, us, tk1);
+    return send(res, 200, { token: tk1, user: pub(us) });
   }
 
   // Email confirmation: soft (people can start straight away), but the link proves the address is theirs.
@@ -166,11 +172,13 @@ async function run(req, res, u) {
       return send(res, 400, { error: 'This reset link is not valid or has expired. Ask for a new one.' });
     us.salt = crypto.randomBytes(16).toString('hex'); us.hash = await scrypt(pw, us.salt); us.reset = null; us.verified = true;
     for (const [k, s2] of Object.entries(db.sessions)) if (s2.uid === us.id) delete db.sessions[k];
-    save(); return send(res, 200, { token: newSession(us.id), user: pub(us) });
+    save(); const tk2 = newSession(us.id); giveCookie(req, res, us, tk2);
+    return send(res, 200, { token: tk2, user: pub(us) });
   }
 
   if (p === '/api/auth/logout' && m === 'POST') {
     const t = req.headers['x-session']; if (t) { delete db.sessions[sha(t)]; save(); }
+    res.setHeader('Set-Cookie', cookieFor(req, '', false));
     return send(res, 200, { ok: true });
   }
 
@@ -178,7 +186,8 @@ async function run(req, res, u) {
     const s = userFrom(req);
     if (!s) return send(res, 401, { error: 'Please sign in' });
     const ss = db.sessions[sha(req.headers['x-session'])], keep = (OWNERS.includes(s.user.email) ? 365 : SESSION_DAYS) * DAY;
-    if (ss && ss.exp - now() < keep - DAY) { ss.exp = now() + keep; save(); }   // stay signed in while you keep using it
+    if (ss && ss.exp - now() < keep - DAY) { ss.exp = now() + keep; save(); }
+    giveCookie(req, res, s.user, req.headers['x-session']);   // stay signed in while you keep using it
     return send(res, 200, { user: pub(s.user), data: s.active ? s.user.data : null,
       plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY } });
   }
@@ -285,6 +294,12 @@ exports.stripePaid = (customer, email, endMs) => {
   u.paidUntil = Math.max(u.paidUntil || 0, (endMs || now() + 30 * DAY) + 2 * DAY); save(); return true;   // 2 days of grace
 };
 exports.userFrom = userFrom;
+// True only for a signed-in OWNER (OWNER_EMAILS). Used to gate the /admin page itself.
+exports.isOwnerCookie = req => {
+  const m = /(?:^|;\s*)sd_admin=([\w-]{20,80})/.exec(req.headers.cookie || '');
+  const s = m && userFrom({ headers: { 'x-session': m[1] } });
+  return !!(s && s.access === 'owner');
+};
 exports.consumeTicket = consumeTicket;
 exports.handle = (req, res, u) => {
   const p = u.pathname;

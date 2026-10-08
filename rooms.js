@@ -35,7 +35,7 @@ const secret = () => crypto.randomBytes(24).toString('base64url');
 const clip = (s, n) => String(s || '').trim().slice(0, n);
 
 const pages = {
-  '/admin': fs.readFileSync(path.join(__dirname, 'public', 'admin.html')),
+  '/rooms': fs.readFileSync(path.join(__dirname, 'public', 'myrooms.html')),
   '/r': fs.readFileSync(path.join(__dirname, 'public', 'room.html'))
 };
 

@@ -206,3 +206,9 @@ Visitors who open your address see the landing page (`public/landing.html`: hero
 
 ## Staying signed in
 People stay signed in on a device (180 days, renewed every time they use the app; 1 year for owners) until they press Sign out. If the server is asleep or restarting, the app keeps the sign-in and retries instead of asking people to log in again. If people ARE being asked to create accounts again after every update, your accounts are being wiped: check in Render that the disk is attached (Disks, mounted at /var/data) and that the DATA_DIR setting is /var/data. Without the disk, everything resets on each deploy.
+
+## Who can see what (access control)
+- `/admin` (the back office) is only sent to a signed-in OWNER, meaning an account whose email is in `OWNER_EMAILS`. Owners get a protected cookie when they sign in. Anyone else who types `/admin`, signed in or not, is sent to `/app`.
+- The customer, trial, paid-month and invite-code actions are refused by the server for everyone except owners (or someone holding `ADMIN_KEY` in an API call), whatever the page shows.
+- Customers get no Back office button. "Open project rooms" opens `/rooms`, a separate page that shows only their own rooms.
+- To make someone else an admin, add their email to `OWNER_EMAILS` in Render and let it redeploy.

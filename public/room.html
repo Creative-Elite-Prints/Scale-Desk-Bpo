@@ -101,7 +101,7 @@ function fail(e){$('err').textContent=e.message}
 function render(){
   var r=room,open=r.status==='open',paid=r.paidCents>=r.amountCents,client=r.role==='client',qk=r.kind==='quote',dev=r.role==='developer',own=r.role==='owner';
   $('title').textContent=r.title;
-  $('who').innerHTML=(own?'<a href="/admin">&larr; Back to your rooms</a> · ':'')+(qk?'Quotation request for '+esc(r.clientName):'You are signed in as the '+esc(r.role)+'. Client: '+esc(r.clientName));
+  $('who').innerHTML=(own?'<a href="/rooms">&larr; Back to your rooms</a> · ':'')+(qk?'Quotation request for '+esc(r.clientName):'You are signed in as the '+esc(r.role)+'. Client: '+esc(r.clientName));
   var steps=qk?[['Request sent',true],['Quotation received',r.quotes.length>0],['Decision made',r.quotes.some(function(q){return q.status!=='sent'})],['Closed',!open]]:(r.offer?[['Offer accepted',r.offer.accepted],['Client approves',r.approved],['Payment complete',paid],['Room closed',!open]]:[['Work in progress',true],['Client approves',r.approved],['Payment complete',paid],['Room closed',!open]]);
   $('steps').innerHTML=steps.map(function(s){return '<div class="st'+(s[1]?' on':'')+'">'+(s[1]?'✓ ':'')+s[0]+'</div>'}).join('');
   $('note').textContent=open?'Open until '+day(r.expiresAt)+'.'+(qk?'':' The room closes after the client approves the work and the full payment is received.'):'Closed ('+r.reason+'). Files can be downloaded until '+day(r.downloadsUntil)+', then they are deleted.';

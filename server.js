@@ -30,6 +30,7 @@ for (const [url, file, type, cache] of [['/manifest.webmanifest', 'manifest.webm
   try { STATIC[url] = { body: fs.readFileSync(path.join(__dirname, 'public', file)), type, cache }; } catch (e) { /* optional */ }
 }
 const LEGAL = { '/terms': legal('terms'), '/privacy': legal('privacy') };
+const ADMIN_PAGE = (() => { try { return fs.readFileSync(path.join(__dirname, 'public', 'admin.html')); } catch (e) { return null; } })();
 let APP_PAGE = null, LANDING = null;
 try { LANDING = fs.readFileSync(path.join(__dirname, 'public', 'landing.html')); } catch (e) { /* optional */ }
 try { APP_PAGE = fs.readFileSync(path.join(__dirname, 'public', 'app.html')); } catch (e) { /* app page not installed */ }
@@ -191,6 +192,13 @@ http.createServer((req, res) => {
   if (u.pathname === '/api/health') return send(res, 200, { ok: true, jobs: jobs.size, sources: SOURCES, lastRun });
   if (STATIC[u.pathname]) { const f = STATIC[u.pathname]; res.writeHead(200, { 'Content-Type': f.type, 'Cache-Control': f.cache, 'X-Content-Type-Options': 'nosniff' }); return res.end(f.body); }
   if (LEGAL[u.pathname]) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'" }); return res.end(LEGAL[u.pathname]); }
+  // Back office: the page itself is only sent to a signed-in owner. Everyone else is sent to their own dashboard.
+  if (/^\/admin\/?$/.test(u.pathname)) {
+    if (req.method !== 'GET' || !ADMIN_PAGE || !accounts.isOwnerCookie(req)) { res.writeHead(302, { Location: '/app', 'Cache-Control': 'no-store' }); return res.end(); }
+    res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-store', 'X-Frame-Options': 'DENY', 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer',
+      'Content-Security-Policy': "default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'self' data:; frame-ancestors 'none'" });
+    return res.end(ADMIN_PAGE);
+  }
   if (u.pathname === '/' && LANDING) {
     res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'Cache-Control': 'no-cache', 'X-Frame-Options': 'DENY',
       'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; connect-src 'self'; style-src 'unsafe-inline'; img-src 'self' data:; frame-ancestors 'none'" });
