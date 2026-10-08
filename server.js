@@ -1,3 +1,8 @@
+// If a backup database is configured, bring back the saved accounts BEFORE anything else loads.
+if (!process.env.SD_RESTORED && require('./persist').enabled()) {
+  require('./persist').restore().then(() => { process.env.SD_RESTORED = '1'; delete require.cache[__filename]; require(__filename); });
+  return;
+}
 // ScaleDesk live job server. Needs Node 18 or newer. No packages to install.
 // It collects open jobs from several sources, keeps the newest, and pushes new ones to the page.
 const http = require('http');
@@ -7,6 +12,7 @@ const billing = require('./billing');
 const rooms = require('./rooms');
 const ai = require('./ai');
 const profile = require('./profile');
+const persist = require('./persist');
 const payfast = require('./payfast');
 const paypal = require('./paypal');
 billing.onRoomPaid(rooms.recordPayment);
@@ -189,7 +195,7 @@ http.createServer((req, res) => {
   const u = new URL(req.url, 'http://localhost');
   res.setHeader('Access-Control-Allow-Origin', ORIGIN);
   if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Headers': '*' }); return res.end(); }
-  if (u.pathname === '/api/health') return send(res, 200, { ok: true, jobs: jobs.size, sources: SOURCES, lastRun });
+  if (u.pathname === '/api/health') return send(res, 200, { ok: true, jobs: jobs.size, sources: SOURCES, lastRun, storage: persist.status().mode });
   if (STATIC[u.pathname]) { const f = STATIC[u.pathname]; res.writeHead(200, { 'Content-Type': f.type, 'Cache-Control': f.cache, 'X-Content-Type-Options': 'nosniff' }); return res.end(f.body); }
   if (LEGAL[u.pathname]) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'" }); return res.end(LEGAL[u.pathname]); }
   // Back office: the page itself is only sent to a signed-in owner. Everyone else is sent to their own dashboard.
@@ -231,4 +237,9 @@ http.createServer((req, res) => {
     return;
   }
   send(res, 404, { error: 'Not found' });
-}).listen(PORT, () => console.log('ScaleDesk server running on port ' + PORT + ' with sources: ' + SOURCES.join(', ')));
+}).listen(PORT, () => {
+  console.log('ScaleDesk server running on port ' + PORT + ' with sources: ' + SOURCES.join(', '));
+  const st = persist.status();
+  if (!st.persistent) console.error('\n!!! WARNING: your accounts are on TEMPORARY storage and will be erased every time Render restarts or sleeps.\n!!! Attach a Render Disk (mounted at the DATA_DIR folder) or set UPSTASH_REDIS_REST_URL and UPSTASH_REDIS_REST_TOKEN. See the README.\n');
+  else console.log('[storage] mode: ' + st.mode);
+});

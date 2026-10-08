@@ -24,8 +24,9 @@ const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referr
 fs.mkdirSync(path.join(DATA, 'files'), { recursive: true });
 const DBF = path.join(DATA, 'rooms.json');
 let db = { rooms: {} };
-try { db = JSON.parse(fs.readFileSync(DBF, 'utf8')); } catch (e) { /* first run */ }
-const save = () => { fs.writeFileSync(DBF + '.tmp', JSON.stringify(db)); fs.renameSync(DBF + '.tmp', DBF); };
+const persist = require('./persist');
+db = persist.load(DBF, db);
+const save = () => { persist.write(DBF, db); persist.touch('rooms.json'); };
 
 const now = () => Date.now();
 const sha = x => crypto.createHash('sha256').update(String(x)).digest('hex');

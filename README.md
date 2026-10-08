@@ -152,8 +152,9 @@ A project room created with **Send offer to client** shows your proposal and pri
 
 | Name | What it does |
 | --- | --- |
-| `ADMIN_KEY` | Your owner password for `/admin`. Required. |
+| `ADMIN_KEY` | A backup key the server accepts for admin actions. Required. You normally sign in as owner with your own login (see `OWNER_EMAILS`). |
 | `DATA_DIR` | Where accounts, rooms and files are saved. Must be a persistent disk. |
+| `UPSTASH_REDIS_REST_URL` and `UPSTASH_REDIS_REST_TOKEN` | Optional. A free outside copy of your accounts and rooms, so a restart or a wiped disk can never lose them. See "Keeping accounts safe". |
 | `PAYMENT_WEBHOOK_SECRET` | Lets a payment tool confirm payments automatically. |
 | `ROOM_DAYS` | How long a room may stay open if never finished. Default 60. |
 | `DOWNLOAD_DAYS_AFTER_CLOSE` | Days to download files after a room closes. Default 7. |
@@ -212,3 +213,22 @@ People stay signed in on a device (180 days, renewed every time they use the app
 - The customer, trial, paid-month and invite-code actions are refused by the server for everyone except owners (or someone holding `ADMIN_KEY` in an API call), whatever the page shows.
 - Customers get no Back office button. "Open project rooms" opens `/rooms`, a separate page that shows only their own rooms.
 - To make someone else an admin, add their email to `OWNER_EMAILS` in Render and let it redeploy.
+
+
+## Keeping accounts safe (why accounts disappear on Render)
+Render's normal storage is temporary. Every restart, deploy or sleep gives the server a blank folder, so every account is gone. The code cannot fix that on its own. You need ONE of these:
+
+**Option A: a Render Disk (paid).** In Render, open your service, then Disks, add a disk mounted at `/var/data`, and set the `DATA_DIR` setting to `/var/data`. Disks need a paid plan (not the free one). This also keeps uploaded project files.
+
+**Option B: a free Upstash database (works on the free plan).**
+1. Go to upstash.com, create a free account, then create a Redis database (pick the region nearest you).
+2. On the database page, find "REST API". Copy the URL and the token.
+3. In Render, open your service, then Environment, and add `UPSTASH_REDIS_REST_URL` (the URL) and `UPSTASH_REDIS_REST_TOKEN` (the token). Save. Render restarts the server.
+4. Check: sign in as the owner. The red "temporary storage" warning in the app and in /admin disappears, and `/api/health` shows `"storage":"remote"`.
+
+How option B works: after every change the server saves a copy of your accounts and rooms to Upstash. When the server starts with an empty folder, it brings them back before anything else loads, so logins, owner status, trials and profiles all return. If Upstash cannot be reached at that moment, the server refuses to start rather than start empty, and tries again.
+Option B copies accounts and rooms only. Uploaded project files are not copied, so use Option A if clients upload files.
+
+You can use both. A copy of the file is also kept as `accounts.json.bak`, and a damaged file is set aside as `accounts.json.damaged-*` instead of being overwritten.
+
+Emails are compared without caring about capital letters or extra spaces, on sign-up, sign-in and password reset, so "Ann@Mail.com " and "ann@mail.com" are the same account.

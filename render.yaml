@@ -26,6 +26,11 @@ services:
         value: "7"
       - key: OWNER_EMAILS
         sync: false
+      # Optional free outside backup of accounts and rooms (see README, Keeping accounts safe)
+      - key: UPSTASH_REDIS_REST_URL
+        sync: false
+      - key: UPSTASH_REDIS_REST_TOKEN
+        sync: false
       - key: PLAN_PRICE_TEXT
         sync: false
       - key: SUBSCRIBE_URL

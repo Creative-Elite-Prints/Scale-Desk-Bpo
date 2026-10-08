@@ -30,6 +30,7 @@ button.alt,a.b.alt{background:none;color:var(--ink);border:1.5px solid var(--lin
 </head>
 <body>
 <div class="w">
+  <div id="sw" hidden style="background:#fde5e2;color:#7a1d12;border-radius:10px;padding:12px;margin-bottom:12px;font-weight:600">Warning: your accounts are on temporary storage and will be erased when Render restarts. Add a Render Disk or an Upstash backup (see the README).</div>
   <h1>Rooms and customers</h1>
   <div class="c" id="login">
     <label for="key">Admin key</label>
@@ -137,6 +138,7 @@ document.addEventListener('click',function(e){
   if(a==='relink')api('/'+id2+'/relink','POST',{role:b.dataset.r}).then(function(d){$('l'+id2).innerHTML=linkRow('New link (the old one stops working)',d.token)}).catch(fail);
 });
 $('kind').addEventListener('change',kindUI);
+fetch('/api/health').then(function(r){return r.json()}).then(function(d){$('sw').hidden=d.storage!=='temporary'}).catch(function(){});
 if(K||S)loadRooms();
 })();
 </script>

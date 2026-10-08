@@ -16,13 +16,15 @@ const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referr
 fs.mkdirSync(DATA, { recursive: true });
 const DBF = path.join(DATA, 'accounts.json');
 let db = { users: {}, sessions: {}, invites: {} };
-try { db = Object.assign(db, JSON.parse(fs.readFileSync(DBF, 'utf8'))); } catch (e) { /* first run */ }
-const save = () => { fs.writeFileSync(DBF + '.tmp', JSON.stringify(db)); fs.renameSync(DBF + '.tmp', DBF); };
+const persist = require('./persist');
+db = Object.assign(db, persist.load(DBF, {}));
+const save = () => { persist.write(DBF, db); persist.touch('accounts.json'); };
 
 const now = () => Date.now();
 const sha = x => crypto.createHash('sha256').update(String(x)).digest('hex');
 const same = (a, b) => crypto.timingSafeEqual(Buffer.from(sha(a)), Buffer.from(sha(b)));
 const clip = (s, n) => String(s || '').trim().slice(0, n);
+const normEmail = s => String(s || '').normalize('NFKC').replace(/[\u200b-\u200d\ufeff]/g, '').trim().toLowerCase().slice(0, 120);
 const scrypt = (pw, salt) => new Promise((ok, no) => crypto.scrypt(pw, salt, 64, (e, k) => e ? no(e) : ok(k.toString('hex'))));
 
 // ---- Plan rules ----
@@ -96,12 +98,12 @@ async function run(req, res, u) {
   if (p === '/api/auth/signup' && m === 'POST') {
     if (count('su' + ip, 3600000) >= 10) return send(res, 429, { error: 'Too many sign-ups from this address. Try later.' });
     const d = await json(req);
-    const email = clip(d && d.email, 120).toLowerCase(), pw = String((d && d.password) || '');
+    const email = normEmail(d && d.email), pw = String((d && d.password) || '');
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return send(res, 400, { error: 'Enter a valid email address' });
     if (pw.length < 8 || pw.length > 200) return send(res, 400, { error: 'Password must be at least 8 characters' });
     if (!clip(d.name, 80)) return send(res, 400, { error: 'Enter your name' });
     if (d.terms !== true) return send(res, 400, { error: 'Please accept the Terms and the Privacy Policy' });
-    if (Object.values(db.users).some(x => x.email === email)) return send(res, 409, { error: 'An account with this email already exists. Sign in instead.' });
+    if (Object.values(db.users).some(x => normEmail(x.email) === email)) return send(res, 409, { error: 'An account with this email already exists. Sign in instead.' });
     mark('su' + ip);
     let days = TRIAL_DAYS;
     const code = clip(d.code, 20).toUpperCase();
@@ -121,9 +123,9 @@ async function run(req, res, u) {
   }
 
   if (p === '/api/auth/login' && m === 'POST') {
-    const d = await json(req), email = clip(d && d.email, 120).toLowerCase(), key = 'lf' + ip + email;
+    const d = await json(req), email = normEmail(d && d.email), key = 'lf' + ip + email;
     if (count(key, 600000) >= 8 || count('lf' + ip, 600000) >= 20) return send(res, 429, { error: 'Too many attempts. Try again in a few minutes.' });
-    const us = Object.values(db.users).find(x => x.email === email);
+    const us = Object.values(db.users).find(x => normEmail(x.email) === email);
     const good = us && crypto.timingSafeEqual(Buffer.from(await scrypt(String((d && d.password) || ''), us.salt), 'hex'), Buffer.from(us.hash, 'hex'));
     if (!good) { mark(key); mark('lf' + ip); return send(res, 401, { error: 'Wrong email or password' }); }
     const tk1 = newSession(us.id); giveCookie(req, res, us, tk1);
@@ -150,10 +152,10 @@ async function run(req, res, u) {
 
   // Forgot password: always answers the same way, so nobody can use it to find out who has an account.
   if (p === '/api/auth/forgot' && m === 'POST') {
-    const d = await json(req), email = clip(d && d.email, 120).toLowerCase();
+    const d = await json(req), email = normEmail(d && d.email);
     if (count('fp' + ip, 3600000) >= 5 || count('fp' + email, 3600000) >= 3) return send(res, 429, { error: 'Too many requests. Try again later.' });
     mark('fp' + ip); mark('fp' + email);
-    const us = Object.values(db.users).find(x => x.email === email);
+    const us = Object.values(db.users).find(x => normEmail(x.email) === email);
     if (us && mailer.enabled()) {
       const sec = crypto.randomBytes(24).toString('base64url');
       us.reset = { h: sha(sec), exp: now() + 3600000 }; save();
@@ -189,7 +191,7 @@ async function run(req, res, u) {
     if (ss && ss.exp - now() < keep - DAY) { ss.exp = now() + keep; save(); }
     giveCookie(req, res, s.user, req.headers['x-session']);   // stay signed in while you keep using it
     return send(res, 200, { user: pub(s.user), data: s.active ? s.user.data : null,
-      plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY } });
+      plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY, storage: s.access === 'owner' ? persist.status().mode : undefined } });
   }
   if (p === '/api/me/data' && m === 'PUT') {
     const s = userFrom(req);
@@ -215,7 +217,7 @@ async function run(req, res, u) {
     const want = crypto.createHmac('sha256', HOOK_SECRET).update(raw).digest('hex'), got = String(req.headers['x-signature'] || '');
     if (got.length !== want.length || !crypto.timingSafeEqual(Buffer.from(got), Buffer.from(want))) return send(res, 401, { error: 'Bad signature' });
     let d; try { d = JSON.parse(raw); } catch (e) { return send(res, 400, { error: 'Bad JSON' }); }
-    const us = Object.values(db.users).find(x => x.email === clip(d.email, 120).toLowerCase());
+    const us = Object.values(db.users).find(x => normEmail(x.email) === normEmail(d.email));
     if (!us) return send(res, 404, { error: 'No account with that email' });
     const ref = clip(d.reference, 80);
     if (!ref) return send(res, 400, { error: 'Reference is required' });
@@ -288,7 +290,7 @@ exports.allUsers = () => Object.values(db.users);
 exports.activeUser = u => isActive(access(u));
 exports.saveProfile = (uid, prof) => { if (db.users[uid]) { db.users[uid].profile = prof; save(); } };
 exports.stripePaid = (customer, email, endMs) => {
-  const u = Object.values(db.users).find(x => (customer && x.stripeCustomer === customer) || (email && x.email === String(email).toLowerCase()));
+  const u = Object.values(db.users).find(x => (customer && x.stripeCustomer === customer) || (email && normEmail(x.email) === normEmail(email)));
   if (!u) return false;
   if (customer && !u.stripeCustomer) u.stripeCustomer = customer;
   u.paidUntil = Math.max(u.paidUntil || 0, (endMs || now() + 30 * DAY) + 2 * DAY); save(); return true;   // 2 days of grace

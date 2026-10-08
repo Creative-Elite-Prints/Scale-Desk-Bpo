@@ -205,6 +205,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 
 <p class="note">Until you connect your server, jobs here are simulated samples, and freelancer profiles are always samples. Credit goes to each listing's source (Freelancer, RemoteOK). Real listings and AI-written proposals need a server connected to each marketplace API and an AI service.</p>
 </div>
+<div id="sdwarn" role="alert" hidden style="position:sticky;top:0;z-index:98;background:#fde5e2;color:#7a1d12;text-align:center;padding:10px 14px;font-size:14px;font-weight:600">Warning: your accounts are on temporary storage and will be erased when Render restarts. Add a Render Disk or an Upstash backup (see the README) so customers keep their accounts.</div>
 <div id="net" role="status" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#fff1d6;color:#5c3b00;text-align:center;padding:8px;font-size:14px">Can't reach ScaleDesk right now. You are still signed in. Trying again…</div>
 <div class="ov" id="auth" hidden>
   <div class="authc">
@@ -589,7 +590,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
   function enter(d){
     me=d.user;planInfo=d.plan||{};
     document.body.classList.add('app');document.body.classList.remove('pre');
-    $('abo').hidden=me.access!=='owner';$('add').hidden=false;$('asum').textContent=me.name||me.email;$('ainfo').textContent=me.email+' · '+planText(me);
+    $('sdwarn').hidden=!(me.access==='owner'&&planInfo.storage==='temporary');$('abo').hidden=me.access!=='owner';$('add').hidden=false;$('asum').textContent=me.name||me.email;$('ainfo').textContent=me.email+' · '+planText(me);
     $('auth').hidden=true;
     $('vbar').hidden=me.verified||!planInfo.email;
     $('aib').hidden=!planInfo.ai;$('mg_ai').hidden=$('mg_sum').hidden=!planInfo.ai;
@@ -619,7 +620,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
       $('net').hidden=false;setTimeout(boot,4000)});
   }
   function submitAuth(){
-    var body={email:$('au_e').value.trim(),password:$('au_p').value};
+    var body={email:$('au_e').value.trim().toLowerCase(),password:$('au_p').value};
     if(amode==='up'){body.name=$('au_n').value;body.business=$('au_b').value;body.code=$('au_c').value;body.terms=$('au_t').checked}
     if(amode==='rs'){body={token:RESET,password:$('au_p').value}}
     $('au_m').textContent='';$('au_go').disabled=true;
