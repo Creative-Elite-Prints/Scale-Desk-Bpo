@@ -203,3 +203,6 @@ Every signed-in user (you included) has a "My profile" tab: name, headline, abou
 
 ## Landing page
 Visitors who open your address see the landing page (`public/landing.html`: hero, how it works, $19/mo pricing). Its buttons go to `/app#signup`. Signed-in people are sent straight to `/app`. The trial length shown comes from `TRIAL_DAYS`. To change the wording, price or features, edit `public/landing.html` and upload it to GitHub like any other file. The $19 and the "Approx. R350" are typed text: if you change what you charge (PAYFAST_SUB_AMOUNT), change it there too.
+
+## Staying signed in
+People stay signed in on a device (180 days, renewed every time they use the app; 1 year for owners) until they press Sign out. If the server is asleep or restarting, the app keeps the sign-in and retries instead of asking people to log in again. If people ARE being asked to create accounts again after every update, your accounts are being wiped: check in Render that the disk is attached (Disks, mounted at /var/data) and that the DATA_DIR setting is /var/data. Without the disk, everything resets on each deploy.

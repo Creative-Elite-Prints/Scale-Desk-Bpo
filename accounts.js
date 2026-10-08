@@ -10,7 +10,7 @@ const OWNERS = (process.env.OWNER_EMAILS || '').toLowerCase().split(',').map(s =
 const PRICE_TEXT = process.env.PLAN_PRICE_TEXT || '';
 const SUBSCRIBE_URL = /^https:\/\//i.test(process.env.SUBSCRIBE_URL || '') ? process.env.SUBSCRIBE_URL : '';
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || '';
-const DAY = 86400000, SESSION_DAYS = 30, MAX_DATA = 300000;
+const DAY = 86400000, SESSION_DAYS = 180, MAX_DATA = 300000;
 const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store' };
 
 fs.mkdirSync(DATA, { recursive: true });
@@ -177,6 +177,8 @@ async function run(req, res, u) {
   if (p === '/api/me' && m === 'GET') {
     const s = userFrom(req);
     if (!s) return send(res, 401, { error: 'Please sign in' });
+    const ss = db.sessions[sha(req.headers['x-session'])], keep = (OWNERS.includes(s.user.email) ? 365 : SESSION_DAYS) * DAY;
+    if (ss && ss.exp - now() < keep - DAY) { ss.exp = now() + keep; save(); }   // stay signed in while you keep using it
     return send(res, 200, { user: pub(s.user), data: s.active ? s.user.data : null,
       plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY } });
   }

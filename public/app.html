@@ -205,6 +205,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 
 <p class="note">Until you connect your server, jobs here are simulated samples, and freelancer profiles are always samples. Credit goes to each listing's source (Freelancer, RemoteOK). Real listings and AI-written proposals need a server connected to each marketplace API and an AI service.</p>
 </div>
+<div id="net" role="status" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#fff1d6;color:#5c3b00;text-align:center;padding:8px;font-size:14px">Can't reach ScaleDesk right now. You are still signed in. Trying again…</div>
 <div class="ov" id="auth" hidden>
   <div class="authc">
     <h1 style="font-size:30px;margin-bottom:4px">ScaleDesk</h1>
@@ -215,6 +216,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     <div id="au_pw"><label for="au_p" id="au_pl">Password (8 or more characters)</label><input id="au_p" type="password" autocomplete="current-password">
     <p id="au_fw" style="margin:6px 0 0"><button type="button" id="au_forgot" style="background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit">Forgot your password?</button></p></div>
     <div id="au_cw" hidden><label for="au_c">Invite code (optional)</label><input id="au_c" autocomplete="off"><label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px"><input type="checkbox" id="au_t" style="width:auto;margin-top:4px"> <span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a></span></label></div>
+    <p id="au_sw" style="margin:0 0 10px;text-align:center"><button type="button" id="au_swb" style="background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit"></button></p>
     <p id="au_m" role="alert" style="color:#c0392b;min-height:22px;margin:8px 0"></p>
     <button class="btn" id="au_go" type="button">Sign in</button>
   </div>
@@ -564,7 +566,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     amode=m;$('au_in').setAttribute('aria-selected',m==='in');$('au_up').setAttribute('aria-selected',m==='up');
     $('au_f').hidden=$('au_cw').hidden=m!=='up';$('au_ew').hidden=m==='rs';$('au_pw').hidden=m==='fg';$('au_fw').hidden=m!=='in';
     $('au_pl').textContent=m==='rs'?'Choose a new password (8 or more characters)':'Password (8 or more characters)';
-    $('au_go').textContent={in:'Sign in',up:'Create account',fg:'Send reset link',rs:'Set new password'}[m];$('au_m').textContent='';$('au_m').style.color='#c0392b';
+    $('au_go').textContent={in:'Sign in',up:'Create account',fg:'Send reset link',rs:'Set new password'}[m];$('au_swb').textContent=m==='up'?'Already have an account? Log in':m==='in'?'New here? Create an account':'Back to log in';$('au_m').textContent='';$('au_m').style.color='#c0392b';
   }
   function showAuth(){document.body.classList.remove('pre');$('auth').hidden=false;$('lock').hidden=true;authMode(amode)}
   function showLock(u,pl,manage){
@@ -611,7 +613,10 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     var rm=/[?&]reset=([\w.-]+)/.exec(location.search);
     if(rm){RESET=rm[1];history.replaceState(null,'',location.pathname);amode='rs';showAuth();return}
     if(!SES){showAuth();return}
-    sApi('/api/me').then(enter).catch(function(){SES='';try{localStorage.removeItem('sd_session')}catch(e){}showAuth()});
+    sApi('/api/me').then(function(d){$('net').hidden=true;enter(d)}).catch(function(e){
+      if(e&&e.status===401){SES='';try{localStorage.removeItem('sd_session')}catch(x){}$('net').hidden=true;showAuth();return}
+      /* server asleep, offline or busy: keep the saved sign-in and try again */
+      $('net').hidden=false;setTimeout(boot,4000)});
   }
   function submitAuth(){
     var body={email:$('au_e').value.trim(),password:$('au_p').value};
@@ -637,6 +642,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     var b=e.target.closest('button');if(!b)return;
     if(b.dataset.guide!==undefined){var g=GUIDES[+b.dataset.guide];$('gdt').textContent=g[0];$('gdb').innerHTML='<ul>'+g[1].map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';$('gdd').open=false;$('gd').showModal()}
     if(b.id==='gdc')$('gd').close();
+    if(b.id==='au_swb')authMode(amode==='in'?'up':'in');
     if(b.id==='au_in')authMode('in');
     if(b.id==='au_forgot')authMode('fg');
     if(b.id==='ai_go'){
@@ -886,7 +892,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
       $('au_price').textContent=(p.price?p.price+'. ':'')+(p.trialDays?p.trialDays+'-day free trial.':'Accounts are unlocked by invitation. Use an invite code to start.');
     }).catch(function(){});
     boot();
-    if(location.hash==='#signup')authMode('up');
+    if(location.hash==='#signup'){if(!SES)authMode('up');history.replaceState(null,'',location.pathname+location.search)}
   }
   $('q').oninput=$('cat').oninput=list;
   $('fq').oninput=$('fa').oninput=flist;
