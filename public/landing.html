@@ -71,6 +71,147 @@ footer{padding:30px 0 90px;color:var(--muted);font-size:13px;text-align:center}f
     <div class="row"><a class="btn go" href="/app#signup">Start&nbsp;<span class="td">7</span>-day trial</a></div>
   </section>
 
+  <!-- ===== ScaleDesk profit calculator: paste this whole block directly above your Pricing section. Standalone, no libraries. ===== -->
+  <style>
+  #sd-calc{--ac:#8b78ff;margin:12px 0;padding:56px 18px;border-radius:20px;background:linear-gradient(135deg,#0b0f1c 0%,#141a33 55%,#1b1550 100%);color:#eaeefb;font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;text-align:left}
+  #sd-calc *{box-sizing:border-box}
+  #sd-calc .in{max-width:960px;margin:0 auto}
+  #sd-calc h2{font:800 clamp(26px,5vw,36px)/1.15 Sora,"Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;text-align:center;margin:0;color:#fff}
+  #sd-calc .sub{text-align:center;color:#b7c0dc;margin:8px auto 0;max-width:520px}
+  #sd-calc .tg{display:flex;width:fit-content;margin:20px auto 0;padding:4px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.06)}
+  #sd-calc .tg button{font:700 14px Manrope,sans-serif;border:0;background:none;color:#c9d1ea;padding:7px 18px;border-radius:999px;cursor:pointer}
+  #sd-calc .tg button[aria-pressed="true"]{background:var(--ac);color:#0b0f1c}
+  #sd-calc .grid{display:grid;gap:18px;grid-template-columns:1fr 1fr;margin-top:30px}
+  @media(max-width:760px){#sd-calc .grid{grid-template-columns:1fr}}
+  #sd-calc .gl{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:22px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 36px rgba(0,0,0,.28)}
+  #sd-calc .sl+.sl{margin-top:22px}
+  #sd-calc .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+  #sd-calc label{font-size:14px;font-weight:500;color:#dfe5f7;margin:0}
+  #sd-calc output{font:700 18px Sora,sans-serif;color:#fff}
+  #sd-calc input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:99px;margin:12px 0 4px;padding:0;border:0;cursor:pointer;background:linear-gradient(to right,var(--ac) var(--p,0%),rgba(255,255,255,.18) var(--p,0%))}
+  #sd-calc input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--ac)}
+  #sd-calc input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--ac)}
+  #sd-calc input[type=range]:focus-visible{outline:3px solid #fff;outline-offset:4px}
+  #sd-calc .mm{display:flex;justify-content:space-between;font-size:12px;color:#97a2c4}
+  #sd-calc .note{font-size:12px;color:#97a2c4;margin:18px 0 0}
+  #sd-calc .res{display:grid;gap:18px;align-content:start}
+  #sd-calc .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  #sd-calc .k{font-size:13px;letter-spacing:.02em;color:#b7c0dc;margin:0}
+  #sd-calc .v{font:800 26px Sora,sans-serif;color:#fff;margin:2px 0 0}
+  #sd-calc .big{grid-column:1/-1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px}
+  #sd-calc .big .v{font-size:38px;color:#6fd7a0}#sd-calc .big.neg .v{color:#ff8a7a}
+  #sd-calc .mg{font-size:14px;color:#c9d1ea;margin:2px 0 0}
+  #sd-calc h3{font:700 18px Sora,sans-serif;color:#fff;margin:0 0 12px}
+  #sd-calc .cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center}
+  #sd-calc .cmp div{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:14px;padding:12px}
+  #sd-calc .cmp .us{border-color:rgba(139,120,255,.7);background:rgba(139,120,255,.16)}
+  #sd-calc .cmp span{display:block;font-size:12px;color:#c9d1ea}
+  #sd-calc .cmp b{font:800 24px Sora,sans-serif;color:#fff}#sd-calc .cmp small{font-size:13px;font-weight:500;color:#c9d1ea}
+  #sd-calc .go{display:block;text-align:center;width:100%;margin-top:16px;padding:13px 20px;border-radius:10px;background:var(--ac);color:#0b0f1c;font:700 15px Sora,sans-serif;text-decoration:none}
+  #sd-calc .go:hover{filter:brightness(1.1)}
+  #sd-calc .fine{text-align:center;font-size:12px;color:#97a2c4;margin:16px auto 0;max-width:640px}
+  </style>
+  
+  <section id="sd-calc" aria-labelledby="sdc-h">
+    <div class="in">
+      <h2 id="sdc-h">What could your BPO earn?</h2>
+      <p class="sub">Move the sliders to see your monthly numbers. Estimates only, not a promise of income.</p>
+      <div class="tg" role="group" aria-label="Currency">
+        <button type="button" data-cur="USD" aria-pressed="true">USD ($)</button>
+        <button type="button" data-cur="ZAR" aria-pressed="false">ZAR (R)</button>
+      </div>
+  
+      <div class="grid">
+        <div class="gl">
+          <div class="sl">
+            <div class="row"><label for="sdc-vas">Number of Remote Staff Placed</label><output id="sdc-vas-o" for="sdc-vas"></output></div>
+            <input id="sdc-vas" type="range" min="1" max="50" step="1" value="5">
+            <div class="mm"><span>1</span><span>50</span></div>
+          </div>
+          <div class="sl">
+            <div class="row"><label for="sdc-rate">What the Client Pays You (per hour)</label><output id="sdc-rate-o" for="sdc-rate"></output></div>
+            <input id="sdc-rate" type="range">
+            <div class="mm"><span id="sdc-rate-min"></span><span id="sdc-rate-max"></span></div>
+          </div>
+          <div class="sl">
+            <div class="row"><label for="sdc-pay">What You Pay the Worker (per hour)</label><output id="sdc-pay-o" for="sdc-pay"></output></div>
+            <input id="sdc-pay" type="range">
+            <div class="mm"><span id="sdc-pay-min"></span><span id="sdc-pay-max"></span></div>
+          </div>
+          <p class="note">Based on 160 working hours per worker per month.</p>
+        </div>
+  
+        <div class="res">
+          <div class="gl two" aria-live="polite">
+            <div><p class="k">Money Coming In (Monthly Revenue)</p><p class="v" id="sdc-rev"></p></div>
+            <div><p class="k">Worker Salaries</p><p class="v" id="sdc-cost"></p></div>
+            <div class="big" id="sdc-big"><p class="k">YOUR MONTHLY PROFIT</p><p class="v" id="sdc-profit"></p><p class="mg" id="sdc-mg"></p></div>
+          </div>
+          <div class="gl">
+            <h3>Cost to get started</h3>
+            <div class="cmp">
+              <div class="us"><span>ScaleDesk</span><b id="sdc-sd"></b><small>/mo</small></div>
+              <div><span>High-ticket courses</span><b id="sdc-co"></b></div>
+            </div>
+            <p class="mg" id="sdc-months" style="margin-top:12px"></p>
+            <a class="go" href="/app#signup">Start&nbsp;<span class="td">7</span>-Day Trial</a>
+          </div>
+        </div>
+      </div>
+      <p class="fine">Illustration only. Real results depend on finding clients and VAs. Figures exclude tax, payment fees and your own time. The ScaleDesk price in rand is approximate.</p>
+    </div>
+  </section>
+  
+  <script>
+  (function () {
+    var HOURS = 160, PRICE = { USD: 19, ZAR: 350 }, COURSE = { USD: 250, ZAR: 4500 };
+    var CFG = { USD: { sym: '$', rate: [15, 60, 1, 30], pay: [5, 25, 1, 10] }, ZAR: { sym: 'R', rate: [250, 1000, 10, 500], pay: [80, 400, 10, 180] } };
+    var $ = function (id) { return document.getElementById(id); };
+    var cur = 'USD', keep = { USD: [30, 10], ZAR: [500, 180] };   // each currency remembers its own slider values
+    var vas = $('sdc-vas'), rate = $('sdc-rate'), pay = $('sdc-pay');
+    if (!vas || !rate || !pay) return;
+  
+    function fmt(n) { return (n < 0 ? '-' : '') + CFG[cur].sym + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+    function fill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+    function setRange(el, r, v) { el.min = r[0]; el.max = r[1]; el.step = r[2]; el.value = v; }
+  
+    function draw() {
+      var c = CFG[cur], n = +vas.value, r = +rate.value, p = +pay.value;
+      keep[cur] = [r, p];
+      var revenue = n * r * HOURS, cost = n * p * HOURS, profit = revenue - cost, margin = revenue ? profit / revenue * 100 : 0;
+      $('sdc-vas-o').textContent = n + ' worker' + (n === 1 ? '' : 's');
+      $('sdc-rate-o').textContent = c.sym + r + '/hr';
+      $('sdc-pay-o').textContent = c.sym + p + '/hr';
+      $('sdc-rev').textContent = fmt(revenue);
+      $('sdc-cost').textContent = fmt(cost);
+      $('sdc-profit').textContent = fmt(profit);
+      $('sdc-big').className = 'big' + (profit < 0 ? ' neg' : '');
+      $('sdc-mg').textContent = profit < 0 ? 'You are paying workers more than the client pays you. Raise your rate or lower the pay.' : Math.round(margin) + '% margin before tax and other costs';
+      $('sdc-sd').textContent = c.sym + PRICE[cur].toLocaleString('en-US');
+      $('sdc-co').textContent = c.sym + COURSE[cur].toLocaleString('en-US') + '+';
+      $('sdc-months').textContent = 'One course costs about as much as ' + Math.round(COURSE[cur] / PRICE[cur]) + ' months of ScaleDesk.';
+      [vas, rate, pay].forEach(fill);
+    }
+  
+    function setCur(k) {
+      cur = k; var c = CFG[k];
+      setRange(rate, c.rate, keep[k][0]); setRange(pay, c.pay, keep[k][1]);
+      $('sdc-rate-min').textContent = c.sym + c.rate[0]; $('sdc-rate-max').textContent = c.sym + c.rate[1];
+      $('sdc-pay-min').textContent = c.sym + c.pay[0]; $('sdc-pay-max').textContent = c.sym + c.pay[1];
+      Array.prototype.forEach.call(document.querySelectorAll('#sd-calc .tg button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-cur') === k); });
+      draw();
+    }
+  
+    [vas, rate, pay].forEach(function (el) { el.addEventListener('input', draw); });
+    Array.prototype.forEach.call(document.querySelectorAll('#sd-calc .tg button'), function (b) {
+      b.addEventListener('click', function () { setCur(b.getAttribute('data-cur')); });
+    });
+    setCur('USD');
+  })();
+  </script>
+  <!-- ===== end of ScaleDesk calculator ===== -->
+  
+
   <section id="pricing">
     <h2>Simple pricing</h2>
     <p class="sub">One plan. Everything included. No hidden fees.</p>
