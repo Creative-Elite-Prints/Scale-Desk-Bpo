@@ -33,7 +33,7 @@ button.alt,a.b.alt{background:none;color:var(--ink);border:1.5px solid var(--lin
   <h1>Rooms and customers</h1>
   <div class="c" id="login">
     <label for="key">Admin key</label>
-    <input id="key" type="password" autocomplete="off">
+    <span style="position:relative;display:block"><input id="key" type="password" autocomplete="off" style="padding-right:46px"><button type="button" class="alt" data-eye="key" aria-label="Show password" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);padding:6px 8px;border:0"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
     <p><button id="go" type="button">Sign in</button></p>
     <p class="m">Signed in to ScaleDesk already? Open this page from the app instead and you will not need a key.</p>
   </div>
@@ -60,7 +60,7 @@ button.alt,a.b.alt{background:none;color:var(--ink);border:1.5px solid var(--lin
       <div id="stats" class="g" style="margin:10px 0"></div>
       <div id="users"></div>
       <h2 style="margin-top:18px">Invite codes (free trial for people you choose)</h2>
-      <div class="g"><div><label for="id">Trial days</label><input id="id" type="number" min="1" value="14"></div><div><label for="iu">People who can use it</label><input id="iu" type="number" min="1" value="1"></div></div>
+      <div class="g"><div><label for="id">Trial days</label><input id="id" type="number" min="1" value="14"></div><div><label for="iu">People who can use it</label><input id="iu" type="number" min="1" max="100000" value="1"><label style="display:flex;gap:8px;align-items:center;margin-top:6px"><input type="checkbox" id="iun" style="width:auto"> Unlimited uses</label></div></div>
       <p><button id="ic" type="button">Create invite code</button></p>
       <div id="inv"></div>
     </div>
@@ -110,7 +110,7 @@ function loadCust(){
     }).join(''):'<p class="m">No customers yet.</p>';
   }).catch(function(e){if(!K){$('cust').hidden=true}else fail(e)});
   call('/api/admin/invites').then(function(o){
-    var k=Object.keys(o);$('inv').innerHTML=k.length?k.map(function(c){return '<p><b>'+esc(c)+'</b> <span class="m">'+o[c].days+' days, '+o[c].uses+' use'+(o[c].uses===1?'':'s')+' left</span></p>'}).join(''):'<p class="m">No codes yet.</p>';
+    var k=Object.keys(o);$('inv').innerHTML=k.length?k.map(function(c){return '<p><b>'+esc(c)+'</b> <span class="m">'+o[c].days+' days, '+(o[c].unlimited?'unlimited uses':o[c].uses+' use'+(o[c].uses===1?'':'s')+' left')+'</span> <button class="alt" data-dc="'+esc(c)+'" type="button">Delete code</button></p>'}).join(''):'<p class="m">No codes yet.</p>';
   }).catch(fail);
 }
 document.addEventListener('click',function(e){
@@ -123,7 +123,9 @@ document.addEventListener('click',function(e){
       $('t').value=$('cn').value=$('am').value=$('pu').value=$('bf').value='';loadRooms();
     }).catch(fail);
   }
-  if(b.id==='ic')call('/api/admin/invites','POST',{days:+$('id').value,uses:+$('iu').value}).then(function(d){$('inv').insertAdjacentHTML('afterbegin','<p><b>New code: '+esc(d.code)+'</b></p>');loadCust()}).catch(fail);
+  if(b.id==='ic')call('/api/admin/invites','POST',{days:+$('id').value,uses:+$('iu').value,unlimited:$('iun').checked}).then(function(d){$('inv').insertAdjacentHTML('afterbegin','<p><b>New code: '+esc(d.code)+'</b></p>');loadCust()}).catch(fail);
+  if(b.dataset.eye){var f=$(b.dataset.eye);f.type=f.type==='password'?'text':'password';b.setAttribute('aria-pressed',f.type==='text');return}
+  if(b.dataset.dc){if(confirm('Delete invite code '+b.dataset.dc+'?'))call('/api/admin/invites/'+encodeURIComponent(b.dataset.dc)+'/delete','POST',{}).then(loadCust).catch(fail);return}
   var u=b.dataset.u;
   if(u){
     var id=b.dataset.id,body={};

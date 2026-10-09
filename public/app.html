@@ -373,7 +373,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     <div class="tabs"><button class="tab" id="au_in" role="tab" aria-selected="true" type="button">Sign in</button><button class="tab" id="au_up" role="tab" aria-selected="false" type="button">Create account</button></div>
     <div id="au_f" hidden><label for="au_n">Your name</label><input id="au_n" autocomplete="name"><label for="au_b">Business name</label><input id="au_b" autocomplete="organization"></div>
     <div id="au_ew"><label for="au_e">Email</label><input id="au_e" type="email" autocomplete="email"></div>
-    <div id="au_pw"><label for="au_p" id="au_pl">Password (8 or more characters)</label><input id="au_p" type="password" autocomplete="current-password">
+    <div id="au_pw"><label for="au_p" id="au_pl">Password (8 or more characters)</label><span class="pww"><input id="au_p" type="password" autocomplete="current-password"><button class="eye" type="button" data-eye="au_p" aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
     <p id="au_fw" style="margin:6px 0 0"><button type="button" id="au_forgot" style="background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit">Forgot your password?</button></p></div>
     <div id="au_cw" hidden><label for="au_c">Invite code (optional)</label><input id="au_c" autocomplete="off"><label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px"><input type="checkbox" id="au_t" style="width:auto;margin-top:4px"> <span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a></span></label></div>
     <p id="au_sw" style="margin:0 0 10px;text-align:center"><button type="button" id="au_swb" style="background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit"></button></p>
@@ -474,6 +474,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
 .ana2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
 #calc{max-width:980px}
 dialog,.ddp,.authc{background:#1E293B}
+.pww{position:relative;display:block}.pww input{padding-right:46px}.eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;border-radius:8px}.eye:hover,.eye[aria-pressed="true"]{color:var(--accent)}
 .dd summary{background:rgba(30,41,59,.7)}
 .ddp{box-shadow:0 14px 40px rgba(2,6,23,.6)}
 .ov{background:#0F172A}
@@ -989,7 +990,7 @@ dialog,.ddp,.authc{background:#1E293B}
     return 'No active plan';
   }
   function authMode(m){
-    amode=m;$('au_in').setAttribute('aria-selected',m==='in');$('au_up').setAttribute('aria-selected',m==='up');
+    amode=m;var pe=$('au_p');if(pe&&pe.type==='text'){var eb=document.querySelector('[data-eye=au_p]');if(eb)eb.click()}$('au_in').setAttribute('aria-selected',m==='in');$('au_up').setAttribute('aria-selected',m==='up');
     $('au_f').hidden=$('au_cw').hidden=m!=='up';$('au_ew').hidden=m==='rs';$('au_pw').hidden=m==='fg';$('au_fw').hidden=m!=='in';
     $('au_pl').textContent=m==='rs'?'Choose a new password (8 or more characters)':'Password (8 or more characters)';
     $('au_go').textContent={in:'Sign in',up:'Create account',fg:'Send reset link',rs:'Set new password'}[m];$('au_swb').textContent=m==='up'?'Already have an account? Log in':m==='in'?'New here? Create an account':'Back to log in';$('au_m').textContent='';$('au_m').style.color='#c0392b';
@@ -1069,6 +1070,7 @@ dialog,.ddp,.authc{background:#1E293B}
     var b=e.target.closest('button');if(!b)return;
     if(b.dataset.guide!==undefined){var g=GUIDES[+b.dataset.guide];$('gdt').textContent=g[0];$('gdb').innerHTML='<ul>'+g[1].map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';$('gd').showModal()}
     if(b.id==='gdc')$('gd').close();
+    if(b.dataset.eye){var pf=$(b.dataset.eye),sh=pf.type==='password';pf.type=sh?'text':'password';b.setAttribute('aria-pressed',sh);b.setAttribute('aria-label',sh?'Hide password':'Show password');b.innerHTML=sh?'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10 10 0 0112 5c6.4 0 10 7 10 7a17 17 0 01-3.2 4.1M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7c1.7 0 3.2-.4 4.5-1M9.9 9.9a3 3 0 004.2 4.2"/></svg>':'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';return}
     if(b.id==='au_swb')authMode(amode==='in'?'up':'in');
     if(b.id==='au_in')authMode('in');
     if(b.id==='au_forgot')authMode('fg');

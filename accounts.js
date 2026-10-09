@@ -111,8 +111,8 @@ async function run(req, res, u) {
     const code = clip(d.code, 20).toUpperCase();
     if (code) {
       const inv = db.invites[code];
-      if (!inv || inv.uses < 1) return send(res, 400, { error: 'That invite code is not valid' });
-      inv.uses -= 1; days = inv.days;
+      if (!inv || (!inv.unlimited && inv.uses < 1)) return send(res, 400, { error: 'That invite code is not valid' });
+      if (!inv.unlimited) inv.uses -= 1; days = inv.days;
     }
     const salt = crypto.randomBytes(16).toString('hex');
     const id = crypto.randomBytes(6).toString('hex');
@@ -260,9 +260,11 @@ async function run(req, res, u) {
     if (p === '/api/admin/invites' && m === 'GET') return send(res, 200, db.invites);
     if (p === '/api/admin/invites' && m === 'POST') {
       const d = (await json(req)) || {}, code = crypto.randomBytes(4).toString('hex').toUpperCase();
-      db.invites[code] = { days: Math.min(365, Math.max(1, +d.days || 14)), uses: Math.min(1000, Math.max(1, +d.uses || 1)) };
+      db.invites[code] = { days: Math.min(365, Math.max(1, +d.days || 14)), uses: d.unlimited ? 0 : Math.min(100000, Math.max(1, +d.uses || 1)), unlimited: !!d.unlimited };
       save(); return send(res, 201, { code, invite: db.invites[code] });
     }
+    const dm = /^\/api\/admin\/invites\/([\w-]+)\/delete$/.exec(p);
+    if (dm && m === 'POST') { if (!db.invites[dm[1]]) return send(res, 404, { error: 'No such code' }); delete db.invites[dm[1]]; save(); return send(res, 200, { ok: true }); }
     const mm = /^\/api\/admin\/users\/(\w+)\/(\w+)$/.exec(p);
     if (mm && m === 'POST') {
       const us = db.users[mm[1]]; if (!us) return send(res, 404, { error: 'No such account' });

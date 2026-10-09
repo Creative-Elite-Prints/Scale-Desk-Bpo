@@ -253,10 +253,15 @@ Emails are compared without caring about capital letters or extra spaces, on sig
 - /admin shows a revenue box (MRR = paid subscribers × price), paid / trial / expired counts, and a customer table with sign-up date and status (Free Trial, Paid, Paused, Expired).
 - Each customer has Extend trial (adds days) and Set trial length (ends N days from today, 0 ends it).
 - MRR uses MRR_PRICE (default 19) and MRR_CURRENCY (default USD). Set them in Render only if your price differs.
-- Access: sign in to ScaleDesk as the owner, or enter ADMIN_KEY on the /admin page.
+- Access: sign in to ScaleDesk with an owner email (OWNER_EMAILS), then press Back office. The /admin page does not open for anyone else; ADMIN_KEY only works for direct API calls.
 - Data lives in Upstash Redis (already connected), so restarts do not erase it.
 
 ## Sign-in fixes
 - Emails are trimmed and lower-cased on sign-up, sign-in and reset. Passwords are trimmed too; accounts made earlier with spaces in the password still work.
 - A taken email on sign-up switches the form to Sign in with the email filled in. A wrong sign-in says whether the email or the password is the problem.
 - /admin has a "Reset link" button per customer: it makes a one-time link (valid 24 hours) that lets them choose a new password.
+
+
+## Invite codes and password eye
+- Invite codes can be single-use, a custom limit up to 100000, or unlimited, and each has a Delete code button. They are saved with the accounts, so they are backed up to Upstash.
+- The sign-in, sign-up and reset password box has an eye button to show or hide the password.
