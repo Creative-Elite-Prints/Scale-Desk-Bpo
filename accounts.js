@@ -10,7 +10,7 @@ const OWNERS = (process.env.OWNER_EMAILS || '').toLowerCase().split(',').map(s =
 const PRICE_TEXT = process.env.PLAN_PRICE_TEXT || '';
 const SUBSCRIBE_URL = /^https:\/\//i.test(process.env.SUBSCRIBE_URL || '') ? process.env.SUBSCRIBE_URL : '';
 const SUPPORT_EMAIL = process.env.SUPPORT_EMAIL || '';
-const DAY = 86400000, SESSION_DAYS = 180, MAX_DATA = 300000;
+const DAY = 86400000, SESSION_DAYS = 180, MAX_DATA = 900000;
 const SEC = { 'X-Content-Type-Options': 'nosniff', 'Referrer-Policy': 'no-referrer', 'Cache-Control': 'no-store' };
 
 fs.mkdirSync(DATA, { recursive: true });

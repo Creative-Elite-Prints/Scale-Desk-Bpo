@@ -171,13 +171,22 @@ The job feed needs a signed-in account with an active plan.
 
 | Source | How often | Notes |
 | --- | --- | --- |
-| Freelancer.com | every 60 seconds | Searches active projects for website, wordpress, game, mobile app, web app, chatbot. |
+| Freelancer.com | every 60 seconds | Searches active projects for virtual assistant, customer support, data entry, cold email, lead generation, appointment setting, website, wordpress, game, mobile app, web app, chatbot. Change the list with `FREELANCER_KEYWORDS`. Hourly projects are shown as `$X / hr`, fixed ones as `$X fixed`. |
 | RemoteOK | every 15 minutes | Credit and link back to RemoteOK (the app does this). |
 | Remotive | every 6 hours | **Off by default.** Limited to 4 fetches a day, 24 hour delay, credit and link back required, no passing jobs to other job boards. |
 
 Each job shows the client's full description in a **Full job description** dropdown, with **Copy description** and **Copy brief for freelancer** buttons. The brief leaves out the client's budget and the listing link and asks for a quotation. Freelancer's full text relies on their search returning it (`full_description`); if it does not, the app shows the short preview instead.
 
 If Freelancer jobs stop appearing, check Freelancer's developer documentation. Bids and messages go through each site itself, using **Open original**. Read each source's terms before selling access to the feed.
+
+## The member dashboard (`/app`)
+
+Dark slate and electric cyan theme with a collapsible left menu: Dashboard, Live Job Leads, Lead Pipeline, Find Talent, Courses, Calculator, Analytics (Proposals, Payouts, My profile and Messages sit under "Your work").
+
+- **Live Job Leads**: filter chips for BPO, Virtual Assistant, Customer Support, Cold Outreach and Software. Each card has **Place Bid**, a save icon, an open-original icon and **1-Click Copy Proposal**. **Upwork does not allow its listings to be copied by other apps**, so the Upwork button opens Upwork's own search for the chosen type in a new tab. Freelancer and RemoteOK leads arrive in the list. The Upwork, Freelancer and RemoteOK search links are built from standard search addresses; open each once to confirm it still works.
+- **Lead Pipeline**: Follow Up, Closing, In Progress, Completed. **+ Add Deal** takes a manual deal or starts from a live lead. Drag cards between columns or use the arrows. Totals add up fixed-price deals only; hourly rates and yearly salaries show on the card but are not added in.
+- **Saved data**: leads, bids, deals and stats are saved to your account and backed up to Upstash with the rest of the accounts (see "Keeping accounts safe"). Deals saved by older versions are moved over automatically (Found and Applied become Follow Up, In talks becomes Closing, Won becomes Completed).
+- **Courses** are the built-in text lessons. **Analytics** is worked out from your own deals and the live feed.
 
 ## Before you sell to the public
 

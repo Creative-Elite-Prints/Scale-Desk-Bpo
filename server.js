@@ -24,7 +24,7 @@ const ACCESS_KEY = process.env.ACCESS_KEY || '';          // optional password f
 const ORIGIN = process.env.ALLOWED_ORIGIN || '*';         // set to your site address once hosted
 const FL_TOKEN = process.env.FREELANCER_TOKEN || '';      // optional Freelancer.com API token
 const SOURCES = (process.env.SOURCES || 'freelancer,remoteok').split(',').map(s => s.trim()).filter(Boolean);
-const KEYWORDS = (process.env.FREELANCER_KEYWORDS || 'website,wordpress,game,mobile app,web app,chatbot')
+const KEYWORDS = (process.env.FREELANCER_KEYWORDS || 'virtual assistant,customer support,data entry,cold email,lead generation,appointment setting,website,wordpress,game,mobile app,web app,chatbot')
   .split(',').map(s => s.trim()).filter(Boolean);
 const FL_EVERY = (+process.env.FREELANCER_EVERY_SECONDS || 60) * 1000;
 const MAX_JOBS = 500;
@@ -42,6 +42,10 @@ try { LANDING = fs.readFileSync(path.join(__dirname, 'public', 'landing.html'));
 try { APP_PAGE = fs.readFileSync(path.join(__dirname, 'public', 'app.html')); } catch (e) { /* app page not installed */ }
 
 const CATS = [
+  ['Cold Outreach', /cold (email|call|outreach)|outreach|lead gen|appointment setting|\bsdr\b|prospecting|email marketing|linkedin/i],
+  ['Customer Support', /customer (support|service|success)|help ?desk|live chat|call cent|support agent|ticket|zendesk|chat support/i],
+  ['Virtual Assistant', /virtual assistant|\bva\b|executive assistant|admin(istrative)? assistant|personal assistant|data entry|bookkeep|scheduling|inbox|transcri/i],
+  ['BPO', /\bbpo\b|back.?office|outsourc|process(ing)? (work|specialist)|order processing|data processing|moderation|quality assurance analyst/i],
   ['Games', /game|unity|unreal|godot|roblox/i],
   ['Mobile apps', /mobile|android|\bios\b|flutter|react native|swift|kotlin/i],
   ['AI and automation', /\bai\b|machine learning|chatbot|openai|automation|\bllm\b|gpt/i],
@@ -90,7 +94,8 @@ async function freelancer() {
           d: (p.type === 'hourly' ? 'Hourly rate. ' : '') + desc,
           full: clean(p.description || p.preview_description).slice(0, 3000),
           skills: (p.jobs || []).map(j => j.name).slice(0, 12),
-          b: Math.round(((min + max) / 2) * rate / 10) * 10,
+          b: Math.round(((min + max) / 2) * rate / (p.type === 'hourly' ? 1 : 10)) * (p.type === 'hourly' ? 1 : 10),
+          bt: p.type === 'hourly' ? 'hr' : 'fixed',
           s: 'Freelancer',
           loc: '',
           t0: (p.time_submitted ? p.time_submitted * 1000 : Date.now()),
@@ -113,7 +118,8 @@ async function remoteok() {
     d: strip(j.description).slice(0, 220),
     full: clean(j.description).slice(0, 3000),
     skills: (j.tags || []).slice(0, 12),
-    b: 0,
+    b: j.salary_min && j.salary_max ? Math.round((+j.salary_min + +j.salary_max) / 2) : 0,
+    bt: 'yr',
     s: 'RemoteOK',
     loc: j.location || 'Remote',
     t0: (j.epoch ? j.epoch * 1000 : Date.parse(j.date)) || Date.now(),
