@@ -255,3 +255,8 @@ Emails are compared without caring about capital letters or extra spaces, on sig
 - MRR uses MRR_PRICE (default 19) and MRR_CURRENCY (default USD). Set them in Render only if your price differs.
 - Access: sign in to ScaleDesk as the owner, or enter ADMIN_KEY on the /admin page.
 - Data lives in Upstash Redis (already connected), so restarts do not erase it.
+
+## Sign-in fixes
+- Emails are trimmed and lower-cased on sign-up, sign-in and reset. Passwords are trimmed too; accounts made earlier with spaces in the password still work.
+- A taken email on sign-up switches the form to Sign in with the email filled in. A wrong sign-in says whether the email or the password is the problem.
+- /admin has a "Reset link" button per customer: it makes a one-time link (valid 24 hours) that lets them choose a new password.

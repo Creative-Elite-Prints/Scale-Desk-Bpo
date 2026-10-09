@@ -1046,9 +1046,9 @@ dialog,.ddp,.authc{background:#1E293B}
       $('net').hidden=false;setTimeout(boot,4000)});
   }
   function submitAuth(){
-    var body={email:$('au_e').value.trim().toLowerCase(),password:$('au_p').value};
+    var body={email:$('au_e').value.trim().toLowerCase(),password:$('au_p').value.trim()};
     if(amode==='up'){body.name=$('au_n').value;body.business=$('au_b').value;body.code=$('au_c').value;body.terms=$('au_t').checked}
-    if(amode==='rs'){body={token:RESET,password:$('au_p').value}}
+    if(amode==='rs'){body={token:RESET,password:$('au_p').value.trim()}}
     $('au_m').textContent='';$('au_go').disabled=true;
     if(amode==='fg'){
       fetch('/api/auth/forgot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:body.email})})
@@ -1058,9 +1058,9 @@ dialog,.ddp,.authc{background:#1E293B}
       return;
     }
     fetch('/api/auth/'+(amode==='in'?'login':amode==='rs'?'reset':'signup'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
-      .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'Something went wrong');return d})})
+      .then(function(r){return r.json().then(function(d){if(!r.ok){var er=new Error(d.error||'Something went wrong');er.status=r.status;throw er}return d})})
       .then(function(d){SES=d.token;try{localStorage.setItem('sd_session',SES)}catch(e){}$('au_p').value='';return sApi('/api/me').then(enter)})
-      .catch(function(e){$('au_m').textContent=e.message}).then(function(){$('au_go').disabled=false});
+      .catch(function(e){var m0=e.message;if(e.status===409){authMode('in');$('au_e').value=body.email}$('au_m').textContent=m0}).then(function(){$('au_go').disabled=false});
   }
   function signOut(){
     sApi('/api/auth/logout',{method:'POST'}).catch(function(){}).then(function(){try{localStorage.removeItem('sd_session')}catch(e){}location.reload()});

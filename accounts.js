@@ -100,7 +100,7 @@ async function run(req, res, u) {
   if (p === '/api/auth/signup' && m === 'POST') {
     if (count('su' + ip, 3600000) >= 10) return send(res, 429, { error: 'Too many sign-ups from this address. Try later.' });
     const d = await json(req);
-    const email = normEmail(d && d.email), pw = String((d && d.password) || '');
+    const email = normEmail(d && d.email), pw = String((d && d.password) || '').trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) return send(res, 400, { error: 'Enter a valid email address' });
     if (pw.length < 8 || pw.length > 200) return send(res, 400, { error: 'Password must be at least 8 characters' });
     if (!clip(d.name, 80)) return send(res, 400, { error: 'Enter your name' });
@@ -128,8 +128,10 @@ async function run(req, res, u) {
     const d = await json(req), email = normEmail(d && d.email), key = 'lf' + ip + email;
     if (count(key, 600000) >= 8 || count('lf' + ip, 600000) >= 20) return send(res, 429, { error: 'Too many attempts. Try again in a few minutes.' });
     const us = Object.values(db.users).find(x => normEmail(x.email) === email);
-    const good = us && crypto.timingSafeEqual(Buffer.from(await scrypt(String((d && d.password) || ''), us.salt), 'hex'), Buffer.from(us.hash, 'hex'));
-    if (!good) { mark(key); mark('lf' + ip); return send(res, 401, { error: 'Wrong email or password' }); }
+    const raw = String((d && d.password) || ''), tries = raw.trim() === raw ? [raw] : [raw.trim(), raw];   // older accounts may have been made with the spaces kept
+    let good = false;
+    if (us) for (const t of tries) if (crypto.timingSafeEqual(Buffer.from(await scrypt(t, us.salt), 'hex'), Buffer.from(us.hash, 'hex'))) { good = true; break; }
+    if (!good) { mark(key); mark('lf' + ip); return send(res, 401, { error: us ? 'Wrong password for this email. Check for extra spaces or capital letters, or use "Forgot your password?".' : 'No account found with that email. Check the spelling, or create an account.' }); }
     const tk1 = newSession(us.id); giveCookie(req, res, us, tk1);
     return send(res, 200, { token: tk1, user: pub(us) });
   }
@@ -167,7 +169,7 @@ async function run(req, res, u) {
     return send(res, 200, { ok: true });
   }
   if (p === '/api/auth/reset' && m === 'POST') {
-    const d = await json(req), m2 = /^(\w+)\.([\w-]+)$/.exec(clip(d && d.token, 120)), pw = String((d && d.password) || '');
+    const d = await json(req), m2 = /^(\w+)\.([\w-]+)$/.exec(clip(d && d.token, 120)), pw = String((d && d.password) || '').trim();
     if (count('rt' + ip, 600000) >= 10) return send(res, 429, { error: 'Too many attempts. Try again later.' });
     mark('rt' + ip);
     if (pw.length < 8 || pw.length > 200) return send(res, 400, { error: 'Password must be at least 8 characters' });
@@ -269,9 +271,13 @@ async function run(req, res, u) {
       else if (mm[2] === 'settrial') { const n = Math.min(365, Math.max(0, Math.round(+d.days || 0))); us.trialUntil = n ? now() + n * DAY : 0; }
       else if (mm[2] === 'paid') us.paidUntil = Math.max(now(), us.paidUntil || 0) + Math.min(12, Math.max(1, Math.round(+d.months || 1))) * 30 * DAY;
       else if (mm[2] === 'cancel') { us.paidUntil = 0; us.trialUntil = 0; }
+      else if (mm[2] === 'resetlink') {
+        const sec = crypto.randomBytes(24).toString('base64url'); us.reset = { h: sha(sec), exp: now() + 86400000 }; save();
+        return send(res, 200, { link: baseOf(req) + '/app?reset=' + us.id + '.' + sec, hours: 24 });
+      }
       else if (mm[2] === 'block') us.blocked = !!d.blocked;
       else if (mm[2] === 'password') {
-        const pw = String(d.password || ''); if (pw.length < 8) return send(res, 400, { error: 'Password must be at least 8 characters' });
+        const pw = String(d.password || '').trim(); if (pw.length < 8) return send(res, 400, { error: 'Password must be at least 8 characters' });
         us.salt = crypto.randomBytes(16).toString('hex'); us.hash = await scrypt(pw, us.salt);
         for (const [k, s] of Object.entries(db.sessions)) if (s.uid === us.id) delete db.sessions[k];
       } else if (mm[2] === 'delete') {

@@ -106,7 +106,7 @@ function loadCust(){
     $('users').innerHTML=a.length?a.map(function(u){
       var plan=u.access==='owner'?'owner':u.access==='active'?'subscribed until '+day(u.paidUntil):u.access==='trial'?'trial until '+day(u.trialUntil):u.access==='blocked'?'paused':'no active plan';
       return '<div class="r"><b>'+esc(u.name)+'</b> <span class="pill '+u.access+'">'+({trial:'Free Trial',active:'Paid',owner:'Owner',expired:'Expired',blocked:'Paused'}[u.access]||u.access)+'</span><br><span class="m">'+esc(u.email)+(u.business?' · '+esc(u.business):'')+' · '+plan+' · joined '+day(u.createdAt)+'</span>'+
-      '<div class="bt"><button data-u="grant" data-id="'+u.id+'" type="button">Extend trial</button><button class="alt" data-u="settrial" data-id="'+u.id+'" type="button">Set trial length</button><button class="alt" data-u="paid" data-id="'+u.id+'" type="button">Add paid month</button><button class="alt" data-u="cancel" data-id="'+u.id+'" type="button">End plan</button><button class="alt" data-u="block" data-b="'+(u.access==='blocked'?'0':'1')+'" data-id="'+u.id+'" type="button">'+(u.access==='blocked'?'Unpause':'Pause')+'</button><button class="alt" data-u="password" data-id="'+u.id+'" type="button">Set password</button><button class="alt" data-u="delete" data-id="'+u.id+'" type="button">Delete</button></div></div>';
+      '<div class="bt"><button data-u="grant" data-id="'+u.id+'" type="button">Extend trial</button><button class="alt" data-u="settrial" data-id="'+u.id+'" type="button">Set trial length</button><button class="alt" data-u="paid" data-id="'+u.id+'" type="button">Add paid month</button><button class="alt" data-u="cancel" data-id="'+u.id+'" type="button">End plan</button><button class="alt" data-u="block" data-b="'+(u.access==='blocked'?'0':'1')+'" data-id="'+u.id+'" type="button">'+(u.access==='blocked'?'Unpause':'Pause')+'</button><button class="alt" data-u="resetlink" data-id="'+u.id+'" type="button">Reset link</button><button class="alt" data-u="password" data-id="'+u.id+'" type="button">Set password</button><button class="alt" data-u="delete" data-id="'+u.id+'" type="button">Delete</button></div></div>';
     }).join(''):'<p class="m">No customers yet.</p>';
   }).catch(function(e){if(!K){$('cust').hidden=true}else fail(e)});
   call('/api/admin/invites').then(function(o){
@@ -133,7 +133,7 @@ document.addEventListener('click',function(e){
     if(u==='block')body.blocked=b.dataset.b==='1';
     if(u==='password'){var p=prompt('New password (8 or more characters)');if(!p)return;body.password=p}
     if((u==='cancel'||u==='delete')&&!confirm('Are you sure?'))return;
-    call('/api/admin/users/'+id+'/'+u,'POST',body).then(loadCust).catch(fail);
+    call('/api/admin/users/'+id+'/'+u,'POST',body).then(function(r){if(r&&r.link){prompt('Send this one-time link to the customer. They open it and choose a new password. It works for '+r.hours+' hours (copy it with Ctrl+C):',r.link)}loadCust()}).catch(fail);
   }
   var a=b.dataset.a,id2=b.dataset.id;if(!a)return;
   if(a==='payment'){var v2=prompt('Amount received ('+b.dataset.c+')');if(v2)api('/'+id2+'/payment','POST',{amount:+v2}).then(loadRooms).catch(fail)}
