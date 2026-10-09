@@ -57,6 +57,7 @@ button.alt,a.b.alt{background:none;color:var(--ink);border:1.5px solid var(--lin
     <div class="c" id="cust" hidden>
       <h2>Customers</h2>
       <p class="m">People who signed up to use ScaleDesk. Unlock a trial, record a paid month, or pause an account.</p>
+      <div id="stats" class="g" style="margin:10px 0"></div>
       <div id="users"></div>
       <h2 style="margin-top:18px">Invite codes (free trial for people you choose)</h2>
       <div class="g"><div><label for="id">Trial days</label><input id="id" type="number" min="1" value="14"></div><div><label for="iu">People who can use it</label><input id="iu" type="number" min="1" value="1"></div></div>
@@ -97,11 +98,15 @@ function loadRooms(){
 }
 function loadCust(){
   $('cust').hidden=false;
+  call('/api/admin/stats').then(function(t){
+    var b=function(l,v){return '<div class="c" style="margin:0"><span class="m">'+l+'</span><div style="font:800 26px inherit">'+v+'</div></div>'};
+    $('stats').innerHTML=b('Monthly recurring revenue (MRR)',esc(t.currency)+' '+t.mrr.toLocaleString('en-US'))+b('Paid subscribers',t.paid)+b('On free trial',t.trial)+b('Expired',t.expired);
+  }).catch(function(){});
   call('/api/admin/users').then(function(a){
     $('users').innerHTML=a.length?a.map(function(u){
       var plan=u.access==='owner'?'owner':u.access==='active'?'subscribed until '+day(u.paidUntil):u.access==='trial'?'trial until '+day(u.trialUntil):u.access==='blocked'?'paused':'no active plan';
-      return '<div class="r"><b>'+esc(u.name)+'</b> <span class="pill '+u.access+'">'+u.access+'</span><br><span class="m">'+esc(u.email)+(u.business?' · '+esc(u.business):'')+' · '+plan+' · joined '+day(u.createdAt)+'</span>'+
-      '<div class="bt"><button data-u="grant" data-id="'+u.id+'" type="button">Give trial days</button><button class="alt" data-u="paid" data-id="'+u.id+'" type="button">Add paid month</button><button class="alt" data-u="cancel" data-id="'+u.id+'" type="button">End plan</button><button class="alt" data-u="block" data-b="'+(u.access==='blocked'?'0':'1')+'" data-id="'+u.id+'" type="button">'+(u.access==='blocked'?'Unpause':'Pause')+'</button><button class="alt" data-u="password" data-id="'+u.id+'" type="button">Set password</button><button class="alt" data-u="delete" data-id="'+u.id+'" type="button">Delete</button></div></div>';
+      return '<div class="r"><b>'+esc(u.name)+'</b> <span class="pill '+u.access+'">'+({trial:'Free Trial',active:'Paid',owner:'Owner',expired:'Expired',blocked:'Paused'}[u.access]||u.access)+'</span><br><span class="m">'+esc(u.email)+(u.business?' · '+esc(u.business):'')+' · '+plan+' · joined '+day(u.createdAt)+'</span>'+
+      '<div class="bt"><button data-u="grant" data-id="'+u.id+'" type="button">Extend trial</button><button class="alt" data-u="settrial" data-id="'+u.id+'" type="button">Set trial length</button><button class="alt" data-u="paid" data-id="'+u.id+'" type="button">Add paid month</button><button class="alt" data-u="cancel" data-id="'+u.id+'" type="button">End plan</button><button class="alt" data-u="block" data-b="'+(u.access==='blocked'?'0':'1')+'" data-id="'+u.id+'" type="button">'+(u.access==='blocked'?'Unpause':'Pause')+'</button><button class="alt" data-u="password" data-id="'+u.id+'" type="button">Set password</button><button class="alt" data-u="delete" data-id="'+u.id+'" type="button">Delete</button></div></div>';
     }).join(''):'<p class="m">No customers yet.</p>';
   }).catch(function(e){if(!K){$('cust').hidden=true}else fail(e)});
   call('/api/admin/invites').then(function(o){
@@ -123,6 +128,7 @@ document.addEventListener('click',function(e){
   if(u){
     var id=b.dataset.id,body={};
     if(u==='grant'){var v=prompt('How many trial days?','14');if(!v)return;body.days=+v}
+    if(u==='settrial'){var v2=prompt('Trial ends this many days from today (0 ends it)?','14');if(v2===null||v2==='')return;body.days=+v2}
     if(u==='paid'){var m=prompt('How many paid months to add?','1');if(!m)return;body.months=+m}
     if(u==='block')body.blocked=b.dataset.b==='1';
     if(u==='password'){var p=prompt('New password (8 or more characters)');if(!p)return;body.password=p}

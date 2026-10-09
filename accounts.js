@@ -250,6 +250,11 @@ async function run(req, res, u) {
     const isOwnerSession = !!(os && os.access === 'owner');
     if (!isOwnerSession && (!ak || !ADMIN_KEY || !same(ak, ADMIN_KEY))) { mark('af' + ip); return send(res, 401, { error: 'Not authorised' }); }
     if (p === '/api/admin/users' && m === 'GET') return send(res, 200, Object.values(db.users).map(pub));
+    if (p === '/api/admin/stats' && m === 'GET') {
+      const us = Object.values(db.users), price = +process.env.MRR_PRICE || 19, cnt = a => us.filter(x => access(x) === a).length;
+      const paid = cnt('active');
+      return send(res, 200, { mrr: Math.round(paid * price * 100) / 100, price, currency: (process.env.MRR_CURRENCY || 'USD').toUpperCase().slice(0, 3), paid, trial: cnt('trial'), expired: cnt('expired'), total: us.length });
+    }
     if (p === '/api/admin/invites' && m === 'GET') return send(res, 200, db.invites);
     if (p === '/api/admin/invites' && m === 'POST') {
       const d = (await json(req)) || {}, code = crypto.randomBytes(4).toString('hex').toUpperCase();
@@ -261,6 +266,7 @@ async function run(req, res, u) {
       const us = db.users[mm[1]]; if (!us) return send(res, 404, { error: 'No such account' });
       const d = (await json(req)) || {};
       if (mm[2] === 'grant') us.trialUntil = Math.max(now(), us.trialUntil || 0) + Math.min(365, Math.max(1, +d.days || 7)) * DAY;
+      else if (mm[2] === 'settrial') { const n = Math.min(365, Math.max(0, Math.round(+d.days || 0))); us.trialUntil = n ? now() + n * DAY : 0; }
       else if (mm[2] === 'paid') us.paidUntil = Math.max(now(), us.paidUntil || 0) + Math.min(12, Math.max(1, Math.round(+d.months || 1))) * 30 * DAY;
       else if (mm[2] === 'cancel') { us.paidUntil = 0; us.trialUntil = 0; }
       else if (mm[2] === 'block') us.blocked = !!d.blocked;

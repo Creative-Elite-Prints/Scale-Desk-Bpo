@@ -248,3 +248,10 @@ Emails are compared without caring about capital letters or extra spaces, on sig
 - Find Talent shows sample remote profiles at $5–$15/hr with rating, jobs done and completion rate. They are samples, not real people.
 - Message on someone not yet onboarded opens their platform page (a talent search on Upwork or Fiverr until you give a real profile link). After you press Mark onboarded, Message opens a chat thread in your Messages tab.
 - Active outreach and Saved talent counts are stored on your account and backed up to Upstash with everything else.
+
+## Admin dashboard additions
+- /admin shows a revenue box (MRR = paid subscribers × price), paid / trial / expired counts, and a customer table with sign-up date and status (Free Trial, Paid, Paused, Expired).
+- Each customer has Extend trial (adds days) and Set trial length (ends N days from today, 0 ends it).
+- MRR uses MRR_PRICE (default 19) and MRR_CURRENCY (default USD). Set them in Render only if your price differs.
+- Access: sign in to ScaleDesk as the owner, or enter ADMIN_KEY on the /admin page.
+- Data lives in Upstash Redis (already connected), so restarts do not erase it.
