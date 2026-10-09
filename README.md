@@ -241,3 +241,10 @@ Option B copies accounts and rooms only. Uploaded project files are not copied, 
 You can use both. A copy of the file is also kept as `accounts.json.bak`, and a damaged file is set aside as `accounts.json.damaged-*` instead of being overwritten.
 
 Emails are compared without caring about capital letters or extra spaces, on sign-up, sign-in and password reset, so "Ann@Mail.com " and "ann@mail.com" are the same account.
+
+
+## Proposals and talent (latest update)
+- Proposals are short: a one-line greeting, an About me summary (BPO, virtual assistant and admin agency), three deliverables, 3–5 business days, a 50% upfront / 50% on delivery split, and the closing line with your first name | ScaleDesk.
+- Find Talent shows sample remote profiles at $5–$15/hr with rating, jobs done and completion rate. They are samples, not real people.
+- Message on someone not yet onboarded opens their platform page (a talent search on Upwork or Fiverr until you give a real profile link). After you press Mark onboarded, Message opens a chat thread in your Messages tab.
+- Active outreach and Saved talent counts are stored on your account and backed up to Upstash with everything else.

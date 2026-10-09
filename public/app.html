@@ -66,11 +66,13 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 
 <div id="dash">
   <div class="ph"><h2>Dashboard</h2><p class="note">Your leads, proposals and deals at a glance.</p></div>
-  <div class="stats">
+  <div class="stats stats6">
     <div class="stat"><b id="s1">0</b><span>Leads saved</span></div>
     <div class="stat"><b id="s2">0</b><span>Proposals sent</span></div>
     <div class="stat"><b id="s3">0</b><span>In closing</span></div>
     <div class="stat"><b id="s4">$0</b><span>Won revenue</span></div>
+    <div class="stat"><b id="s5">0</b><span>Active outreach</span></div>
+    <div class="stat"><b id="s6">0</b><span>Saved talent</span></div>
   </div>
   <div class="cols2">
     <section class="card"><h3>Newest leads</h3><div id="dnew"></div><p style="margin:12px 0 0"><button class="btn alt sm" type="button" data-t="jobs">See all live leads</button></p></section>
@@ -95,7 +97,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
       <label for="pn">Your name</label><input id="pn" value="Jene van der Walt">
       <label for="pb">Business name</label><input id="pb" value="Scale Desk">
       <label for="pc">Your email or phone (added to the message)</label><input id="pc" placeholder="you@example.com">
-      <label for="ps">What you offer</label><textarea id="ps">Scale Desk delivers websites, apps and games with clear milestones and regular progress updates. (Edit this to describe your real experience.)</textarea>
+      <label for="ps">What you offer</label><textarea id="ps">Scale Desk is a BPO and virtual assistant agency providing back-office, administrative, customer support and data entry services. Our trained remote team works to written checklists with quality checks and regular progress reports, so you can hand work over with confidence.</textarea>
       <label for="pt">Tone</label><select id="pt"><option value="friendly">Friendly</option><option value="pro">Professional</option><option value="short">Short</option></select>
       <p><button class="btn" id="gen" type="button">Generate proposal</button></p>
     </div>
@@ -107,7 +109,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
         <div class="out" id="ai_o" hidden></div><p class="note" id="ai_m" role="status"></p></div>
       <div id="sendc" hidden style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
         <b>Send this offer to your client in the app</b>
-        <div class="sg"><div><label for="cc">Client name</label><input id="cc"></div><div><label for="ce">Client email</label><input id="ce" type="email"></div><div><label for="cq">Your price</label><input id="cq" type="number" min="1" step="0.01"></div><div><label for="cu">Currency (ZAR: PayFast. USD, EUR, GBP and more: PayPal)</label><input id="cu" value="ZAR" maxlength="3"></div><div><label for="csp">Payment plan</label><select id="csp"><option value="30,40,30">30% start, 40% midpoint, 30% delivery</option><option value="50,50">50% start, 50% delivery</option><option value="100">100% before final files</option></select></div></div>
+        <div class="sg"><div><label for="cc">Client name</label><input id="cc"></div><div><label for="ce">Client email</label><input id="ce" type="email"></div><div><label for="cq">Your price</label><input id="cq" type="number" min="1" step="0.01"></div><div><label for="cu">Currency (ZAR: PayFast. USD, EUR, GBP and more: PayPal)</label><input id="cu" value="ZAR" maxlength="3"></div><div><label for="csp">Payment plan</label><select id="csp"><option value="50,50">50% upfront, 50% on delivery</option><option value="30,40,30">30% start, 40% midpoint, 30% delivery</option><option value="100">100% before final files</option></select></div></div>
         <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="csend" type="button">Send offer to client</button><button class="btn alt" id="copen" type="button" hidden>Open chat with this client</button></p>
         <p class="note" id="cs" role="status"></p><input id="clink" readonly hidden onclick="this.select()" aria-label="Private link for your client">
       </div>
@@ -344,7 +346,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
     <div class="out" id="fo" style="margin-top:10px;min-height:120px"></div>
     <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn alt" id="fcp" type="button">Copy message</button><button class="btn alt" id="fsend" type="button" hidden>Send by email</button><button class="btn" id="fchat" type="button" hidden>Chat in app</button><a class="btn alt" id="fem" href="#" target="_blank" rel="noopener">Email</a><a class="btn alt" id="fwa" href="#" target="_blank" rel="noopener">WhatsApp</a><button class="btn alt" id="fcl" type="button">Close</button></p>
   </div>
-  <p class="note" id="fc" style="margin:0 0 12px"></p>
+  <p class="note" id="fc" style="margin:0 0 6px"></p><p class="note" id="tmsg" role="status" style="margin:0 0 12px"></p>
   <div class="people" id="fl"></div>
   <h3 style="margin:30px 0 4px">List yourself as available</h3>
   <div class="two">
@@ -353,6 +355,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
       <label for="fs">Skills, separated by commas</label><input id="fs" placeholder="React, Node, UI design">
       <label for="fr">Hourly rate (USD)</label><input id="fr" type="number" min="1" placeholder="35">
       <label for="fe2">Email (optional, so you can message them)</label><input id="fe2" type="email">
+      <label for="fu">Profile link on Upwork, Freelancer or similar (optional, https)</label><input id="fu" type="url" placeholder="https://">
       <p><button class="btn" id="fadd" type="button">Add my profile</button></p>
     </div>
   </div>
@@ -439,6 +442,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
 .btn.alt{background:rgba(15,23,42,.45);color:var(--ink);border-color:var(--line)}.btn.alt:hover{border-color:var(--accent);box-shadow:none}
 .badge2,.meta .badge{background:var(--ind);color:#fff}
 .meta span{background:rgba(6,182,212,.12);color:#a5f3fc}
+.stats6{grid-template-columns:repeat(3,1fr)}@media (max-width:820px){.stats6{grid-template-columns:1fr 1fr}}.tacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.person .rt{color:#fbbf24;font-weight:600}
 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{padding:18px}.card h3{font-size:17px;margin-bottom:10px}
 .dr{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}.dr:last-child{border-bottom:0}.dv{font-weight:700;white-space:nowrap;color:#67e8f9}.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
 .chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
@@ -681,22 +685,26 @@ dialog,.ddp,.authc{background:#1E293B}
     save();board();list(true);$('dd_d').close();
   }
   var people=[
-   {id:"p1",n:"Amara O.",role:"Full-stack web developer",sk:["React","Node","Shopify"],r:35,loc:"Nigeria",av:"Available now",bio:"Builds online stores and dashboards."},
-   {id:"p2",n:"Diego R.",role:"Unity game developer",sk:["Unity","C#","Mobile games"],r:45,loc:"Mexico",av:"Available now",bio:"Shipped four casual mobile games."},
-   {id:"p3",n:"Priya S.",role:"UI and web designer",sk:["Figma","WordPress","Landing pages"],r:30,loc:"India",av:"Part time",bio:"Clean, fast marketing sites."},
-   {id:"p4",n:"Lukas M.",role:"Backend engineer",sk:["Python","APIs","Game servers"],r:55,loc:"Germany",av:"Available now",bio:"Realtime systems and integrations."},
-   {id:"p5",n:"Thandi N.",role:"Mobile app developer",sk:["Flutter","Firebase","iOS"],r:40,loc:"South Africa",av:"Available now",bio:"Delivery and booking apps."},
-   {id:"p6",n:"Mei L.",role:"AI automation specialist",sk:["Python","Chatbots","OpenAI API"],r:60,loc:"Singapore",av:"Part time",bio:"Support bots and workflow automation."},
-   {id:"p7",n:"Omar H.",role:"WordPress developer",sk:["WordPress","PHP","SEO"],r:25,loc:"Egypt",av:"Available now",bio:"Fast turnaround on business sites."},
-   {id:"p8",n:"Sofia K.",role:"Godot game developer",sk:["Godot","GDScript","2D art"],r:38,loc:"Brazil",av:"Part time",bio:"Platformers and level design."}
-  ],team=[],mine=[];
-  try{if(window.SD_APP)throw 0;team=JSON.parse(localStorage.getItem('sd_team')||'[]');mine=JSON.parse(localStorage.getItem('sd_free')||'[]')}catch(e){team=[];mine=[]}
-  function saveF(){if(window.SD_APP){sync();return}try{localStorage.setItem('sd_team',JSON.stringify(team));localStorage.setItem('sd_free',JSON.stringify(mine))}catch(e){}}
+   {id:"p1",n:"Maricel D.",role:"Virtual assistant",sk:["Virtual assistant","Inbox management","Calendar","Data entry"],r:7,loc:"Philippines",av:"Available now",bio:"Runs inboxes, diaries and daily admin for small agencies.",plat:"Upwork"},
+   {id:"p2",n:"Joseph K.",role:"Customer support agent",sk:["Customer support","Zendesk","Live chat","Email support"],r:8,loc:"Kenya",av:"Available now",bio:"Chat and email support with fast, friendly replies.",plat:"Upwork"},
+   {id:"p3",n:"Ananya R.",role:"Data entry and back-office",sk:["Data entry","Back office","Excel","Order processing"],r:5,loc:"India",av:"Available now",bio:"Accurate processing of orders, records and spreadsheets.",plat:"Upwork"},
+   {id:"p4",n:"Thabo M.",role:"Customer service and call handling",sk:["Customer service","Call handling","BPO","Quality checks"],r:12,loc:"South Africa",av:"Available now",bio:"Phone and chat support, with experience coaching small teams.",plat:"Upwork"},
+   {id:"p5",n:"Ayesha F.",role:"Cold email and lead generation",sk:["Cold email","Lead generation","LinkedIn","Appointment setting"],r:10,loc:"Pakistan",av:"Part time",bio:"Builds prospect lists and writes personal outreach sequences.",plat:"Fiverr"},
+   {id:"p6",n:"Carlos P.",role:"Appointment setter",sk:["Appointment setting","Cold calling","CRM","Lead qualification"],r:9,loc:"Colombia",av:"Available now",bio:"Books qualified meetings for service businesses.",plat:"Upwork"},
+   {id:"p7",n:"Rina S.",role:"Admin assistant and bookkeeper",sk:["Administrative support","Bookkeeping","QuickBooks","Invoicing"],r:11,loc:"Philippines",av:"Available now",bio:"Monthly bookkeeping, invoicing and admin support.",plat:"Upwork"},
+   {id:"p8",n:"Mohamed A.",role:"Support and moderation agent",sk:["Customer support","Content moderation","Chat support","Helpdesk"],r:6,loc:"Egypt",av:"Available now",bio:"Handles tickets and community moderation across time zones.",plat:"Upwork"},
+   {id:"p9",n:"Grace W.",role:"Executive virtual assistant",sk:["Executive assistant","Travel booking","Email","Scheduling"],r:14,loc:"Uganda",av:"Part time",bio:"Supports founders with scheduling, travel and correspondence.",plat:"Upwork"},
+   {id:"p10",n:"Sana H.",role:"Social media and inbox assistant",sk:["Virtual assistant","Social media","Canva","Customer replies"],r:8,loc:"Bangladesh",av:"Available now",bio:"Posts, replies and basic graphics for online shops.",plat:"Fiverr"},
+   {id:"p11",n:"Jorge L.",role:"E-commerce order processing",sk:["Order processing","Shopify admin","Data entry","Inventory"],r:10,loc:"Mexico",av:"Available now",bio:"Daily order handling and stock updates for online stores.",plat:"Upwork"},
+   {id:"p12",n:"Lerato N.",role:"Customer support and help desk",sk:["Customer support","Email support","Help desk","Saved replies"],r:9,loc:"South Africa",av:"Available now",bio:"Clear, calm email support using your saved replies.",plat:"Upwork"}
+  ],team=[],mine=[],onb={};
+  try{if(window.SD_APP)throw 0;team=JSON.parse(localStorage.getItem('sd_team')||'[]');mine=JSON.parse(localStorage.getItem('sd_free')||'[]');onb=JSON.parse(localStorage.getItem('sd_onb')||'{}')||{}}catch(e){team=[];mine=[];onb={}}
+  function saveF(){if(window.SD_APP){sync();return}try{localStorage.setItem('sd_team',JSON.stringify(team));localStorage.setItem('sd_free',JSON.stringify(mine));localStorage.setItem('sd_onb',JSON.stringify(onb))}catch(e){}}
   var LBL={available:'Available now',busy:'Busy',offline:'Offline'};
-  var REP={p1:[4.9,42],p2:[4.7,18],p3:[4.8,31],p4:[4.6,25],p5:[4.9,12],p6:[4.5,9],p7:[4.4,60],p8:[4.7,14]};
+  var REP={p1:[4.9,86,98],p2:[4.8,64,97],p3:[4.8,142,99],p4:[4.9,58,96],p5:[4.7,47,95],p6:[4.7,39,94],p7:[4.9,73,99],p8:[4.6,95,96],p9:[4.9,52,100],p10:[4.6,31,93],p11:[4.8,66,97],p12:[4.8,44,98]};
   function stOf(p){return p.st||(p.av==='Part time'?'busy':'available')}
-  function rep(p){var r=REP[p.id]||[0,0];return {rating:r[0],n:r[1],bayes:(5*4+r[0]*r[1])/(5+r[1])}}
-  function catOf(p){var k=p.sk.join(' ').toLowerCase();return /unity|godot|game/.test(k)?'Games':/flutter|ios|android/.test(k)?'Mobile apps':/wordpress|shopify|figma|landing|seo/.test(k)?'Websites':/chatbot|openai|automation/.test(k)?'AI and automation':'Web apps'}
+  function rep(p){var r=REP[p.id]||[0,0,0];return {rating:r[0],n:r[1],pct:r[2],bayes:(5*4+r[0]*r[1])/(5+r[1])}}
+  function catOf(p){var k=p.sk.join(' ').toLowerCase();return /cold|lead gen|appointment|linkedin/.test(k)?'Cold Outreach':/support|customer service|help ?desk|live chat/.test(k)?'Customer Support':/virtual|executive|assistant|admin|bookkeep/.test(k)?'Virtual Assistant':/data entry|back office|order proc|bpo/.test(k)?'BPO':/unity|godot|game/.test(k)?'Games':/flutter|ios|android/.test(k)?'Mobile apps':/wordpress|shopify|figma|landing|seo/.test(k)?'Websites':/chatbot|openai|automation/.test(k)?'AI and automation':'Web apps'}
   function scoreCand(j,p){
     var text=(j.t+' '+(j.d||'')).toLowerCase(),hits=p.sk.filter(function(x){return text.indexOf(x.toLowerCase())>-1}).length;
     var skill=Math.min(1,hits/2),cat=catOf(p)===j.c?1:0,st=stOf(p),av=st==='available'?1:st==='busy'?.3:0,r=rep(p);
@@ -705,10 +713,11 @@ dialog,.ddp,.authc{background:#1E293B}
     if(hits)why.push(hits+' matching skill'+(hits>1?'s':''));if(cat)why.push('right job type');why.push(LBL[st].toLowerCase());if(r.n)why.push('rated '+r.rating);
     return {score:Math.round(sc*100),why:why};
   }
+  function ratingLine(p){var r=rep(p);return r.n?'★ '+r.rating.toFixed(1)+' · '+r.n+' jobs · '+r.pct+'% completed':'New on ScaleDesk'}
   function mt(j){
     var top=null;
     mine.concat(people).forEach(function(p){if(stOf(p)==='offline')return;var m=scoreCand(j,p);if(!top||m.score>top.m.score)top={p:p,m:m}});
-    return top?'<p style="margin-top:8px;font-size:13px">Best match: <b>'+esc(top.p.n)+'</b> · '+top.m.score+'% · '+LBL[stOf(top.p)]+' <button class="btn alt sm" data-rank="'+j.id+'" style="margin-left:6px">See all matches</button></p>':'';
+    return top?'<p style="margin-top:8px;font-size:13px">Best match: <b>'+esc(top.p.n)+'</b> · '+top.m.score+'% · $'+top.p.r+'/hr · <span style="color:#fbbf24">'+esc(ratingLine(top.p))+'</span> <button class="btn alt sm" data-rank="'+j.id+'" style="margin-left:6px">See all matches</button></p>':'';
   }
   function fillMj(want){
     var v=want||$('fmj').value,l=jobs.slice(0,30),sel=find(+v);
@@ -716,14 +725,46 @@ dialog,.ddp,.authc{background:#1E293B}
     $('fmj').innerHTML='<option value="">Rank by job: none</option>'+l.map(function(j){return '<option value="'+j.id+'">'+esc(j.t.slice(0,48))+'</option>'}).join('');
     if(sel)$('fmj').value=v;
   }
+  function extUrl(p){
+    if(p.url&&/^https:\/\//.test(p.url))return p.url;
+    var q=encodeURIComponent(p.sk[0]);
+    return p.plat==='Fiverr'?'https://www.fiverr.com/search/gigs?query='+q:'https://www.upwork.com/nx/search/talent/?q='+q;
+  }
+  function cand(id){return mine.concat(people).filter(function(z){return z.id===id})[0]}
+  var tc={outreach:0,outreachTotal:0,saved:0,savedTotal:0},tl={out:{},saved:{}};
+  function tShow(){$('s5').textContent=tc.outreach;$('s6').textContent=tc.saved;if($('fc').dataset.base!==undefined)$('fc').textContent=$('fc').dataset.base+' Active outreach: '+tc.outreach+'. Saved talent: '+tc.saved+'.'}
+  function tEvent(type,id){
+    if(APP&&me){sApi('/api/me/talent',{method:'POST',body:{type:type,id:String(id)}}).then(function(d){tc=d;tShow()}).catch(function(){})}
+    else{
+      if(type==='message'){tl.out[id]=1;tc.outreachTotal++}else if(type==='save'){if(!tl.saved[id])tc.savedTotal++;tl.saved[id]=1}else delete tl.saved[id];
+      tc.outreach=Object.keys(tl.out).length;tc.saved=Object.keys(tl.saved).length;tShow();
+    }
+  }
+  function openThread(p){
+    var T=$('tmsg');
+    if(!APP||!me){T.textContent='Message threads open in the signed-in app on your server.';return}
+    T.textContent='Opening the conversation…';
+    mgLoadList().then(function(){
+      var rid=onb[p.id];
+      if(rid&&rid!==1&&mg.rooms.some(function(r){return r.id===rid})){T.textContent='';tab('msg');return mgOpen(rid)}
+      return sApi('/api/rooms',{method:'POST',body:{kind:'quote',title:'Chat with '+p.n,clientName:p.n,brief:'Direct conversation with '+p.n+' ('+p.role+').',email:p.email||'',subject:'Message from '+($('pb').value||'ScaleDesk'),message:'Hello '+p.n.split(' ')[0]+',\n\nI would like to talk to you about some work. Open your private link to reply:\n{link}'}}).then(function(d){
+        onb[p.id]=d.id;mg.links[d.id]=location.origin+'/r#t='+d.tokens.developer;saveF();T.textContent='';tab('msg');
+        return mgLoadList().then(function(){return mgOpen(d.id)});
+      });
+    }).catch(function(e){T.textContent='Could not open the conversation: '+e.message});
+  }
   function flist(){
     var t=$('fq').value.toLowerCase(),a=$('fa').value,mj=find(+$('fmj').value);
     var out=mine.concat(people).filter(function(p){return (a==='Any availability'||LBL[stOf(p)]===a)&&(!t||(p.n+' '+p.role+' '+p.sk.join(' ')).toLowerCase().indexOf(t)>-1)}).map(function(p){return {p:p,m:mj?scoreCand(mj,p):null}});
     if(mj)out.sort(function(x,y){return y.m.score-x.m.score});
-    $('fc').textContent=out.length+' freelancer'+(out.length===1?'':'s')+(mj?' ranked for "'+mj.t+'"':' looking for work')+'. Shortlisted: '+team.length+'. Statuses change on their own to show how live availability will work.';
+    $('fc').dataset.base=out.length+' remote freelancer'+(out.length===1?'':'s')+(mj?' ranked for "'+mj.t+'"':' looking for work')+'. Sample profiles show how live availability will work.';
+    tShow();
     $('fl').innerHTML=out.map(function(o){
-      var p=o.p,f=team.indexOf(p.id)>-1,st=stOf(p),r=rep(p),own=String(p.id).charAt(0)==='m';
-      return '<article class="person"><h3>'+esc(p.n)+(o.m?' <span class="badge2">'+o.m.score+'% match</span>':'')+'</h3><p>'+esc(p.role)+' · '+esc(p.loc)+' · '+(r.n?'★ '+r.rating+' ('+r.n+' jobs)':'New')+'</p><p>'+esc(p.bio)+'</p>'+(o.m?'<p><i>'+esc(o.m.why.join(', '))+'</i></p>':'')+'<div class="meta">'+p.sk.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div><div class="row"><span><b>$'+p.r+'/hr</b> · <span class="st '+st+'">● '+LBL[st]+'</span></span><span style="display:flex;gap:6px">'+(own?'<button class="btn alt sm" data-st="'+p.id+'">Set status</button>':'')+'<button class="btn alt sm" data-msg="'+p.id+'">Message</button><button class="btn sm'+(f?'':' alt')+'" data-fav="'+p.id+'">'+(f?'Shortlisted':'Shortlist')+'</button></span></div></article>';
+      var p=o.p,f=team.indexOf(p.id)>-1,st=stOf(p),own=String(p.id).charAt(0)==='m',ob=!!onb[p.id];
+      return '<article class="person"><h3>'+esc(p.n)+(o.m?' <span class="badge2">'+o.m.score+'% match</span>':'')+'</h3><p>'+esc(p.role)+' · '+esc(p.loc)+'</p><p class="rt">'+esc(ratingLine(p))+'</p><p>'+esc(p.bio)+'</p>'+(o.m?'<p><i>'+esc(o.m.why.join(', '))+'</i></p>':'')+
+        '<div class="meta">'+p.sk.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+(own?'':'<span>Sample profile</span>')+(ob?'<span class="badge">Onboarded</span>':'')+'</div>'+
+        '<div class="row"><span><b>$'+p.r+'/hr</b> · <span class="st '+st+'">● '+LBL[st]+'</span></span></div>'+
+        '<div class="tacts"><button class="btn sm" data-tmsg="'+p.id+'" type="button">Message</button><button class="btn alt sm" data-msg="'+p.id+'" type="button">Request quote</button><button class="btn sm'+(f?'':' alt')+'" data-fav="'+p.id+'" type="button">'+(f?'Saved ✓':'Save')+'</button><button class="btn alt sm" data-onb="'+p.id+'" type="button">'+(ob?'Onboarded ✓':'Mark onboarded')+'</button>'+(own?'<button class="btn alt sm" data-st="'+p.id+'" type="button">Set status</button>':'')+'</div></article>';
     }).join('')||'<p style="color:var(--muted)">No freelancers match. Try another skill.</p>';
   }
   var nid=100,paused=false,lastUp=Date.now();
@@ -769,18 +810,23 @@ dialog,.ddp,.authc{background:#1E293B}
   }
   var DEL={"Websites":["Responsive design for phone and desktop","Contact form and basic SEO setup","Speed optimisation and testing","Handover with a short training video"],"Games":["Playable build with the core mechanics","Menus, levels and sound","Testing on target devices","Source code and release support"],"Web apps":["Secure login and admin panel","Core features built to your brief","Testing and bug fixing","Deployment and documentation"],"Mobile apps":["App for iOS and Android","Accounts and push notifications","Testing on real devices","Store submission support"],"AI and automation":["Integration with your tools and data","Prompt and workflow design","Testing with real examples","Documentation and handover"],"BPO":["Work done to your written checklist","Accuracy checks on every batch","Weekly report of tasks completed","Backup person for time off"],"Virtual Assistant":["Inbox, calendar and admin support","Data entry and research","Daily or weekly updates","Hours that suit your time zone"],"Customer Support":["Replies within the agreed response time","Your help-desk tool and saved replies","Weekly ticket summary","Clear escalation to you"],"Cold Outreach":["Targeted prospect list","Personal emails with follow-ups","Replies passed on the same day","Weekly results report"]};
   function dl(b){return b<500?5:b<1500?10:b<3500?21:35}
-  function dlj(j){return jbt(j)==='hr'?7:dl(j.b)}
+  function dlj(j){return jbt(j)==='hr'?7:5}
+  function splitText(a){return a.length===1?'100% before the final files are released':a.length===2?'two stages: '+a[0]+'% upfront, '+a[1]+'% on delivery':'three milestones: '+a[0]+'% to start, '+a[1]+'% at the midpoint, '+a[2]+'% on delivery'}
   function gen(){
     var j=find(+$('pj').value)||jobs[0];if(!j){$('po').textContent='No jobs yet. Jobs appear here as they are collected.';return}
     if(cpJob!==j.id){cpJob=j.id;$('cq').value=jbt(j)==='fixed'?(j.b||''):''}
-    var n=$('pn').value||'Your Name',s=$('ps').value,c=$('pc').value,tn=$('pt').value,t=jbt(j),hr=t==='hr',yr=t==='yr';
-    var pr=ov?ov.price:(yr?0:j.b),days=ov?ov.days:dlj(j),dv=DEL[j.c]||DEL.Websites,sig=n+($('pb').value?'\n'+$('pb').value:'')+(c?'\n'+c:''),sub='Proposal: '+j.t,body;
-    var pt=pr?(hr?money(pr)+' / hr':money(pr)):'a price to be agreed';
+    var n=$('pn').value||'Your Name',s=$('ps').value.trim(),c=$('pc').value.trim(),tn=$('pt').value,t=jbt(j),hr=t==='hr',yr=t==='yr';
+    var pr=ov?ov.price:(yr?0:j.b),days=ov&&ov.days?ov.days:5,dv=(DEL[j.c]||DEL.Websites).slice(0,3);
+    var fn=n.trim().split(/\s+/)[0]||'Your Name',dur=days===5?'3–5 business days':days+' business days';
+    var plan=ov&&ov.split?splitText(ov.split):'two stages: 50% upfront, 50% on delivery';
+    var pt=pr?(hr?money(pr)+' / hr':money(pr)):'a price to be agreed',sub='Proposal: '+j.t;
+    var greet=tn==='pro'?'Hello, I am writing about "'+j.t+'" and would be glad to help.':'Hi there, I saw your post "'+j.t+'" and I would be glad to help.';
+    var cta='Reply here or connect via my ScaleDesk workspace to confirm details.'+(c?'\nContact: '+c:'')+'\n\nBest regards,\n'+fn+' | ScaleDesk',body;
     if(tn==='short'){
-      body='Hello,\n\n'+(hr?'I can take on "'+j.t+'" at '+pt+' and start right away. ':'I can deliver "'+j.t+'" for '+pt+' in about '+days+' days. ')+s+'\n\n'+(hr?'Shall we talk this week?':'Shall we start this week?')+'\n\n'+sig;
+      body=greet+'\n\n'+(hr?'Rate: '+pt+', starting right away.':pt+' in '+dur+', paid in '+plan+'.')+'\n\n'+cta;
     }else{
-      var fr=tn==='friendly',tl=hr?'• I can start right away and send a short progress update every week\n• Rate: '+pt+', billed weekly for the hours worked\n• A trial week is welcome if you would like one':'• Delivery in about '+days+' days\n• Total price: '+pt+', paid in three milestones (30% to start, 40% at the midpoint, 30% on delivery)\n• Two rounds of revisions included';
-      body=(fr?'Hi there!\n\nThanks for sharing ':'Hello,\n\nThank you for posting ')+'"'+j.t+'". I have read the brief. Scope as I understand it: '+j.d+'\n\nAbout me\n'+s+'\n\nWhat you will receive\n'+dv.map(function(x){return '• '+x}).join('\n')+'\n\nTimeline and price\n'+tl+'\n\nNext steps\nReply to this message and we can confirm the details in a short call, then I can start right away.\n\n'+(fr?'Thanks for considering me,\n':'Kind regards,\n')+sig;
+      body=greet+'\n\nAbout me\n'+s+'\n\nWhat you will receive\n'+dv.map(function(x){return '• '+x}).join('\n')+'\n\nTimeline and milestones\n'+
+        (hr?'• Start: right away, with a short progress update each week\n• Rate: '+pt+', billed weekly for the hours worked':'• Delivery: '+dur+'\n• Price: '+pt+', paid in '+plan)+'\n\n'+cta;
     }
     $('po').textContent='Subject: '+sub+'\n\n'+body;
     $('em').href='mailto:?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
@@ -867,12 +913,14 @@ dialog,.ddp,.authc{background:#1E293B}
     if(b.dataset.write){fillSel();$('pj').value=b.dataset.write;gen();tab('prop')}
     if(b.dataset.mv){var a=b.dataset.mv.split(':');var pp=pipe.filter(function(z){return z.id===+a[0]})[0];if(pp)mvDeal(pp.id,pp.stage+ +a[1])}
     if(b.dataset.rm){pipe=pipe.filter(function(z){return z.id!==+b.dataset.rm});save();board();list(true)}
-    if(b.dataset.fav){var i=team.indexOf(b.dataset.fav);if(i>-1)team.splice(i,1);else team.push(b.dataset.fav);saveF();flist()}
+    if(b.dataset.fav){var i=team.indexOf(b.dataset.fav);if(i>-1){team.splice(i,1);tEvent('unsave',b.dataset.fav)}else{team.push(b.dataset.fav);tEvent('save',b.dataset.fav)}saveF();flist()}
+    if(b.dataset.onb){if(onb[b.dataset.onb])delete onb[b.dataset.onb];else onb[b.dataset.onb]=1;saveF();flist()}
+    if(b.dataset.tmsg){var tp=cand(b.dataset.tmsg);if(tp){tEvent('message',tp.id);if(onb[tp.id])openThread(tp);else{$('tmsg').textContent='Opened '+tp.n+' on '+(tp.url?'their profile page':(tp.plat||'Upwork')+' (search results for '+tp.sk[0]+')')+'.';window.open(extUrl(tp),'_blank','noopener')}}}
     if(b.id==='fadd'){
       var nm=$('fn').value.trim(),sk=$('fs').value.split(',').map(function(s){return s.trim()}).filter(Boolean),rt=+$('fr').value;
       if(!nm||!sk.length||!rt){(nm?(sk.length?$('fr'):$('fs')):$('fn')).focus();return}
-      mine.unshift({id:"m"+Date.now(),n:nm,email:$('fe2').value.trim(),role:"New on ScaleDesk",sk:sk,r:rt,loc:"Worldwide",av:"Available now",bio:"Looking for new projects."});
-      $('fn').value=$('fs').value=$('fr').value=$('fe2').value='';saveF();flist();
+      mine.unshift({id:"m"+Date.now(),n:nm,email:$('fe2').value.trim(),url:/^https:\/\//i.test($('fu').value.trim())?$('fu').value.trim().slice(0,300):'',role:"New on ScaleDesk",sk:sk,r:rt,loc:"Worldwide",av:"Available now",bio:"Looking for new projects."});
+      $('fn').value=$('fs').value=$('fr').value=$('fe2').value=$('fu').value='';saveF();flist();
     }
     if(b.dataset.msg){
       tgt=mine.concat(people).filter(function(z){return z.id===b.dataset.msg})[0];
@@ -928,10 +976,11 @@ dialog,.ddp,.authc{background:#1E293B}
   var syncP=false;
   function pushNow(){
     if(!syncP||!APP||!me)return;syncP=false;
-    sApi('/api/me/data',{method:'PUT',keepalive:true,body:{pipe:pipe,team:team,mine:mine,pays:pays,sender:{n:$('pn').value,b:$('pb').value,c:$('pc').value,s:$('ps').value}}}).catch(function(){syncP=true;setTimeout(pushNow,5000)});
+    sApi('/api/me/data',{method:'PUT',keepalive:true,body:{pipe:pipe,team:team,mine:mine,onb:onb,pays:pays,sender:{n:$('pn').value,b:$('pb').value,c:$('pc').value,s:$('ps').value}}}).catch(function(){syncP=true;setTimeout(pushNow,5000)});
   }
   window.addEventListener('pagehide',function(){clearTimeout(syncT);pushNow()});
   document.addEventListener('visibilitychange',function(){if(document.hidden){clearTimeout(syncT);pushNow()}});
+  function aboutDef(b){return (b||'Our agency')+' is a BPO and virtual assistant agency providing back-office, administrative, customer support and data entry services. Our trained remote team works to written checklists with quality checks and regular progress reports, so you can hand work over with confidence.'}
   function daysLeft(t){return Math.max(0,Math.ceil((t-Date.now())/864e5))}
   function planText(u){
     if(u.access==='owner')return 'Owner account';
@@ -975,10 +1024,11 @@ dialog,.ddp,.authc{background:#1E293B}
     if(/billing=/.test(location.search))history.replaceState(null,'',location.pathname);
     $('lock').hidden=true;
     var x=d.data||{},sd=x.sender||{};
-    pipe=x.pipe||[];team=x.team||[];mine=x.mine||[];pays=x.pays||[];
+    pipe=x.pipe||[];team=x.team||[];mine=x.mine||[];onb=x.onb||{};pays=x.pays||[];tc=me.talent||tc;
     $('pn').value=sd.n||me.name||'';$('pb').value=sd.b||me.business||'';$('pc').value=sd.c||me.email||'';
-    $('ps').value=sd.s||'Write a short summary of your experience and what you deliver.';
+    $('ps').value=(!sd.s||/^Write a short summary|^Scale Desk delivers websites/.test(sd.s))?aboutDef(sd.b||me.business):sd.s;
     if(migrate(pipe))save();
+    tShow();if((tc.saved||0)!==team.length)team.forEach(function(id){tEvent('save',id)});
     $('fchat').hidden=false;$('fsend').hidden=false;$('fsw').hidden=false;$('sendc').hidden=false;
     jobs=[];seen={};live=true;base0=location.origin;
     board();stats();flist();list();gen();status();tab('dash');
@@ -1048,15 +1098,11 @@ dialog,.ddp,.authc{background:#1E293B}
       var cj=find(+$('pj').value);if(!cj)return;
       var cprice=+$('cq').value,cem=$('ce').value.trim(),cnm=$('cc').value.trim();
       if(!cnm||!(cprice>0)){$('cs').textContent='Enter the client name and your price.';return}
-      ov={price:cprice,days:dl(cprice)};gen();ov=null;
-      var cbody=$('po').textContent.replace(/^Subject:[^\n]*\n\n/,'');
-      var csplit=$('csp').value.split(',').map(Number),cpl=csplit.length===1?'Payment: the full amount is paid before the final files are released.':'Payment: '+csplit.map(function(x,i){return x+'% '+(csplit.length===3?['to start','at the midpoint','on delivery'][i]:csplit.length===2?['to start','on delivery'][i]:'')}).join(', ')+'. Final files are released after the full amount is paid.';
-      cbody=cbody+'\n\n'+cpl;
       b.disabled=true;$('cs').textContent='Sending…';
       sApi('/api/rooms',{method:'POST',body:{kind:'project',offer:true,offerText:cbody,title:cj.t,clientName:cnm,amount:cprice,split:csplit,currency:$('cu').value||'USD',email:cem,subject:'Proposal: '+cj.t,message:'Hello '+cnm.split(' ')[0]+',\n\nHere is my proposal for "'+cj.t+'".\n\n'+cbody+'\n\nOpen your private link to read it, accept the offer, chat with me and follow the work:\n{link}'}}).then(function(d){
         mg.links[d.id]=location.origin+'/r#t='+d.tokens.client;mg.offerRoom=d.id;$('copen').hidden=false;$('clink').value=location.origin+'/r#t='+d.tokens.client;$('clink').hidden=!!d.emailed;
         $('cs').textContent=d.emailed?'Sent to '+cem+'. The project room is in your rooms list.':(d.emailError?d.emailError+'. ':'')+'Copy the link below and send it to your client yourself.';
-        lead(cj,0,{bid:cprice,days:dl(cprice),sent:true,bt:'fixed'});list(true);
+        lead(cj,0,{bid:cprice,days:5,sent:true,bt:'fixed'});list(true);
       }).catch(function(er){$('cs').textContent='Could not send: '+er.message}).then(function(){b.disabled=false});
     }
     if(b.id==='fsend'&&tgt){
@@ -1065,7 +1111,7 @@ dialog,.ddp,.authc{background:#1E293B}
       b.disabled=true;$('fst').textContent='Sending…';
       sApi('/api/rooms',{method:'POST',body:{kind:'quote',title:'Quote request: '+fj.t,clientName:tgt.n,brief:fj.t+'\n\n'+fullOf(fj),email:fem,subject:'Quotation request: '+fj.t,message:fBody(fj,'{link}')}}).then(function(d){
         qInv[tgt.id+':'+fj.id]=location.origin+'/r#t='+d.tokens.developer;fMsg();
-        $('fst').textContent=d.emailed?'Message sent to '+fem+'. Their quotation will appear in your rooms list.':(d.emailError?d.emailError+'. ':'')+'The message above now has their private link. Copy it or send it by WhatsApp.';
+        tEvent('message',tgt.id);$('fst').textContent=d.emailed?'Message sent to '+fem+'. Their quotation will appear in your rooms list.':(d.emailError?d.emailError+'. ':'')+'The message above now has their private link. Copy it or send it by WhatsApp.';
       }).catch(function(er){$('fst').textContent='Could not send: '+er.message}).then(function(){b.disabled=false});
     }
     if(b.id==='fchat'&&tgt){
@@ -1076,7 +1122,7 @@ dialog,.ddp,.authc{background:#1E293B}
         mg.links[d.id]=location.origin+'/r#t='+d.tokens.developer;
         return sApi('/api/rooms/'+d.id+'/messages',{method:'POST',body:{body:fBody(cj3,null,'chat')}}).then(function(){return d});
       }).then(function(d){
-        $('fst').textContent='';tab('msg');
+        tEvent('message',tgt.id);$('fst').textContent='';tab('msg');
         return mgLoadList().then(function(){return mgOpen(d.id)}).then(function(){
           $('mg_info').textContent=d.emailed?'Email sent to '+cem+' with their private link.':(d.emailError?d.emailError+'. ':'')+'Send the private link below to the freelancer so they can read your message and reply.';
         });

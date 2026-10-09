@@ -42,8 +42,10 @@ const cookieFor = (req, token, on) => 'sd_admin=' + (on ? token : '') + '; Path=
   (((req.headers['x-forwarded-proto'] || '').split(',')[0] === 'https') ? '; Secure' : '');
 const giveCookie = (req, res, u, token) => { if (u && OWNERS.includes(u.email)) res.setHeader('Set-Cookie', cookieFor(req, token, true)); };
 const BIZ = process.env.BUSINESS_NAME || 'Scale Desk';
+// Talent counters live on the account itself (not in the browser data), so they are backed up to Upstash with everything else.
+const talentStats = u => { const t = u.talent || {}; return { outreach: Object.keys(t.out || {}).length, outreachTotal: t.outTotal || 0, saved: Object.keys(t.saved || {}).length, savedTotal: t.savedTotal || 0 }; };
 const pub = u => ({ id: u.id, email: u.email, name: u.name, business: u.business, access: access(u), verified: !!u.verified || OWNERS.includes(u.email),
-  trialUntil: u.trialUntil || 0, paidUntil: u.paidUntil || 0, createdAt: u.createdAt });
+  trialUntil: u.trialUntil || 0, paidUntil: u.paidUntil || 0, createdAt: u.createdAt, talent: talentStats(u) });
 
 // ---- Sessions ----
 function newSession(uid) {
@@ -190,7 +192,7 @@ async function run(req, res, u) {
     const ss = db.sessions[sha(req.headers['x-session'])], keep = (OWNERS.includes(s.user.email) ? 365 : SESSION_DAYS) * DAY;
     if (ss && ss.exp - now() < keep - DAY) { ss.exp = now() + keep; save(); }
     giveCookie(req, res, s.user, req.headers['x-session']);   // stay signed in while you keep using it
-    return send(res, 200, { user: pub(s.user), data: s.active ? s.user.data : null,
+    return send(res, 200, { user: pub(s.user), data: s.active ? s.user.data : null, stats: s.user.stats || { outreach: 0, saved: Math.max(0, ((s.user.data && s.user.data.team) || []).length) },
       plan: { price: PRICE_TEXT, subscribeUrl: SUBSCRIBE_URL, support: SUPPORT_EMAIL, billing: billingOn(), providers: providersOn(), email: mailer.enabled(), ai: !!process.env.ANTHROPIC_API_KEY, storage: s.access === 'owner' ? persist.status().mode : undefined } });
   }
   if (p === '/api/me/data' && m === 'PUT') {
@@ -201,6 +203,20 @@ async function run(req, res, u) {
     if (raw === null || raw.length > MAX_DATA) return send(res, 413, { error: 'Too much data' });
     let d; try { d = JSON.parse(raw); } catch (e) { return send(res, 400, { error: 'Bad JSON' }); }
     s.user.data = d; save(); return send(res, 200, { ok: true });
+  }
+  // Talent counters (active outreach, saved talent). Kept on the account, so they are backed up to Upstash with everything else.
+  if (p === '/api/me/talent' && m === 'POST') {
+    const s = userFrom(req);
+    if (!s) return send(res, 401, { error: 'Please sign in' });
+    if (!s.active) return send(res, 402, { error: 'Your plan is not active' });
+    const d = await json(req), id = clip(d && d.id, 40), type = d && d.type;
+    if (!id || !['message', 'save', 'unsave'].includes(type)) return send(res, 400, { error: 'Bad request' });
+    const t = s.user.talent = s.user.talent || { out: {}, saved: {}, outTotal: 0, savedTotal: 0 };
+    if (type === 'message') { t.outTotal = (t.outTotal || 0) + 1; if (Object.keys(t.out).length < 2000) t.out[id] = now(); }
+    else if (type === 'save') { if (!t.saved[id]) { t.savedTotal = (t.savedTotal || 0) + 1; if (Object.keys(t.saved).length < 2000) t.saved[id] = now(); } }
+    else delete t.saved[id];
+    save();
+    return send(res, 200, talentStats(s.user));
   }
   if (p === '/api/stream-ticket' && m === 'GET') {
     const s = userFrom(req);
@@ -305,7 +321,7 @@ exports.isOwnerCookie = req => {
 exports.consumeTicket = consumeTicket;
 exports.handle = (req, res, u) => {
   const p = u.pathname;
-  if (!(p === '/api/plan' || p.startsWith('/api/auth/') || p === '/api/me' || p === '/api/me/data' || p === '/api/stream-ticket' ||
+  if (!(p === '/api/plan' || p.startsWith('/api/auth/') || p === '/api/me' || p === '/api/me/data' || p === '/api/me/talent' || p === '/api/stream-ticket' ||
         p === '/api/webhooks/subscription' || p.startsWith('/api/admin/'))) return false;
   run(req, res, u).catch(e => { console.error('accounts:', e.message); if (!res.headersSent) send(res, 500, { error: 'Server error' }); });
   return true;
