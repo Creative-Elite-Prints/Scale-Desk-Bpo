@@ -161,7 +161,7 @@ A project room created with **Send offer to client** shows your proposal and pri
 | `ACCESS_KEY` | Optional key for the job feed, for your own scripts. Signed-in users do not need it. |
 | `PAYFAST_MERCHANT_ID`, `PAYFAST_MERCHANT_KEY`, `PAYFAST_PASSPHRASE`, `PAYFAST_SUB_AMOUNT`, `PAYFAST_SANDBOX` | PayFast payments and subscriptions (see above). |
 | `PAYPAL_CLIENT_ID`, `PAYPAL_CLIENT_SECRET`, `PAYPAL_SANDBOX` | PayPal payments in other currencies (see above). |
-| `SOURCES`, `FREELANCER_TOKEN` | Job sources, and an optional Freelancer.com token. |
+| `SOURCES`, `FREELANCER_ACCESS_TOKEN` (the old name FREELANCER_TOKEN still works) | Job sources, and an optional Freelancer.com token. |
 | `BUSINESS_NAME`, `LEGAL_COUNTRY` | Names used in the Terms, Privacy Policy and emails. |
 | `ANTHROPIC_API_KEY`, `AI_DAILY_LIMIT`, `ANTHROPIC_MODEL` | Turns on the AI assistant, its daily limit per account, and the model. |
 

@@ -22,7 +22,7 @@ accounts.setProviders(billing.providers);
 const PORT = process.env.PORT || 3000;
 const ACCESS_KEY = process.env.ACCESS_KEY || '';          // optional password for the feed
 const ORIGIN = process.env.ALLOWED_ORIGIN || '*';         // set to your site address once hosted
-const FL_TOKEN = process.env.FREELANCER_TOKEN || '';      // optional Freelancer.com API token
+const FL_TOKEN = process.env.FREELANCER_ACCESS_TOKEN || process.env.FREELANCER_TOKEN || '';      // optional Freelancer.com API token
 const SOURCES = (process.env.SOURCES || 'freelancer,remoteok').split(',').map(s => s.trim()).filter(Boolean);
 const KEYWORDS = (process.env.FREELANCER_KEYWORDS || 'virtual assistant,customer support,data entry,cold email,lead generation,appointment setting,website,wordpress,game,mobile app,web app,chatbot')
   .split(',').map(s => s.trim()).filter(Boolean);

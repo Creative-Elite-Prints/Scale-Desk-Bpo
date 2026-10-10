@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>Project room</title>
+<style>
+:root{--bg:#0F172A;--s:#1E293B;--ink:#e6edf7;--mut:#94a3b8;--acc:#06B6D4;--on:#032a33;--line:rgba(148,163,184,.22);--ok:#4ade9a;--warn:#f6c453;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(800px 480px at 5% -10%,rgba(6,182,212,.15),transparent 60%),radial-gradient(700px 480px at 100% 0,rgba(99,102,241,.15),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.w{max-width:860px;margin:0 auto;padding:20px}
+.c{background:var(--s);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:17px;margin:0 0 10px}
+.m{color:var(--mut);font-size:14px}
+.steps{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.st{flex:1;min-width:130px;border-top:4px solid var(--line);padding-top:6px;font-size:14px}
+.st.on{border-color:var(--ok);color:var(--ok);font-weight:700}
+button,.b{font:700 15px inherit;background:var(--acc);color:var(--on);border:0;border-radius:8px;padding:10px 16px;cursor:pointer;text-decoration:none;display:inline-block}
+button.alt{background:none;color:var(--ink);border:1.5px solid var(--line)}
+button:disabled{opacity:.5;cursor:not-allowed}
+input[type=text],input[type=number],textarea{width:100%;font:inherit;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+#msgs{max-height:340px;overflow:auto;margin-bottom:10px}
+.msg{padding:8px 0;border-bottom:1px solid var(--line);white-space:pre-wrap;word-wrap:break-word}
+.msg b{font-size:13px}.msg span{color:var(--mut);font-size:12px;margin-left:6px}
+.f{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.tag.paid{color:var(--ok);border-color:var(--ok)}.tag.due{color:var(--warn);border-color:var(--warn)}
+#wm{position:fixed;inset:0;background:rgba(5,8,16,.88);z-index:9;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:16px}
+#wm[hidden]{display:none}#wmc{max-width:100%;max-height:78vh;border-radius:8px;-webkit-user-select:none;user-select:none;-webkit-touch-callout:none}
+#ck label{display:block;font-size:14px;margin:4px 0}
+.tag{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 8px;margin-left:6px}
+#err{color:#c0392b;min-height:20px;font-size:14px}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="w" id="app">
+  <div class="c">
+    <h1 id="title">Loading…</h1>
+    <div class="m" id="who"></div>
+    <div class="steps" id="steps"></div>
+    <p class="m" id="note"></p>
+    <p><b id="money"></b></p>
+    <div id="ms"></div>
+    <p id="acts"></p>
+  </div>
+  <div class="c" id="rvc" hidden><h2>Review</h2><div id="rvb"></div></div>
+  <div class="c" id="ocard" hidden><h2>Proposal</h2><p id="otext" style="white-space:pre-wrap"></p><p id="oacts"></p></div>
+  <div class="c" id="qcard" hidden>
+    <h2>Project brief</h2>
+    <p id="brief" style="white-space:pre-wrap"></p>
+    <h2>Quotations</h2>
+    <div id="qs"></div>
+    <div id="qform">
+      <p class="m">Send your quotation: your price for the whole project, how many days you need, and anything the client should know.</p>
+      <input id="qa" type="number" min="1" step="0.01" placeholder="Your price" aria-label="Your price" style="max-width:200px"> <input id="qd" type="number" min="1" placeholder="Days" aria-label="Days needed" style="max-width:120px"> 
+      <textarea id="qn" rows="2" placeholder="Notes, examples of similar work (optional)" aria-label="Notes" style="margin-top:8px"></textarea>
+      <p><button id="qsend" type="button">Send quotation</button></p>
+    </div>
+  </div>
+  <div class="c">
+    <h2>Messages</h2>
+    <div id="msgs" aria-live="polite"></div>
+    <textarea id="txt" rows="2" placeholder="Write a message" aria-label="Message"></textarea>
+    <p><button id="send" type="button">Send</button></p>
+  </div>
+  <div class="c">
+    <h2>Files</h2>
+    <div id="files"></div>
+    <p id="up"><input id="pick" type="file" aria-label="Choose a file"> <label id="fl"><input id="fin" type="checkbox"> Final delivery (client gets it after full payment)</label> <button id="upb" type="button" class="alt">Upload</button></p>
+    <div id="ck" hidden class="m"><b>Final delivery checklist.</b> Tick every item before this file goes to the client.
+      <label><input type="checkbox" class="ckb"> Everything in the agreed scope is finished</label>
+      <label><input type="checkbox" class="ckb"> Tested on a phone and on a computer</label>
+      <label><input type="checkbox" class="ckb"> No test content, watermarks or placeholder text left</label>
+      <label><input type="checkbox" class="ckb"> The client's feedback has been dealt with</label>
+      <label><input type="checkbox" class="ckb"> Handover items are ready (files, logins, domain)</label></div>
+    <p class="m">Files up to 7 MB each.</p>
+  </div>
+  <div id="err" role="alert"></div>
+</div>
+<div id="wm" hidden><canvas id="wmc"></canvas><p class="m" style="color:#cfd6ee">Preview only. The finished work is released after full payment.</p><button id="wmx" type="button" class="alt" style="color:#fff;border-color:#fff">Close</button></div>
+<script>
+(function(){
+var T=null;
+try{var h=location.hash.match(/t=([\w.-]+)/);if(h){sessionStorage.setItem('rt',h[1]);history.replaceState(null,'',location.pathname)}T=sessionStorage.getItem('rt')}catch(e){}
+var $=function(i){return document.getElementById(i)};
+var OWN=null,QID=new URLSearchParams(location.search).get('id');
+if(!T&&QID){try{var ss=localStorage.getItem('sd_session'),ak=sessionStorage.getItem('ak');if(ak)OWN={'x-admin-key':ak};else if(ss)OWN={'x-session':ss}}catch(e){}}
+if(!T&&!OWN){$('app').innerHTML='<div class="c">Open the private link you were given.</div>';return}
+var ID=T?T.split('.')[0]:QID,last=0,room=null,tick=0;
+function H(){return T?{Authorization:'Bearer '+T}:OWN}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function money(c,cur){return (c/100).toFixed(2)+' '+cur}
+function day(t){return new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'})}
+function api(path,opt){
+  opt=opt||{};opt.headers=Object.assign({},H(),opt.headers||{});
+  return fetch('/api/rooms/'+ID+path,opt).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||('Error '+r.status));return d},function(){throw new Error('Error '+r.status)})});
+}
+function post(path,body){return api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body||{})})}
+function fail(e){$('err').textContent=e.message}
+function render(){
+  var r=room,open=r.status==='open',paid=r.paidCents>=r.amountCents,client=r.role==='client',qk=r.kind==='quote',dev=r.role==='developer',own=r.role==='owner';
+  $('title').textContent=r.title;
+  $('who').innerHTML=(own?'<a href="/rooms">&larr; Back to your rooms</a> · ':'')+(qk?'Quotation request for '+esc(r.clientName):'You are signed in as the '+esc(r.role)+'. Client: '+esc(r.clientName));
+  var steps=qk?[['Request sent',true],['Quotation received',r.quotes.length>0],['Decision made',r.quotes.some(function(q){return q.status!=='sent'})],['Closed',!open]]:(r.offer?[['Offer accepted',r.offer.accepted],['Client approves',r.approved],['Payment complete',paid],['Room closed',!open]]:[['Work in progress',true],['Client approves',r.approved],['Payment complete',paid],['Room closed',!open]]);
+  $('steps').innerHTML=steps.map(function(s){return '<div class="st'+(s[1]?' on':'')+'">'+(s[1]?'✓ ':'')+s[0]+'</div>'}).join('');
+  $('note').textContent=open?'Open until '+day(r.expiresAt)+'.'+(qk?'':' The room closes after the client approves the work and the full payment is received.'):'Closed ('+r.reason+'). Files can be downloaded until '+day(r.downloadsUntil)+', then they are deleted.';
+  $('money').textContent=qk?'':'Paid '+money(r.paidCents,r.currency)+' of '+money(r.amountCents,r.currency);
+  $('ms').innerHTML=qk?'':(r.milestones||[]).map(function(m){return '<div class="f"><span>'+esc(m.label)+' · '+m.pct+'%</span><span><b>'+money(m.cents,r.currency)+'</b><span class="tag '+m.status+'">'+({paid:'Paid ✓',due:'Due now',upcoming:'Not requested yet'})[m.status]+'</span></span></div>'}).join('');
+  $('acts').innerHTML=qk?'':(r.canPay?(r.payMethods||[]).map(function(m){return '<button class="paycard" data-p="'+m+'" type="button">'+(m==='payfast'?'Pay '+money(r.dueCents,r.currency)+' with PayFast (card or EFT)':m==='paypal'?'Pay '+money(r.dueCents,r.currency)+' with PayPal (PayPal or card)':'Pay '+money(r.dueCents,r.currency)+' with card')+'</button> '}).join(''):'')+(r.canRelease?'<button id="rel" type="button" class="alt">Request next payment</button> ':'')+'<button id="inv" type="button" class="alt">Invoice (PDF)</button> '+(r.canApprove?'<button id="appr" type="button">I am happy with the work: approve</button> ':'')+(client&&r.payUrl?'<a class="b" href="'+esc(r.payUrl)+'" target="_blank" rel="noopener noreferrer">Pay now</a>':'');
+  $('ocard').hidden=!r.offer;
+  if(r.offer){$('otext').textContent=r.offer.text;$('oacts').innerHTML=r.canAccept?'<button id="oacc" type="button">Accept this offer ('+money(r.amountCents,r.currency)+')</button> <button class="alt" id="odec" type="button">Decline</button>':'<b>'+(r.offer.accepted?'Offer accepted':r.status==='open'?'Waiting for the client to accept':'Offer declined')+'</b>'}
+  var WL={pending:'Pending Bid',progress:'In Progress',review:'In Review',completed:'Completed'};
+  if(!qk)$('money').textContent+=' · Status: '+(WL[r.work]||'')
+  $('rvc').hidden=qk||r.work!=='completed';
+  if(!$('rvc').hidden)$('rvb').innerHTML=r.review?'<p style="font-size:20px;margin:0">'+'★'.repeat(r.review.rating)+'☆'.repeat(5-r.review.rating)+'</p><p style="white-space:pre-wrap">'+esc(r.review.comment||'')+'</p>':(r.canReview?'<p>The project is complete. How did it go?</p><label for="rvr">Rating</label><select id="rvr"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select><label for="rvt">Comment (optional)</label><textarea id="rvt" rows="3" maxlength="1000"></textarea><p><button id="rvgo" type="button">Send review</button></p>':'<p class="m">Waiting for the client to leave a review.</p>');
+  $('qcard').hidden=!qk;
+  if(qk){
+    $('brief').textContent=r.brief;
+    $('qs').innerHTML=r.quotes.map(function(q){return '<div class="f"><span><b>'+money(q.cents,r.currency)+'</b> in '+q.days+' days<span class="tag">'+esc(q.status)+'</span>'+(q.note?'<br><span class="m">'+esc(q.note)+'</span>':'')+'</span>'+(own&&open&&q.status==='sent'?'<span><button data-q="'+q.id+'" data-d="accepted" type="button">Accept</button> <button class="alt" data-q="'+q.id+'" data-d="declined" type="button">Decline</button></span>':'')+'</div>'}).join('')||'<p class="m">No quotation yet.</p>';
+    $('qform').style.display=dev&&open?'':'none';
+  }
+  $('files').innerHTML=r.files.map(function(f){return '<div class="f"><span>'+esc(f.name)+'<span class="tag">'+(f.final?'Final':'Preview')+'</span> <span class="m">'+Math.ceil(f.size/1024)+' KB · '+esc(f.by)+'</span></span>'+(f.locked?'<span class="m">Unlocks after full payment</span>':(client&&!f.final&&IMG.test(f.name)?'<button class="alt" data-v="'+f.id+'" type="button">View preview</button>':'<button class="alt" data-f="'+f.id+'" data-n="'+esc(f.name)+'" type="button">Download</button>'))+'</div>'}).join('')||'<p class="m">No files yet.</p>';
+  $('send').disabled=$('txt').disabled=!open;$('up').style.display=open&&(!r.offer||r.offer.accepted)?'':'none';$('fl').style.display=client||qk?'none':'';
+}
+var IMG=/\.(png|jpe?g|gif|webp)$/i;
+function showWm(id){
+  fetch('/api/rooms/'+ID+'/files/'+id,{headers:H()}).then(function(r){if(!r.ok)return r.json().then(function(d){throw new Error(d.error)});return r.blob()}).then(function(bl){
+    var u=URL.createObjectURL(bl),img=new Image();
+    img.onload=function(){
+      var c=$('wmc'),w=Math.min(img.width,1200),h=Math.round(img.height*w/img.width);c.width=w;c.height=h;
+      var x=c.getContext('2d');x.drawImage(img,0,0,w,h);URL.revokeObjectURL(u);
+      var t='PREVIEW · '+room.clientName+' · '+(room.ownerLabel||'Scale Desk'),fs=Math.max(16,Math.round(w/28));
+      x.font='bold '+fs+'px system-ui,sans-serif';x.textAlign='center';x.lineWidth=3;
+      x.save();x.rotate(-Math.PI/7);
+      for(var yy=-h;yy<h*1.6;yy+=fs*3.2)for(var xx=-w;xx<w*1.6;xx+=x.measureText(t).width+fs){
+        x.strokeStyle='rgba(0,0,0,.35)';x.fillStyle='rgba(255,255,255,.55)';x.strokeText(t,xx,yy);x.fillText(t,xx,yy)}
+      x.restore();$('wm').hidden=false;
+    };
+    img.onerror=function(){URL.revokeObjectURL(u);fail(new Error('This file could not be shown'))};
+    img.src=u;
+  }).catch(fail);
+}
+$('wmc').addEventListener('contextmenu',function(e){e.preventDefault()});
+function go(d){
+  if(d.fields){var f=document.createElement('form');f.method='POST';f.action=d.url;
+    Object.keys(d.fields).forEach(function(k){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=d.fields[k];f.appendChild(i)});
+    document.body.appendChild(f);f.submit()}
+  else location.href=d.url;
+}
+function loadRoom(){return api('').then(function(d){room=d;render()}).catch(fail)}
+function loadMsgs(){
+  return api('/messages?since='+last).then(function(a){
+    if(!a.length)return;var box=$('msgs'),bottom=box.scrollTop+box.clientHeight>=box.scrollHeight-30;
+    a.forEach(function(m){last=Math.max(last,m.id);box.insertAdjacentHTML('beforeend','<div class="msg"><b>'+esc(m.name)+'</b><span>'+new Date(m.at).toLocaleString()+'</span><br>'+esc(m.body)+'</div>')});
+    if(bottom)box.scrollTop=box.scrollHeight;
+  }).catch(fail);
+}
+document.addEventListener('change',function(e){if(e.target.id==='fin')$('ck').hidden=!e.target.checked});
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;$('err').textContent='';
+  if(b.id==='appr'&&confirm('Approve this work? The room closes once the full payment is also received.'))post('/approve').then(function(d){room=d;render()}).catch(fail);
+  if(b.id==='rvgo')post('/review',{rating:+$('rvr').value,comment:$('rvt').value}).then(function(d){room=d;render()}).catch(fail);
+  if(b.id==='qsend')post('/quote',{amount:+$('qa').value,days:+$('qd').value,note:$('qn').value}).then(function(d){room=d;render();loadMsgs();$('qa').value=$('qd').value=$('qn').value=''}).catch(fail);
+  if(b.dataset.q)post('/decide',{quoteId:b.dataset.q,decision:b.dataset.d}).then(function(d){room=d;render();loadMsgs()}).catch(fail);
+  if(b.id==='oacc'||b.id==='odec')post('/offer',{decision:b.id==='oacc'?'accept':'decline'}).then(function(d){room=d;render();loadMsgs()}).catch(fail);
+  if(b.id==='wmx')$('wm').hidden=true;
+  if(b.dataset.v)showWm(b.dataset.v);
+  if(b.id==='rel'&&confirm('Ask the client to pay the next milestone now?'))post('/release').then(function(d){room=d;render();loadMsgs()}).catch(fail);
+  if(b.id==='inv')fetch('/api/rooms/'+ID+'/invoice',{headers:H()}).then(function(r){if(!r.ok)return r.json().then(function(d){throw new Error(d.error)});return r.blob()}).then(function(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download='invoice.pdf';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}).catch(fail);
+  if(b.classList.contains('paycard')){b.disabled=true;post('/checkout',{provider:b.dataset.p}).then(go).catch(function(e){fail(e);b.disabled=false})}
+  if(b.id==='send'){var t=$('txt').value.trim();if(t)post('/messages',{body:t}).then(function(){$('txt').value='';loadMsgs()}).catch(fail)}
+  if(b.id==='upb'){
+    var f=$('pick').files[0];if(!f){$('err').textContent='Choose a file first';return}
+    if(f.size>7*1024*1024){$('err').textContent='File must be under 7 MB';return}
+    var fin=$('fin').checked,allck=Array.prototype.every.call(document.querySelectorAll('.ckb'),function(x){return x.checked});
+    if(fin&&!allck){$('err').textContent='Tick every item in the Final delivery checklist first';return}
+    b.disabled=true;var rd=new FileReader();
+    rd.onload=function(){post('/files',{name:f.name,data:String(rd.result).split(',')[1],final:fin,checklistDone:fin&&allck}).then(function(d){room=d;render();$('pick').value='';$('fin').checked=false;$('ck').hidden=true;Array.prototype.forEach.call(document.querySelectorAll('.ckb'),function(x){x.checked=false})}).catch(fail).then(function(){b.disabled=false})};
+    rd.readAsDataURL(f);
+  }
+  if(b.dataset.f){
+    fetch('/api/rooms/'+ID+'/files/'+b.dataset.f,{headers:H()}).then(function(r){if(!r.ok)return r.json().then(function(d){throw new Error(d.error)});return r.blob()}).then(function(bl){var a=document.createElement('a');a.href=URL.createObjectURL(bl);a.download=b.dataset.n;a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000)}).catch(fail);
+  }
+});
+loadRoom().then(loadMsgs);
+if(/paid=1/.test(location.search)){var pn=0,pv=setInterval(function(){loadRoom();if(++pn>10)clearInterval(pv)},3000)}
+setInterval(function(){if(document.hidden)return;loadMsgs();if(++tick%5===0)loadRoom()},3000);
+})();
+</script>
+</body>
+</html>

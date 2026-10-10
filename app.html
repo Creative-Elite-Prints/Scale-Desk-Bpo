@@ -1,0 +1,1399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head><script>window.SD_APP=true</script><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0F172A"><link rel="apple-touch-icon" href="/icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ScaleDesk – Leads, proposals and deals</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%228%22%20fill%3D%22%230F172A%22%20stroke%3D%22%2306B6D4%22%20stroke-width%3D%221.6%22/%3E%3Cpath%20d%3D%22M21%2010.5H13.5a3%203%200%200%200%200%206h5a3%203%200%200%201%200%206H10.5%22%20fill%3D%22none%22%20stroke%3D%22%2306B6D4%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%2210.5%22%20r%3D%222%22%20fill%3D%22%2306B6D4%22/%3E%3Ccircle%20cx%3D%2210.5%22%20cy%3D%2222.5%22%20r%3D%222%22%20fill%3D%22%236366F1%22/%3E%3C/svg%3E">
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@600;800&family=Manrope:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0F172A;--surface:#1E293B;--glass:rgba(30,41,59,.58);--ink:#e6edf7;--muted:#94a3b8;--accent:#06B6D4;--ind:#6366F1;--on-accent:#032a33;--line:rgba(148,163,184,.2);--tag:rgba(6,182,212,.14);color-scheme:dark;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:400 16px/1.55 Manrope,system-ui,sans-serif}
+h1,h2,h3{font-family:Sora,"Helvetica Neue",Arial,sans-serif;margin:0;letter-spacing:-.02em}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.wrap{max-width:1040px;margin:0 auto;padding:0 20px 40px}
+header{display:flex;justify-content:space-between;align-items:center;padding:20px 0 8px}
+.logo{font:800 22px Sora,sans-serif}
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:14px 0 20px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:14px 16px}
+.stat b{display:block;font:800 26px Sora,sans-serif}
+.stat span{font-size:13px;color:var(--muted)}
+.tabs{display:flex;gap:6px;border-bottom:1px solid var(--line);margin-bottom:18px}
+.tab{font:700 15px Manrope,sans-serif;background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;color:var(--muted);cursor:pointer}
+.tab[aria-selected="true"]{color:var(--ink);border-color:var(--accent)}
+input,select,textarea{font:inherit;padding:11px 13px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink);width:100%}
+textarea{min-height:110px;resize:vertical}
+label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
+.btn{font:700 15px Sora,sans-serif;background:var(--accent);color:var(--on-accent);border:0;border-radius:8px;padding:11px 18px;cursor:pointer}
+.btn.alt{background:none;color:var(--ink);border:1.5px solid var(--line)}
+.btn.sm{padding:6px 12px;font-size:13px}
+.bar{display:grid;grid-template-columns:1fr 200px;gap:10px;margin-bottom:12px}
+.job{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px;margin-bottom:10px;display:grid;grid-template-columns:1fr auto;gap:8px 18px}
+.job h3{font-size:17px;font-weight:600}
+.job p{margin:4px 0 0;color:var(--muted);font-size:14px}
+.meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;font-size:12px}
+.meta span{background:var(--tag);padding:2px 9px;border-radius:99px}
+.side{text-align:right}
+.price{font:800 19px Sora,sans-serif}
+.acts{display:flex;gap:6px;margin-top:8px;justify-content:flex-end}
+.two{display:grid;grid-template-columns:1fr 1.2fr;gap:24px}
+.out{white-space:pre-wrap;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-height:260px}
+.board{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
+.col{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;min-height:200px}
+.col h3{font-size:15px;margin-bottom:10px}
+.lead{border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:8px;font-size:14px}
+.lead b{display:block;font-weight:700}
+.lead div{display:flex;gap:6px;margin-top:8px}
+.pfr{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:6px 0 10px}.pfs{margin:0}.pfw{border:1px solid var(--line);border-radius:10px;padding:12px;margin:8px 0}.pfw img{max-width:160px;max-height:110px;border-radius:6px;display:block;margin:6px 0}
+.note{font-size:13px;color:var(--muted);margin-top:18px}
+@media (max-width:820px){.stats{grid-template-columns:1fr 1fr}.two,.board{grid-template-columns:1fr}.job{grid-template-columns:1fr}.side{text-align:left}.acts{justify-content:flex-start}.bar{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <button class="ibt" id="sbt" type="button" aria-label="Show or hide the menu" aria-expanded="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+  <a class="brand" href="/app" aria-label="ScaleDesk home"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#6366F1"/></linearGradient><filter id="lgf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="2" y="2" width="28" height="28" rx="8" fill="#0F172A" stroke="url(#lgg)" stroke-width="1.5"/><path d="M21 10.5H13.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H10.5" fill="none" stroke="url(#lgg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#lgf)"/><circle cx="21" cy="10.5" r="2" fill="#06B6D4"/><circle cx="10.5" cy="22.5" r="2" fill="#6366F1"/></svg><b>ScaleDesk</b></a>
+  <span class="grow"></span>
+  <details class="dd" id="add" hidden><summary id="asum">Account</summary><div class="ddp"><p class="note" id="ainfo" style="margin:4px 8px 10px"></p><div style="display:flex;gap:6px;padding:0 6px 6px"><button class="btn alt sm" id="abo" type="button" hidden>Back office</button><button class="btn alt sm" id="aplan" type="button">Plan</button><button class="btn alt sm" id="aout" type="button">Sign out</button></div></div></details>
+</header>
+<div class="shell">
+<nav id="sb" aria-label="Main"><button class="nv" type="button" data-t="dash" title="Dashboard" aria-selected="true"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="9" rx="1.5"/><rect x="14" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="12" width="7" height="9" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/></svg><span class="nl">Dashboard</span></button><button class="nv" type="button" data-t="jobs" title="Live Job Leads" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"/></svg><span class="nl">Live Job Leads</span></button><button class="nv" type="button" data-t="pipe" title="Lead Pipeline" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="5" height="18" rx="1.5"/><rect x="10" y="3" width="5" height="12" rx="1.5"/><rect x="17" y="3" width="4" height="8" rx="1.5"/></svg><span class="nl">Lead Pipeline</span></button><button class="nv" type="button" data-t="free" title="Find Talent" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c0-3.6 3-6 6.5-6s6.5 2.4 6.5 6"/><path d="M16 4.5a3.5 3.5 0 010 7M18 14.5c2 .8 3.5 2.6 3.5 5.5"/></svg><span class="nl">Find Talent</span></button><button class="nv" type="button" data-t="crs" title="Courses" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5a2 2 0 012-2h13v16H6a2 2 0 00-2 2V5z"/><path d="M4 19a2 2 0 012-2h13"/></svg><span class="nl">Courses</span></button><button class="nv" type="button" data-t="calc" title="Calculator" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2.5"/><path d="M8.5 7h7M8.5 12h.01M12 12h.01M15.5 12h.01M8.5 16h.01M12 16h.01M15.5 16h.01"/></svg><span class="nl">Calculator</span></button><button class="nv" type="button" data-t="ana" title="Analytics" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="nl">Analytics</span></button><button class="nv" type="button" data-t="how" title="How It Works" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M9.5 9.2a2.7 2.7 0 015.2.9c0 1.8-2.7 2.3-2.7 4M12 17.4h.01"/></svg><span class="nl">How It Works</span></button><div class="nvh">Your work</div><button class="nv" type="button" data-t="prop" title="Proposals" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 3H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V8l-5-5z"/><path d="M14 3v5h5M9 13h6M9 17h6"/></svg><span class="nl">Proposals</span></button><button class="nv" type="button" data-t="pout" title="Payouts" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="14" rx="2.5"/><path d="M3 10h18M16 15h2"/></svg><span class="nl">Payouts</span></button><button class="nv" type="button" data-t="prof" title="My profile" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 3.6-6.5 8-6.5s8 2.5 8 6.5"/></svg><span class="nl">My profile</span></button><button class="nv" type="button" data-t="msg" title="Messages" aria-selected="false"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21 12a8 8 0 01-11.6 7.1L4 20l1.1-4.6A8 8 0 1121 12z"/></svg><span class="nl">Messages <span class="badge2" id="mbadge" hidden></span></span></button></nav>
+<main class="main">
+<div id="vbar" class="note" hidden style="padding:8px 12px;border:1px solid var(--line);border-radius:8px;margin:0 0 12px">Please confirm your email address: we sent you a link. <button type="button" id="vsend" class="btn alt" style="padding:4px 10px">Send it again</button> <span id="vmsg"></span></div>
+
+<div id="dash">
+  <div class="ph"><h2>Dashboard</h2><p class="note">Your leads, proposals and deals at a glance.</p></div>
+  <div class="stats stats6">
+    <div class="stat"><b id="s1">0</b><span>Leads saved</span></div>
+    <div class="stat"><b id="s2">0</b><span>Proposals sent</span></div>
+    <div class="stat"><b id="s3">0</b><span>In closing</span></div>
+    <div class="stat"><b id="s4">$0</b><span>Won revenue</span></div>
+    <div class="stat"><b id="s5">0</b><span>Active outreach</span></div>
+    <div class="stat"><b id="s6">0</b><span>Saved talent</span></div>
+  </div>
+  <div class="rev rev4" id="rv"></div>
+  <section class="card" style="margin:0 0 16px"><h3>Project history</h3><div id="rvt" style="overflow:auto"></div></section>
+  <div class="cols2">
+    <section class="card"><h3>Newest leads</h3><div id="dnew"></div><p style="margin:12px 0 0"><button class="btn alt sm" type="button" data-t="jobs">See all live leads</button></p></section>
+    <section class="card"><h3>Your pipeline</h3><div id="dpipe"></div><p style="margin:12px 0 0;display:flex;gap:8px;flex-wrap:wrap"><button class="btn sm" type="button" id="adl2">+ Add Deal</button><button class="btn alt sm" type="button" data-t="pipe">Open pipeline</button></p></section>
+  </div>
+</div>
+
+<div id="jobs" hidden>
+  <div class="ph"><h2>Live Job Leads</h2><p class="note">BPO, virtual assistant, customer support and cold outreach leads from public job boards, plus software projects.</p></div>
+  <div class="chips" id="chips" role="group" aria-label="Lead type"></div>
+  <div class="bar"><input id="q" type="search" placeholder="Search leads, e.g. inbox, Zendesk, data entry" aria-label="Search leads"><select id="cat" aria-label="Job type"></select><select id="srcf" aria-label="Source"></select></div>
+  <div class="live"><span><i class="dot" id="ld"></i><span id="ls"></span></span><span><button class="btn alt sm" id="rf" type="button">Refresh</button> <button class="btn alt sm" id="pz" type="button">Pause live</button></span></div>
+  <details class="fd" id="feeds" open><summary>Open the boards directly: Upwork, Freelancer, RemoteOK</summary><div id="fdl"></div></details>
+  <div class="srv"><input id="srv" placeholder="Live server address (https://...)" aria-label="Live server address"><input id="key" type="password" placeholder="Access key (if set)" aria-label="Access key"><button class="btn sm" id="cn" type="button">Connect</button></div>
+  <div id="jl"></div>
+</div>
+
+<div id="prop" hidden>
+  <div class="two">
+    <div>
+      <label for="pj">Job</label><select id="pj"></select>
+      <label for="pn">Your name</label><input id="pn" value="Jene van der Walt">
+      <label for="pb">Business name</label><input id="pb" value="Scale Desk">
+      <label for="pc">Your email or phone (added to the message)</label><input id="pc" placeholder="you@example.com">
+      <label for="ps">What you offer</label><textarea id="ps">Scale Desk is a BPO and virtual assistant agency providing back-office, administrative, customer support and data entry services. Our trained remote team works to written checklists with quality checks and regular progress reports, so you can hand work over with confidence.</textarea>
+      <label for="pt">Tone</label><select id="pt"><option value="friendly">Friendly</option><option value="pro">Professional</option><option value="short">Short</option></select>
+      <p><button class="btn" id="gen" type="button">Generate proposal</button></p>
+    </div>
+    <div>
+      <div class="out" id="po" aria-live="polite">Your proposal will appear here.</div>
+      <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn alt" id="cp" type="button">Copy text</button><a class="btn alt" id="em" href="#" target="_blank" rel="noopener">Email</a><a class="btn alt" id="wa" href="#" target="_blank" rel="noopener">WhatsApp</a><button class="btn alt" id="ap" type="button">Mark as sent</button></p>
+      <div id="aib" hidden style="margin-top:10px"><label for="ai_q">Ask the AI to change this proposal</label><input id="ai_q" placeholder="For example: make it shorter and warmer">
+        <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn alt" id="ai_go" type="button">Improve with AI</button><button class="btn alt" id="ai_cp" type="button" hidden>Copy the AI version</button></p>
+        <div class="out" id="ai_o" hidden></div><p class="note" id="ai_m" role="status"></p></div>
+      <div id="sendc" hidden style="margin-top:12px;border-top:1px solid var(--line);padding-top:12px">
+        <b>Send this offer to your client in the app</b>
+        <div class="sg"><div><label for="cc">Client name</label><input id="cc"></div><div><label for="ce">Client email</label><input id="ce" type="email"></div><div><label for="cq">Your price</label><input id="cq" type="number" min="1" step="0.01"></div><div><label for="cu">Currency (ZAR: PayFast. USD, EUR, GBP and more: PayPal)</label><input id="cu" value="ZAR" maxlength="3"></div><div><label for="csp">Payment plan</label><select id="csp"><option value="50,50">50% upfront, 50% on delivery</option><option value="30,40,30">30% start, 40% midpoint, 30% delivery</option><option value="100">100% before final files</option></select></div></div>
+        <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="csend" type="button">Send offer to client</button><button class="btn alt" id="copen" type="button" hidden>Open chat with this client</button></p>
+        <p class="note" id="cs" role="status"></p><input id="clink" readonly hidden onclick="this.select()" aria-label="Private link for your client">
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="pout" hidden>
+  <p class="note" style="margin:0 0 8px">Keep track of what you owe your freelancers and what you have paid them. This is a record only: it does not move money.</p>
+  <div id="po_sum" class="note" style="font-weight:600;margin:6px 0"></div>
+  <div class="sg">
+    <div><label for="po_who">Freelancer</label><input id="po_who" placeholder="Name"></div>
+    <div><label for="po_job">Job</label><input id="po_job" placeholder="What the payment is for"></div>
+    <div><label for="po_amt">Amount owed</label><input id="po_amt" type="number" min="0.01" step="0.01"></div>
+    <div><label for="po_cur">Currency</label><input id="po_cur" value="USD" maxlength="3"></div>
+    <div><label for="po_due">Due date (optional)</label><input id="po_due" type="date"></div>
+  </div>
+  <p style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" id="po_add" type="button">Add to payouts</button><button class="btn alt" id="po_csv" type="button">Download as spreadsheet (CSV)</button><span class="note" id="po_err" role="alert" style="margin:0;color:#c0392b"></span></p>
+  <div id="po_list"></div>
+</div>
+
+<div id="prof" hidden>
+  <p class="note" id="pf_off" style="margin:0">Your profile page works in the signed-in app on your own server. This preview page cannot save or publish one.</p>
+  <div id="pf_on" hidden>
+    <p class="note" style="margin:0 0 10px">Tell people what you do and show examples of your work. You get your own web page to share. Nothing is public until you tick the box at the bottom.</p>
+    <div class="sg">
+      <div><label for="pf_name">Name or business</label><input id="pf_name" maxlength="80"></div>
+      <div><label for="pf_loc">Location</label><input id="pf_loc" maxlength="80" placeholder="For example: Cape Town, South Africa"></div>
+      <div><label for="pf_rate">Rates or availability</label><input id="pf_rate" maxlength="80" placeholder="For example: From $25 an hour"></div>
+      <div><label for="pf_mail">Contact email shown on your page (optional)</label><input id="pf_mail" type="email" maxlength="120"></div>
+    </div>
+    <label for="pf_head">Headline</label><input id="pf_head" maxlength="140" placeholder="One line: what you do and who for">
+    <p class="pfr"><button class="btn alt sm pfai" data-f="pf_head" data-task="headline" type="button">Write with AI</button><span class="note pfs" id="pf_head_s"></span></p>
+    <label for="pf_about">About you</label><textarea id="pf_about" maxlength="2500" placeholder="Type rough notes about you: your skills, years of experience, the kind of clients you like. The AI can turn them into a proper paragraph."></textarea>
+    <p class="pfr"><button class="btn alt sm pfai" data-f="pf_about" data-task="about" type="button">Write with AI</button><button class="btn alt sm pfai" data-f="pf_about" data-task="polish" type="button">Fix wording</button><span class="note pfs" id="pf_about_s"></span></p>
+    <label for="pf_serv">What you can do (one service per line)</label><textarea id="pf_serv" style="min-height:90px" placeholder="Websites for small businesses&#10;Logo and brand design&#10;Monthly bookkeeping"></textarea>
+    <p class="pfr"><button class="btn alt sm pfai" data-f="pf_serv" data-task="services" type="button">Tidy into a list with AI</button><span class="note pfs" id="pf_serv_s"></span></p>
+    <h3 style="margin:18px 0 4px">Examples of your work (up to 6)</h3>
+    <div id="pf_work"></div>
+    <p><button class="btn alt sm" id="pf_addw" type="button">Add an example</button></p>
+    <label style="display:flex;gap:8px;align-items:center;font-weight:600;margin-top:14px"><input type="checkbox" id="pf_pub" style="width:auto"> Make my profile page public</label>
+    <p style="display:flex;gap:8px;flex-wrap:wrap;align-items:center"><button class="btn" id="pf_save" type="button">Save profile</button><a class="btn alt" id="pf_view" href="#" target="_blank" rel="noopener" hidden>Open my page</a><button class="btn alt" id="pf_copy" type="button" hidden>Copy page link</button><span class="note" id="pf_msg" role="status" style="margin:0"></span></p>
+    <p class="note" id="pf_aino" hidden>AI writing help is not switched on for this site yet.</p>
+  </div>
+</div>
+
+<div id="msg" hidden>
+  <p class="note" id="mg_off" style="margin:0">Messages work in the signed-in app on your own server, where you can chat with freelancers and clients, read their replies and accept their quotations. This preview page cannot send or receive messages.</p>
+  <div class="mg" id="mg_on" hidden>
+    <div class="mgl" id="mg_list" role="list"></div>
+    <div class="mgt">
+      <p class="note" id="mg_empty" style="margin:0">Pick a conversation on the left. To start a new one, open Find Talent, press Message on a person, then press Chat in app.</p>
+      <div id="mg_box" hidden>
+        <div class="mgh"><div><b id="mg_title" style="font-size:18px"></b><div class="note" id="mg_sub" style="margin:2px 0 0"></div></div>
+          <span class="mgb"><button class="btn alt sm" id="mg_del" type="button" hidden>Delegate task</button><button class="btn alt sm" id="mg_link" type="button">Link to share</button><a class="btn alt sm" id="mg_open" href="#" target="_blank" rel="noopener">Open full room</a></span></div>
+        <div class="mgshare" id="mg_share" hidden>
+          <p class="note" style="margin:0 0 6px">Send this private link to the person so they can read your messages and reply. It stops working if you create a new one.</p>
+          <input id="mg_url" readonly aria-label="Private link" onclick="this.select()">
+          <p style="display:flex;gap:6px;flex-wrap:wrap;margin:6px 0 0"><button class="btn alt sm" id="mg_copy" type="button">Copy link</button><a class="btn alt sm" id="mg_wa" href="#" target="_blank" rel="noopener">WhatsApp</a><a class="btn alt sm" id="mg_em" href="#" target="_blank" rel="noopener">Email</a></p>
+        </div>
+        <p class="note" id="mg_info" role="status" style="margin:4px 0"></p>
+        <div id="mg_q"></div>
+        <div class="mgm" id="mg_msgs" aria-live="polite"></div>
+        <label for="mg_txt" style="margin-top:0">Your message</label>
+        <textarea id="mg_txt" rows="3" style="min-height:70px"></textarea>
+        <p style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><button class="btn" id="mg_send" type="button">Send</button><button class="btn alt" id="mg_ai" type="button" hidden>Draft reply with AI</button><button class="btn alt" id="mg_sum" type="button" hidden>Summarise</button><span class="note" id="mg_err" role="alert" style="margin:0;color:#c0392b"></span></p>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="pipe" hidden>
+  <div class="ph phr"><div><h2>Lead Pipeline</h2><p class="note">Drag a deal between columns, or use the arrows.</p></div><div class="phb"><button class="btn" id="adl" type="button">+ Add Deal</button><button class="btn alt" id="rooms" type="button">Open project rooms</button></div></div>
+  <div class="rev" id="rev"></div>
+  <div class="board" id="board"></div>
+  <p class="note" id="rn">Totals count fixed-price deals. Hourly rates and yearly salaries are shown on the card but not added up. Project rooms need your server, connected on the Live Job Leads tab.</p>
+</div>
+
+<div id="how" hidden>
+  <div class="ph"><h2>How It Works</h2><p class="note">ScaleDesk runs managed BPO work: clients ask, we manage, freelancers deliver.</p></div>
+  <div class="cols2">
+    <section class="card"><h3>For clients</h3>
+      <div class="hw"><span>1</span><div><b>Request Project</b><p class="note">Tell us what you need done and your budget. You get a private proposal and a project room link.</p></div></div>
+      <div class="hw"><span>2</span><div><b>ScaleDesk Management</b><p class="note">We assign the work to a vetted freelancer and manage it for you. You deal with one team and one chat.</p></div></div>
+      <div class="hw"><span>3</span><div><b>Approve &amp; Receive Deliverables</b><p class="note">Review the work, approve it, pay the final milestone and download your files. Then leave a rating.</p></div></div>
+    </section>
+    <section class="card"><h3>For freelancers</h3>
+      <div class="hw"><span>1</span><div><b>Create Profile</b><p class="note">List your skills, rate and availability so you can be matched to jobs.</p></div></div>
+      <div class="hw"><span>2</span><div><b>Receive Assigned Tasks</b><p class="note">We send you a private task link with the brief. You chat with ScaleDesk only. Client names and contact details are never shared.</p></div></div>
+      <div class="hw"><span>3</span><div><b>Complete &amp; Get Paid</b><p class="note">Upload the finished work. Once the client approves, ScaleDesk pays you.</p></div></div>
+    </section>
+  </div>
+  <section class="card" style="margin-top:16px"><h3>For ScaleDesk admins and agencies</h3>
+    <p class="note" style="margin:0">Open a project in Messages and press <b>Delegate task</b>. Write the task in your own words, name the freelancer, and send them the private link. Nothing from the client's room is copied across, so neither side sees the other's contact details.</p>
+    <p class="note" style="margin:10px 0 0">Live Job Leads are collected for everyone by ScaleDesk's own server, so you never enter Freelancer or RemoteOK keys. <b>Apply in 1 click</b> writes the proposal, saves it to your pipeline, copies it and opens the original job. ScaleDesk cannot post a bid on Freelancer or Upwork for you, because those sites only accept bids from your own account, so you paste it there.</p>
+  </section>
+</div>
+
+<div id="crs" hidden>
+  <div class="ph"><h2>Courses</h2><p class="note">Short built-in lessons on finding work, pricing, proposals and running a small remote-staff business. Text only, no videos.</p></div>
+  <div class="cg" id="crl"></div>
+</div>
+
+<div id="calc" hidden>
+<style>
+#sd-calc{--ac:#06B6D4;margin:0;padding:4px 0 0;border-radius:0;background:none;color:#eaeefb;font-family:Manrope,system-ui,-apple-system,Segoe UI,sans-serif;text-align:left}
+#sd-calc *{box-sizing:border-box}
+#sd-calc .in{max-width:960px}
+#sd-calc h2{font:800 26px/1.15 Sora,"Helvetica Neue",Arial,sans-serif;letter-spacing:-.02em;text-align:left;margin:0;color:#fff}
+#sd-calc .sub{text-align:left;color:#94a3b8;margin:4px 0 0}
+#sd-calc .tg{display:flex;width:fit-content;margin:16px 0 0;padding:4px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.06)}
+#sd-calc .tg button{font:700 14px Manrope,sans-serif;border:0;background:none;color:#c9d1ea;padding:7px 18px;border-radius:999px;cursor:pointer}
+#sd-calc .tg button[aria-pressed="true"]{background:var(--ac);color:#032a33}
+#sd-calc .grid{display:grid;gap:18px;grid-template-columns:1fr 1fr;margin-top:30px}
+@media(max-width:760px){#sd-calc .grid{grid-template-columns:1fr}}
+#sd-calc .gl{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:22px;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);box-shadow:0 12px 36px rgba(0,0,0,.28)}
+#sd-calc .sl+.sl{margin-top:22px}
+#sd-calc .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+#sd-calc label{font-size:14px;font-weight:500;color:#dfe5f7;margin:0}
+#sd-calc output{font:700 18px Sora,sans-serif;color:#fff}
+#sd-calc input[type=range]{-webkit-appearance:none;appearance:none;width:100%;height:8px;border-radius:99px;margin:12px 0 4px;padding:0;border:0;cursor:pointer;background:linear-gradient(to right,var(--ac) var(--p,0%),rgba(255,255,255,.18) var(--p,0%))}
+#sd-calc input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:#fff;border:3px solid var(--ac)}
+#sd-calc input[type=range]::-moz-range-thumb{width:18px;height:18px;border-radius:50%;background:#fff;border:3px solid var(--ac)}
+#sd-calc input[type=range]:focus-visible{outline:3px solid #fff;outline-offset:4px}
+#sd-calc .mm{display:flex;justify-content:space-between;font-size:12px;color:#97a2c4}
+#sd-calc .note{font-size:12px;color:#97a2c4;margin:18px 0 0}
+#sd-calc .res{display:grid;gap:18px;align-content:start}
+#sd-calc .two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+#sd-calc .k{font-size:13px;letter-spacing:.02em;color:#b7c0dc;margin:0}
+#sd-calc .v{font:800 26px Sora,sans-serif;color:#fff;margin:2px 0 0}
+#sd-calc .big{grid-column:1/-1;background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.12);border-radius:14px;padding:14px}
+#sd-calc .big .v{font-size:38px;color:#6fd7a0}#sd-calc .big.neg .v{color:#ff8a7a}
+#sd-calc .mgn{font-size:14px;color:#c9d1ea;margin:2px 0 0}
+#sd-calc h3{font:700 18px Sora,sans-serif;color:#fff;margin:0 0 12px}
+#sd-calc .cmp{display:grid;grid-template-columns:1fr 1fr;gap:12px;text-align:center}
+#sd-calc .cmp div{border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);border-radius:14px;padding:12px}
+#sd-calc .cmp .us{border-color:rgba(6,182,212,.7);background:rgba(6,182,212,.16)}
+#sd-calc .cmp span{display:block;font-size:12px;color:#c9d1ea}
+#sd-calc .cmp b{font:800 24px Sora,sans-serif;color:#fff}#sd-calc .cmp small{font-size:13px;font-weight:500;color:#c9d1ea}
+#sd-calc .fine{text-align:left;font-size:12px;color:#97a2c4;margin:16px 0 0;max-width:640px}
+</style>
+
+<section id="sd-calc" aria-labelledby="sdc-h">
+  <div class="in">
+    <h2 id="sdc-h">BPO profit calculator</h2>
+    <p class="sub">Move the sliders to see your monthly numbers. Estimates only, not a promise of income.</p>
+    <div class="tg" role="group" aria-label="Currency">
+      <button type="button" data-cur="USD" aria-pressed="true">USD ($)</button>
+      <button type="button" data-cur="ZAR" aria-pressed="false">ZAR (R)</button>
+    </div>
+
+    <div class="grid">
+      <div class="gl">
+        <div class="sl">
+          <div class="row"><label for="sdc-vas">Number of Remote Staff Placed</label><output id="sdc-vas-o" for="sdc-vas"></output></div>
+          <input id="sdc-vas" type="range" min="1" max="50" step="1" value="5">
+          <div class="mm"><span>1</span><span>50</span></div>
+        </div>
+        <div class="sl">
+          <div class="row"><label for="sdc-rate">What the Client Pays You (per hour)</label><output id="sdc-rate-o" for="sdc-rate"></output></div>
+          <input id="sdc-rate" type="range">
+          <div class="mm"><span id="sdc-rate-min"></span><span id="sdc-rate-max"></span></div>
+        </div>
+        <div class="sl">
+          <div class="row"><label for="sdc-pay">What You Pay the Worker (per hour)</label><output id="sdc-pay-o" for="sdc-pay"></output></div>
+          <input id="sdc-pay" type="range">
+          <div class="mm"><span id="sdc-pay-min"></span><span id="sdc-pay-max"></span></div>
+        </div>
+        <p class="note">Based on 160 working hours per worker per month.</p>
+      </div>
+
+      <div class="res">
+        <div class="gl two" aria-live="polite">
+          <div><p class="k">Money Coming In (Monthly Revenue)</p><p class="v" id="sdc-rev"></p></div>
+          <div><p class="k">Worker Salaries</p><p class="v" id="sdc-cost"></p></div>
+          <div class="big" id="sdc-big"><p class="k">YOUR MONTHLY PROFIT</p><p class="v" id="sdc-profit"></p><p class="mgn" id="sdc-mg"></p></div>
+        </div>
+        <div class="gl">
+          <h3>Cost to get started</h3>
+          <div class="cmp">
+            <div class="us"><span>ScaleDesk</span><b id="sdc-sd"></b><small>/mo</small></div>
+            <div><span>High-ticket courses</span><b id="sdc-co"></b></div>
+          </div>
+          <p class="mgn" id="sdc-months" style="margin-top:12px"></p>
+        </div>
+      </div>
+    </div>
+    <p class="fine">Illustration only. Real results depend on finding clients and VAs. Figures exclude tax, payment fees and your own time. The ScaleDesk price in rand is approximate.</p>
+  </div>
+</section>
+
+<script>
+(function () {
+  var HOURS = 160, PRICE = { USD: 19, ZAR: 350 }, COURSE = { USD: 250, ZAR: 4500 };
+  var CFG = { USD: { sym: '$', rate: [15, 60, 1, 30], pay: [5, 25, 1, 10] }, ZAR: { sym: 'R', rate: [250, 1000, 10, 500], pay: [80, 400, 10, 180] } };
+  var $ = function (id) { return document.getElementById(id); };
+  var cur = 'USD', keep = { USD: [30, 10], ZAR: [500, 180] };   // each currency remembers its own slider values
+  var vas = $('sdc-vas'), rate = $('sdc-rate'), pay = $('sdc-pay');
+  if (!vas || !rate || !pay) return;
+
+  function fmt(n) { return (n < 0 ? '-' : '') + CFG[cur].sym + Math.round(Math.abs(n)).toLocaleString('en-US'); }
+  function fill(el) { el.style.setProperty('--p', ((el.value - el.min) / (el.max - el.min) * 100) + '%'); }
+  function setRange(el, r, v) { el.min = r[0]; el.max = r[1]; el.step = r[2]; el.value = v; }
+
+  function draw() {
+    var c = CFG[cur], n = +vas.value, r = +rate.value, p = +pay.value;
+    keep[cur] = [r, p];
+    var revenue = n * r * HOURS, cost = n * p * HOURS, profit = revenue - cost, margin = revenue ? profit / revenue * 100 : 0;
+    $('sdc-vas-o').textContent = n + ' worker' + (n === 1 ? '' : 's');
+    $('sdc-rate-o').textContent = c.sym + r + '/hr';
+    $('sdc-pay-o').textContent = c.sym + p + '/hr';
+    $('sdc-rev').textContent = fmt(revenue);
+    $('sdc-cost').textContent = fmt(cost);
+    $('sdc-profit').textContent = fmt(profit);
+    $('sdc-big').className = 'big' + (profit < 0 ? ' neg' : '');
+    $('sdc-mg').textContent = profit < 0 ? 'You are paying workers more than the client pays you. Raise your rate or lower the pay.' : Math.round(margin) + '% margin before tax and other costs';
+    $('sdc-sd').textContent = c.sym + PRICE[cur].toLocaleString('en-US');
+    $('sdc-co').textContent = c.sym + COURSE[cur].toLocaleString('en-US') + '+';
+    $('sdc-months').textContent = 'One course costs about as much as ' + Math.round(COURSE[cur] / PRICE[cur]) + ' months of ScaleDesk.';
+    [vas, rate, pay].forEach(fill);
+  }
+
+  function setCur(k) {
+    cur = k; var c = CFG[k];
+    setRange(rate, c.rate, keep[k][0]); setRange(pay, c.pay, keep[k][1]);
+    $('sdc-rate-min').textContent = c.sym + c.rate[0]; $('sdc-rate-max').textContent = c.sym + c.rate[1];
+    $('sdc-pay-min').textContent = c.sym + c.pay[0]; $('sdc-pay-max').textContent = c.sym + c.pay[1];
+    Array.prototype.forEach.call(document.querySelectorAll('#sd-calc .tg button'), function (b) { b.setAttribute('aria-pressed', b.getAttribute('data-cur') === k); });
+    draw();
+  }
+
+  [vas, rate, pay].forEach(function (el) { el.addEventListener('input', draw); });
+  Array.prototype.forEach.call(document.querySelectorAll('#sd-calc .tg button'), function (b) {
+    b.addEventListener('click', function () { setCur(b.getAttribute('data-cur')); });
+  });
+  setCur('USD');
+})();
+</script>
+
+
+</div>
+
+<div id="ana" hidden>
+  <div class="ph"><h2>Analytics</h2><p class="note">Worked out from your own deals and the live feed. Nothing here is estimated.</p></div>
+  <div id="anb"></div>
+</div>
+
+<div id="free" hidden>
+  <div class="bar b3"><input id="fq" type="search" placeholder="Search by skill, e.g. Unity, React, design" aria-label="Search freelancers"><select id="fa" aria-label="Availability"><option>Any availability</option><option>Available now</option><option>Busy</option><option>Offline</option></select><select id="fmj" aria-label="Rank freelancers for a job"><option value="">Rank by job: none</option></select></div>
+  <div id="fm" hidden style="margin-bottom:20px">
+    <h3 id="fmt" style="margin-bottom:6px"></h3>
+    <p class="note" style="margin:0 0 6px">Uses your name and contact from the Proposals tab.</p>
+    <label for="fj">Job to offer</label><select id="fj"></select>
+    <div id="fsw" hidden><label for="fe">Send to (email)</label><input id="fe" type="email"><p class="note" id="fst" role="status" style="margin:6px 0"></p></div>
+    <div class="out" id="fo" style="margin-top:10px;min-height:120px"></div>
+    <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn alt" id="fcp" type="button">Copy message</button><button class="btn alt" id="fsend" type="button" hidden>Send by email</button><button class="btn" id="fchat" type="button" hidden>Chat in app</button><a class="btn alt" id="fem" href="#" target="_blank" rel="noopener">Email</a><a class="btn alt" id="fwa" href="#" target="_blank" rel="noopener">WhatsApp</a><button class="btn alt" id="fcl" type="button">Close</button></p>
+  </div>
+  <p class="note" id="fc" style="margin:0 0 6px"></p><p class="note" id="tmsg" role="status" style="margin:0 0 12px"></p>
+  <div class="people" id="fl"></div>
+  <h3 style="margin:30px 0 4px">List yourself as available</h3>
+  <div class="two">
+    <div>
+      <label for="fn">Name</label><input id="fn">
+      <label for="fs">Skills, separated by commas</label><input id="fs" placeholder="React, Node, UI design">
+      <label for="fr">Hourly rate (USD)</label><input id="fr" type="number" min="1" placeholder="35">
+      <label for="fe2">Email (optional, so you can message them)</label><input id="fe2" type="email">
+      <label for="fu">Profile link on Upwork, Freelancer or similar (optional, https)</label><input id="fu" type="url" placeholder="https://">
+      <p><button class="btn" id="fadd" type="button">Add my profile</button></p>
+    </div>
+  </div>
+</div>
+<style>.tabs{overflow-x:auto;scrollbar-width:thin}.tab{white-space:nowrap}.mg{display:grid;grid-template-columns:300px 1fr;gap:14px;align-items:start}.mgl{display:flex;flex-direction:column;gap:6px;max-height:560px;overflow:auto}.mgi{display:flex;flex-direction:column;gap:2px;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;color:var(--ink);font:500 14px Manrope,sans-serif;cursor:pointer;width:100%}.mgi.sel{border-color:var(--accent);box-shadow:0 0 0 1px var(--accent)}.mgs{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.mgt{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px;min-height:300px}.mgh{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:flex-start;margin-bottom:8px}.mgb{display:flex;gap:6px;flex-wrap:wrap}.mgm{max-height:360px;overflow:auto;border:1px solid var(--line);border-radius:8px;padding:6px 12px;margin:8px 0;background:var(--bg)}.mgmsg{padding:7px 0;border-bottom:1px solid var(--line);white-space:pre-wrap;word-wrap:break-word;font-size:14px}.mgmsg:last-child{border-bottom:0}.mgmsg.me b{color:var(--accent)}.mgq{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;margin:6px 0;font-size:14px}.pillm{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 8px;margin-left:6px}.mgshare{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:10px;margin:8px 0}@media (max-width:820px){.mg{grid-template-columns:1fr}.mgl{max-height:240px}}.jd{margin-top:10px;border-top:1px solid var(--line);padding-top:8px}.jd summary{cursor:pointer;font:700 14px Manrope,sans-serif;color:var(--accent)}.jdb{margin-top:8px}.jdt{white-space:pre-wrap;word-wrap:break-word;background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:12px;font-size:14px;max-height:320px;overflow:auto;margin:8px 0}.jdn{font-size:12px;color:var(--muted);margin:0 0 6px}.sg{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}@media (max-width:820px){.sg{grid-template-columns:1fr}}header{gap:12px;flex-wrap:wrap}.tagl{color:var(--muted);font-size:14px}.hr{display:flex;gap:10px;align-items:center}.dd{position:relative}.dd summary{list-style:none;cursor:pointer;font:700 14px Manrope,sans-serif;border:1.5px solid var(--line);border-radius:8px;padding:8px 14px;background:var(--surface)}.dd summary::-webkit-details-marker{display:none}.dd summary::after{content:" ▾"}.ddp{position:absolute;right:0;top:calc(100% + 6px);min-width:270px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:6px;z-index:20;box-shadow:0 10px 28px rgba(0,0,0,.18)}.ddp button.g{display:block;width:100%;text-align:left;background:none;border:0;color:var(--ink);font:500 15px Manrope,sans-serif;padding:9px 10px;border-radius:6px;cursor:pointer}.ddp button.g:hover{background:var(--tag)}#gdb ul{padding-left:20px;margin:0}#gdb li{margin-bottom:8px}.ov{position:fixed;inset:0;background:var(--bg);overflow:auto;z-index:50;display:flex;align-items:flex-start;justify-content:center;padding:40px 16px}.ov[hidden]{display:none}.authc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:28px;max-width:440px;width:100%}body.pre .wrap{visibility:hidden}body.app .srv,body.app .simn{display:none}.st.available{color:#0a7d4f}.st.busy{color:#b7791f}.st.offline{color:var(--muted)}@media (prefers-color-scheme:dark){.st.available{color:#4ade9a}.st.busy{color:#f6c453}}.badge2{font:700 12px Manrope,sans-serif;background:var(--accent);color:var(--on-accent);padding:2px 8px;border-radius:99px;margin-left:6px;vertical-align:middle}.bar.b3{grid-template-columns:1fr 190px 230px}@media (max-width:820px){.bar.b3{grid-template-columns:1fr}}.srv{display:grid;grid-template-columns:1fr 170px 100px;gap:8px;margin-bottom:12px}@media (max-width:820px){.srv{grid-template-columns:1fr}}a.btn{display:inline-block;text-decoration:none}dialog{max-width:580px;width:calc(100% - 32px);border:1px solid var(--line);border-radius:12px;background:var(--surface);color:var(--ink);padding:22px}dialog::backdrop{background:rgba(10,14,28,.55)}.live{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin:0 0 12px;font-size:14px;color:var(--muted)}.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#0a9f62;margin-right:8px}.meta .badge{background:var(--accent);color:var(--on-accent)}.people{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}.person{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px 18px}.person h3{font-size:17px}.person p{margin:4px 0 0;color:var(--muted);font-size:14px}.person .row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:14px}.on{color:#0a7d4f;font-weight:700}@media (prefers-color-scheme:dark){.on{color:#4ade9a}}@media (max-width:820px){.people{grid-template-columns:1fr}}</style>
+
+<p class="note simn">Until you connect your server, leads here are simulated samples, and freelancer profiles are always samples. Credit goes to each listing's source (Freelancer, RemoteOK). Real listings and AI-written proposals need a server connected to each marketplace API and an AI service.</p>
+</main></div></div>
+<div id="sdwarn" role="alert" hidden style="position:sticky;top:0;z-index:98;background:#fde5e2;color:#7a1d12;text-align:center;padding:10px 14px;font-size:14px;font-weight:600">Warning: your accounts are on temporary storage and will be erased when Render restarts. Add a Render Disk or an Upstash backup (see the README) so customers keep their accounts.</div>
+<div id="net" role="status" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#fff1d6;color:#5c3b00;text-align:center;padding:8px;font-size:14px">Can't reach ScaleDesk right now. You are still signed in. Trying again…</div>
+<div class="ov" id="auth" hidden>
+  <div class="authc">
+    <h1 style="font-size:30px;margin-bottom:4px">ScaleDesk</h1>
+    <p class="note" id="au_price" style="margin:0 0 14px"></p>
+    <div class="tabs"><button class="tab" id="au_in" role="tab" aria-selected="true" type="button">Sign in</button><button class="tab" id="au_up" role="tab" aria-selected="false" type="button">Create account</button></div>
+    <div id="au_f" hidden><label for="au_n">Your name</label><input id="au_n" autocomplete="name"><label for="au_b">Business name</label><input id="au_b" autocomplete="organization"></div>
+    <div id="au_ew"><label for="au_e">Email</label><input id="au_e" type="email" autocomplete="email"></div>
+    <div id="au_pw"><label for="au_p" id="au_pl">Password (8 or more characters)</label><span class="pww"><input id="au_p" type="password" autocomplete="current-password"><button class="eye" type="button" data-eye="au_p" aria-label="Show password" aria-pressed="false"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
+    <p id="au_fw" style="margin:6px 0 0"><button type="button" id="au_forgot" style="background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit">Forgot your password?</button></p></div>
+    <div id="au_cw" hidden><label for="au_c">Invite code (optional)</label><input id="au_c" autocomplete="off"><label style="display:flex;gap:8px;align-items:flex-start;margin-top:10px"><input type="checkbox" id="au_t" style="width:auto;margin-top:4px"> <span>I agree to the <a href="/terms" target="_blank" rel="noopener">Terms</a> and the <a href="/privacy" target="_blank" rel="noopener">Privacy Policy</a></span></label></div>
+    <p id="au_sw" style="margin:0 0 10px;text-align:center"><button type="button" id="au_swb" style="background:none;border:0;padding:0;color:inherit;text-decoration:underline;cursor:pointer;font:inherit"></button></p>
+    <p id="au_m" role="alert" style="color:#c0392b;min-height:22px;margin:8px 0"></p>
+    <button class="btn" id="au_go" type="button">Sign in</button>
+  </div>
+</div>
+<div class="ov" id="lock" hidden>
+  <div class="authc">
+    <h2 id="lt" style="margin-bottom:8px"></h2>
+    <p id="lm"></p>
+    <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="lpay" type="button" hidden>Subscribe</button><button class="btn alt" id="lmanage" type="button" hidden>Manage billing</button><a class="btn" id="lsub" href="#" target="_blank" rel="noopener" hidden>Subscribe</a><button class="btn alt" id="lback" type="button" hidden>Back to the app</button><button class="btn alt" id="lout" type="button">Sign out</button></p>
+  </div>
+</div>
+<dialog id="gd" aria-labelledby="gdt"><h3 id="gdt" style="margin-bottom:8px"></h3><div id="gdb"></div><p><button class="btn" id="gdc" type="button">Close</button></p></dialog>
+<dialog id="dd_d" aria-labelledby="dd_ttl">
+  <h3 id="dd_ttl" style="margin-bottom:6px">Add deal</h3>
+  <div id="dd_lw"><label for="dd_lead">Start from a lead (optional)</label><select id="dd_lead"></select></div>
+  <label for="dd_t">Deal name</label><input id="dd_t" maxlength="140" placeholder="For example: Support team for Acme Realty">
+  <div class="sg"><div><label for="dd_c">Client or prospect</label><input id="dd_c" maxlength="80"></div>
+  <div><label for="dd_s">Source</label><select id="dd_s"><option>Manual</option><option>Upwork</option><option>Freelancer</option><option>RemoteOK</option><option>Remotive</option><option>Referral</option><option>Cold outreach</option><option>Other</option></select></div>
+  <div><label for="dd_v">Value (USD)</label><input id="dd_v" type="number" min="0" step="0.01"></div>
+  <div><label for="dd_bt">Value is</label><select id="dd_bt"><option value="fixed">A fixed total</option><option value="hr">A rate per hour</option></select></div>
+  <div><label for="dd_st">Stage</label><select id="dd_st"></select></div></div>
+  <label for="dd_n">Note (optional)</label><input id="dd_n" maxlength="300">
+  <p class="note" id="dd_m" role="alert" style="color:#f87171;min-height:20px;margin:8px 0 0"></p>
+  <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="dd_save" type="button">Save deal</button><button class="btn alt" id="dd_x" type="button">Cancel</button></p>
+</dialog>
+<dialog id="bd" aria-labelledby="bdt">
+  <h3 id="bdt" style="margin-bottom:4px"></h3>
+  <p class="note" id="bdm" style="margin:0 0 6px"></p>
+  <label for="ba" id="bal">Your bid (USD)</label><input id="ba" type="number" min="1">
+  <label for="bdays">Delivery in (days)</label><input id="bdays" type="number" min="1">
+  <label for="bp">Message to the client</label><textarea id="bp" style="min-height:230px"></textarea>
+  <p class="note">Changing the amount or days rewrites the message. This records your bid in ScaleDesk. To place it on Freelancer.com itself, copy the message there or connect their API through a server.</p>
+  <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bs" type="button">Submit bid</button><button class="btn alt" id="bcp" type="button">Copy message</button><button class="btn alt" id="bc" type="button">Cancel</button></p>
+</dialog>
+<style id="sdx">
+body{background:radial-gradient(900px 520px at 6% -8%,rgba(6,182,212,.17),transparent 60%),radial-gradient(800px 520px at 100% 0,rgba(99,102,241,.17),transparent 60%),#0F172A;background-attachment:fixed;min-height:100vh}
+.wrap{max-width:none;margin:0;padding:0}
+.top{position:sticky;top:0;z-index:30;display:flex;align-items:center;gap:12px;padding:10px 18px;background:rgba(15,23,42,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+.grow{flex:1}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none}
+.brand svg{width:34px;height:34px;filter:drop-shadow(0 0 7px rgba(6,182,212,.7))}
+.brand b{font:800 21px Sora,sans-serif;color:#fff;letter-spacing:-.02em;text-shadow:0 0 18px rgba(6,182,212,.35)}
+.ibt{background:rgba(30,41,59,.6);border:1px solid var(--line);color:var(--ink);border-radius:10px;width:38px;height:38px;cursor:pointer;display:grid;place-items:center;padding:0}
+.shell{display:flex;align-items:flex-start}
+#sb{position:sticky;top:59px;align-self:flex-start;width:236px;flex:none;height:calc(100vh - 59px);overflow:auto;padding:14px 10px;border-right:1px solid var(--line);background:rgba(15,23,42,.55);transition:width .18s}
+.nv{display:flex;align-items:center;gap:12px;width:100%;background:none;border:0;color:var(--muted);font:600 15px Manrope,sans-serif;padding:10px 12px;border-radius:10px;cursor:pointer;text-align:left;margin-bottom:2px;white-space:nowrap}
+.nv svg{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.nv:hover{background:rgba(148,163,184,.09);color:var(--ink)}
+.nv[aria-selected="true"]{color:#fff;background:linear-gradient(90deg,rgba(6,182,212,.24),rgba(99,102,241,.2));box-shadow:inset 3px 0 0 var(--accent)}
+.nvh{font:700 11px Manrope,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#64748b;margin:18px 12px 6px;white-space:nowrap;overflow:hidden}
+body.sbc #sb{width:68px}
+body.sbc .nl{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+body.sbc .nvh{visibility:hidden;height:6px;margin:8px 0}
+.main{flex:1;min-width:0;padding:22px 26px 40px;max-width:1240px}
+.ph{margin:0 0 16px}.ph h2{font-size:26px}.ph .note{margin:4px 0 0}
+.phr{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:flex-end}.phb{display:flex;gap:8px;flex-wrap:wrap}
+.stat,.job,.col,.person,.mgt,.out,.card,.pfw,.rc,.fd,.cc{background:var(--glass);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid var(--line);box-shadow:0 8px 28px rgba(2,6,23,.35)}
+.stat,.rc,.card,.cc{border-radius:14px}.job,.col,.person,.mgt{border-radius:14px}
+.stat b{background:linear-gradient(90deg,#fff,#67e8f9);-webkit-background-clip:text;background-clip:text;color:transparent}
+input,select,textarea{background:rgba(15,23,42,.65);border-color:var(--line)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(6,182,212,.22)}
+.btn{box-shadow:0 0 0 rgba(6,182,212,0);transition:box-shadow .15s,filter .15s}.btn:hover{box-shadow:0 0 16px rgba(6,182,212,.45)}
+.btn.alt{background:rgba(15,23,42,.45);color:var(--ink);border-color:var(--line)}.btn.alt:hover{border-color:var(--accent);box-shadow:none}
+.badge2,.meta .badge{background:var(--ind);color:#fff}
+.meta span{background:rgba(6,182,212,.12);color:#a5f3fc}
+.stats6{grid-template-columns:repeat(3,1fr)}@media (max-width:820px){.stats6{grid-template-columns:1fr 1fr}}.tacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.person .rt{color:#fbbf24;font-weight:600}
+.cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card{padding:18px}.card h3{font-size:17px;margin-bottom:10px}
+.dr{display:flex;justify-content:space-between;gap:12px;align-items:center;padding:9px 0;border-bottom:1px solid var(--line);font-size:14px}.dr:last-child{border-bottom:0}.dv{font-weight:700;white-space:nowrap;color:#67e8f9}.sw{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:8px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
+.chip{border:1px solid var(--line);background:rgba(15,23,42,.5);color:var(--muted);font:600 13px Manrope,sans-serif;padding:7px 15px;border-radius:99px;cursor:pointer}
+.chip:hover{color:var(--ink)}.chip[aria-pressed="true"]{background:rgba(6,182,212,.2);border-color:var(--accent);color:#fff;box-shadow:0 0 14px rgba(6,182,212,.25)}
+.bar{grid-template-columns:1fr 190px 170px}
+.fd{border-radius:12px;padding:10px 14px;margin:0 0 12px;font-size:14px}.fd summary{cursor:pointer;font:700 14px Manrope,sans-serif;color:#67e8f9}.fd p{margin:8px 0 0}
+.fdb{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.job{grid-template-columns:1fr 230px}
+.side{display:flex;flex-direction:column;align-items:flex-end;gap:10px;text-align:right}
+.price{font:800 20px Sora,sans-serif;color:#fff}
+.acts{display:flex;gap:8px;align-items:center;margin:0;justify-content:flex-end}
+.ib{width:38px;height:38px;border-radius:10px;border:1px solid var(--line);background:rgba(15,23,42,.6);color:var(--ink);display:inline-grid;place-items:center;cursor:pointer;text-decoration:none;padding:0}
+.ib:hover{border-color:var(--accent);color:#67e8f9}.ib.on{color:var(--accent);border-color:var(--accent);background:rgba(6,182,212,.14)}.ib.on svg{fill:currentColor}
+.ib svg,.cpp svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
+.cpp{display:inline-flex;gap:8px;align-items:center;font:700 13px Manrope,sans-serif;color:#67e8f9;background:rgba(6,182,212,.1);border:1px dashed rgba(6,182,212,.5);border-radius:10px;padding:8px 12px;cursor:pointer}
+.cpp:hover{background:rgba(6,182,212,.2)}
+.rev{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 16px}.rc{padding:16px 18px}.rc span{font-size:13px;color:var(--muted)}.rc b{display:block;font:800 28px Sora,sans-serif;margin:2px 0}.rc small{color:var(--muted);font-size:12px}
+.rev4{grid-template-columns:repeat(4,minmax(0,1fr))}.rc small{display:block}
+.hw{display:flex;gap:12px;margin:12px 0}.hw>span{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06B6D4,#6366F1);color:#fff;font:800 14px Sora,sans-serif;display:grid;place-items:center}.hw p{margin:2px 0 0}
+.rtb{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}.rtb th{text-align:left;color:var(--muted);font:600 12px Manrope,sans-serif;padding:6px 8px;border-bottom:1px solid var(--line)}.rtb td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}.rtb select{padding:6px 8px;width:auto;font-size:13px}.stars{color:#fbbf24;letter-spacing:1px}
+.rc:nth-child(1) b{color:#67e8f9}.rc:nth-child(2) b{color:#a5b4fc}.rc:nth-child(3) b{color:#6ee7b7}
+.board{grid-template-columns:repeat(4,minmax(0,1fr));align-items:start}
+.col{padding:12px;min-height:220px}.col.over{outline:2px dashed var(--accent);outline-offset:-4px}
+.col h3{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.col h3 .cn{background:rgba(148,163,184,.18);border-radius:99px;padding:0 9px;font:700 12px Manrope,sans-serif}.col h3 small{margin-left:auto;font:600 12px Manrope,sans-serif;color:var(--muted)}
+.lead{background:rgba(15,23,42,.6);border:1px solid var(--line);cursor:grab}.lead:active{cursor:grabbing}
+.lead .ls,.lead .lv{display:block;font-size:13px;color:var(--muted)}.lead .lv{color:#67e8f9;font-weight:700;margin-top:2px}
+.lead .la{flex-wrap:wrap}
+.cg{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.cc{padding:18px;display:flex;flex-direction:column;gap:6px;align-items:flex-start}.cc h3{font-size:16px}.cc .note{margin:0}
+.brow{display:grid;grid-template-columns:130px 1fr 70px;gap:10px;align-items:center;font-size:13px;margin:7px 0}.brow span{color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.brow b{text-align:right}
+.bt{height:10px;border-radius:99px;background:rgba(148,163,184,.15);overflow:hidden}.bt i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#06B6D4,#6366F1)}
+.ana2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:16px}
+#calc{max-width:980px}
+dialog,.ddp,.authc{background:#1E293B}
+.pww{position:relative;display:block}.pww input{padding-right:46px}.eye{position:absolute;right:4px;top:50%;transform:translateY(-50%);width:38px;height:38px;border:0;background:none;color:var(--muted);cursor:pointer;display:grid;place-items:center;border-radius:8px}.eye:hover,.eye[aria-pressed="true"]{color:var(--accent)}
+.dd summary{background:rgba(30,41,59,.7)}
+.ddp{box-shadow:0 14px 40px rgba(2,6,23,.6)}
+.ov{background:#0F172A}
+.st.available,.on{color:#4ade9a}.st.busy{color:#f6c453}
+@media (max-width:1000px){.rev4{grid-template-columns:1fr 1fr}.cg{grid-template-columns:1fr 1fr}.board{grid-template-columns:1fr 1fr}.job{grid-template-columns:1fr}.side{align-items:flex-start;text-align:left}.acts{justify-content:flex-start}}
+@media (max-width:820px){
+ #sb{position:fixed;left:0;top:59px;bottom:0;height:auto;z-index:40;width:250px;transform:translateX(-102%);transition:transform .18s;background:#0F172A}
+ body.sbo #sb{transform:none;box-shadow:12px 0 40px rgba(2,6,23,.6)}
+ body.sbc #sb{width:250px}body.sbc .nl{position:static;width:auto;height:auto;clip:auto}body.sbc .nvh{visibility:visible;height:auto;margin:18px 12px 6px}
+ .main{padding:16px}.cols2,.cg,.ana2,.rev,.board{grid-template-columns:1fr}.bar{grid-template-columns:1fr}.brow{grid-template-columns:100px 1fr 60px}
+}
+</style>
+<script>
+(function(){
+  var jobs=[
+   {id:1,t:"E-commerce website for handmade candles",c:"Websites",s:"Freelancer",b:900,d:"Shopify store, 20 products, payments and shipping rules."},
+   {id:2,t:"Mobile puzzle game in Unity",c:"Games",s:"Freelancer",b:3500,d:"Casual puzzle game for Android and iOS with 60 levels."},
+   {id:3,t:"WordPress site for a dental clinic",c:"Websites",s:"Freelancer",b:400,d:"Five page site with booking form and local SEO setup."},
+   {id:4,t:"Multiplayer game server and lobby",c:"Games",s:"Remotive",b:2200,d:"Realtime lobby, matchmaking and leaderboards."},
+   {id:5,t:"React dashboard for logistics data",c:"Web apps",s:"RemoteOK",b:2600,d:"Charts and filters over delivery data from a REST API."},
+   {id:6,t:"Flutter app for a food delivery startup",c:"Mobile apps",s:"Freelancer",b:2800,d:"Ordering, live tracking and push notifications."},
+   {id:7,t:"Chatbot for customer support",c:"AI and automation",s:"RemoteOK",b:1500,d:"Connect a language model to a help centre and ticket system."},
+   {id:8,t:"Booking system with payments",c:"Web apps",s:"Freelancer",b:5000,d:"Calendar, deposits and email reminders for a salon chain."}
+   ,{id:9,t:"Back-office order processing for an online store",c:"BPO",s:"Freelancer",b:12,bt:"hr",d:"Process daily orders, update stock sheets and flag problems."},
+   {id:10,t:"Virtual assistant for a real-estate agent",c:"Virtual Assistant",s:"Freelancer",b:8,bt:"hr",d:"Inbox, diary and listing admin, about 20 hours a week."},
+   {id:11,t:"Customer support agent for a SaaS startup",c:"Customer Support",s:"RemoteOK",b:15,bt:"hr",d:"Email and chat support with saved replies, UK hours."},
+   {id:12,t:"Cold email outreach for a B2B agency",c:"Cold Outreach",s:"Freelancer",b:600,bt:"fixed",d:"Build a prospect list and send personal first emails with follow-ups."},
+   {id:13,t:"Data entry and inbox clean-up",c:"Virtual Assistant",s:"Freelancer",b:150,bt:"fixed",d:"One-off job: enter 500 records and sort a shared inbox."},
+   {id:14,t:"Appointment setter for a dental group",c:"Cold Outreach",s:"RemoteOK",b:14,bt:"hr",d:"Call and message new leads to book consultations."}
+  ];
+  jobs.forEach(function(j){j.sim=true});
+  var stages=["Follow Up","Closing","In Progress","Completed"],pipe=[],cur=null;
+  try{if(window.SD_APP)throw 0;pipe=JSON.parse(localStorage.getItem('sd_pipe')||'[]')}catch(e){pipe=[]}
+  function save(){if(window.SD_APP){sync();return}try{localStorage.setItem('sd_pipe',JSON.stringify(pipe));localStorage.setItem('sd_pays',JSON.stringify(pays))}catch(e){}}
+  var pays=[];try{pays=JSON.parse(localStorage.getItem('sd_pays')||'[]')||[]}catch(e){pays=[]}
+  function esc(s){return String(s).replace(/[&<>"]/g,function(m){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[m]})}
+  function $(i){return document.getElementById(i)}
+  function money(n){return '$'+n.toLocaleString('en-US')}
+  function find(id){return jobs.filter(function(j){return j.id===id})[0]}
+  function jkey(j){return j.key||('s'+j.id)}
+  function jbt(j){return j.bt||(/^Hourly rate\./.test(j.d||'')?'hr':(j.b?'fixed':''))}
+  function fmtB(j,v){var b=v==null?j.b:v,t=jbt(j);if(!b)return 'Budget not listed';var n='$'+Number(b).toLocaleString('en-US');return t==='hr'?n+' / hr':t==='yr'?n+' / yr':n+' fixed'}
+  function dealOf(j){var k=jkey(j);return pipe.filter(function(p){return p.jk===k})[0]}
+  function val(p){return (p.bt==='hr'||p.bt==='yr')?0:(+(p.bid||p.b)||0)}
+  function sum(a){return a.reduce(function(s,p){return s+val(p)},0)}
+  function newId(){return Date.now()*1000+Math.floor(Math.random()*1000)}
+  function migrate(a){
+    var ch=false;
+    a.forEach(function(p){
+      if(p.v===2)return;
+      if(p.stage===1)p.stage=0;else if(p.stage===2)p.stage=1;
+      if(p.bid||p.sent===undefined&&p.stage===0&&p.msg)p.sent=true;
+      p.v=2;ch=true;
+    });
+    return ch;
+  }
+  function lead(j,stage,extra){
+    if(typeof j==='number')j=find(j);if(!j)return null;
+    var e=dealOf(j);
+    if(e){if(stage>e.stage)e.stage=stage}else{e={id:newId(),v:2,jk:jkey(j),t:j.t,b:j.b||0,bt:jbt(j),s:j.s,stage:stage,at:Date.now()};pipe.push(e)}
+    if(extra)Object.assign(e,extra);
+    if(e.stage===3&&!e.done)e.done=Date.now();
+    save();board();return e;
+  }
+  function stats(){
+    $('s1').textContent=pipe.length;
+    $('s2').textContent=pipe.filter(function(p){return p.sent}).length;
+    $('s3').textContent=pipe.filter(function(p){return p.stage===1}).length;
+    $('s4').textContent=money(sum(pipe.filter(function(p){return p.stage===3})));
+  }
+  var DEV=["Websites","Web apps","Mobile apps","Games","AI and automation"];
+  var CATL=["All types","BPO","Virtual Assistant","Customer Support","Cold Outreach","Software"].concat(DEV);
+  var CHIPS=["All types","BPO","Virtual Assistant","Customer Support","Cold Outreach","Software"];
+  function catOk(j,c){return c==="All types"||(c==="Software"?DEV.indexOf(j.c)>-1:j.c===c)}
+  $('cat').innerHTML=CATL.map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
+  $('srcf').innerHTML=["All sources","Freelancer","RemoteOK","Remotive"].map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
+  $('pj').innerHTML=jobs.map(function(j){return '<option value="'+j.id+'">'+esc(j.t)+'</option>'}).join('');
+  var dirty=false,openJobs={};
+  var SF={
+   "Websites":["Pages: home, about, services and contact","Looks good on phones and computers and loads fast","Contact form that emails the owner","Basic search engine setup (titles and descriptions)","The client supplies the text and photos"],
+   "Games":["A playable build with the main game mechanics","Menus, levels, sound and simple art","Testing on the target phones or computers","Source files and help to publish"],
+   "Web apps":["Secure sign-in and an admin area","The main features described in the brief","Testing and bug fixing before delivery","Setup on a live server and short documentation"],
+   "Mobile apps":["One app for iPhone and Android","Accounts and push notifications","Testing on real phones","Help to publish in the app stores"],
+   "AI and automation":["Connect the AI service to the client's tools and data","Clear instructions and workflow design","Testing with real examples","Documentation and a handover call"]
+   ,"BPO":["Daily back-office tasks done to a written checklist","Order, data or document processing with accuracy checks","A weekly report of work completed","A trained backup person for time off"],
+   "Virtual Assistant":["Inbox, calendar and scheduling support","Data entry and simple research","Clear daily or weekly updates","Agreed working hours in your time zone"],
+   "Customer Support":["Answer customers by email, chat or phone within agreed times","Use your help-desk tool and saved replies","A weekly summary of tickets and common questions","Escalate hard cases to you"],
+   "Cold Outreach":["A targeted prospect list that fits your customer","Personal first emails and two or three follow-ups","Replies passed to you the same day","A weekly report of sent, opened and replied"]
+  };
+  function sampleFull(j){
+    var pts=SF[j.c]||SF.Websites;
+    return j.t+'.\n\n'+(j.d||'')+'\n\nThe client is looking for:\n'+pts.map(function(x){return '• '+x}).join('\n')+'\n\nThe client expects:\n• A clear plan and regular progress updates\n• Testing before delivery\n• Two rounds of changes after the first draft';
+  }
+  function fullOf(j){return j.full||(j.sim?sampleFull(j):(j.d||j.t))}
+  function briefText(j){
+    var n=$('pn').value||'',biz=$('pb').value;
+    return 'Project: '+j.t+'\nType: '+j.c+(j.skills&&j.skills.length?'\nSkills: '+j.skills.join(', '):'')+'\n\nWhat the client wants:\n'+fullOf(j)+'\n\nPlease send me a quotation with:\n• Your price for the whole project\n• How many days you need\n• Two examples of similar work\n\nThank you,\n'+n+(biz?'\n'+biz:'');
+  }
+  function jobDetails(j){
+    return '<details class="jd" data-jid="'+j.id+'"'+(openJobs[j.id]?' open':'')+'><summary>Full job description</summary><div class="jdb">'+
+      (j.skills&&j.skills.length?'<div class="meta">'+j.skills.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+'</div>':'')+
+      (j.sim?'<p class="jdn">Sample text. Real jobs show the client\'s own words.</p>':'')+
+      '<div class="jdt">'+esc(fullOf(j))+'</div>'+
+      '<div class="acts" style="justify-content:flex-start"><button class="btn alt sm" data-cpd="'+j.id+'" type="button">Copy description</button><button class="btn sm" data-cpb="'+j.id+'" type="button">Copy brief for freelancer</button></div>'+
+      '<p class="jdn" style="margin-top:6px">The brief leaves out the client\'s budget and the listing link, and asks the freelancer for a quotation.</p></div></details>';
+  }
+  function copyText(t,b,label){
+    var el=b.querySelector&&b.querySelector('span')||b;function done(ok){el.textContent=ok?'Copied':'Select the text and copy it';setTimeout(function(){el.textContent=label},1800)}
+    function fb(){var ta=document.createElement('textarea');ta.value=t;ta.style.cssText='position:fixed;opacity:0';document.body.appendChild(ta);ta.select();var ok=false;try{ok=document.execCommand('copy')}catch(e){}document.body.removeChild(ta);done(ok)}
+    if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(t).then(function(){done(true)},fb);else fb();
+  }
+  document.addEventListener('toggle',function(e){
+    var d=e.target;if(!d||!d.classList||!d.classList.contains('jd'))return;
+    if(d.open)openJobs[d.dataset.jid]=1;else{delete openJobs[d.dataset.jid];if(dirty){list(true);status()}}
+  },true);
+  var IC={mark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>',ext:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg>',copy:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>'};
+  var SCOL=['#06B6D4','#6366F1','#a78bfa','#34d399'];
+  function chipsSync(){$('chips').innerHTML=CHIPS.map(function(x){return '<button class="chip" type="button" data-chip="'+esc(x)+'" aria-pressed="'+($('cat').value===x)+'">'+(x==='All types'?'All leads':x==='Software'?'Software and apps':esc(x))+'</button>'}).join('')}
+  function feeds(){
+    var c=$('cat').value,K={'BPO':['bpo back office','data-entry'],'Virtual Assistant':['virtual assistant','virtual-assistant'],'Customer Support':['customer support','customer-support'],'Cold Outreach':['cold email outreach','sales']};
+    var k=K[c]||(c==='Software'?['web development','dev']:DEV.indexOf(c)>-1?[c.toLowerCase(),'dev']:['virtual assistant','virtual-assistant']),q=encodeURIComponent(k[0]);
+    function a(n,u){return '<a class="btn alt sm" href="'+u+'" target="_blank" rel="noopener noreferrer">'+n+' ↗</a>'}
+    $('fdl').innerHTML='<div class="fdb">'+a('Upwork: '+esc(k[0]),'https://www.upwork.com/nx/search/jobs/?q='+q+'&sort=recency')+a('Freelancer: '+esc(k[0]),'https://www.freelancer.com/jobs/?keywords='+q)+a('RemoteOK: '+esc(k[1]),'https://remoteok.com/remote-'+k[1]+'-jobs')+'</div><p class="note">Upwork does not let other apps copy its listings, so its button opens Upwork\'s own search in a new tab. Found one you like? Add it with + Add Deal on the Lead Pipeline tab. Freelancer and RemoteOK leads also arrive in the list below on their own.</p>';
+  }
+  function jobCard(j){
+    var age=j.t0?Math.max(0,Math.round((Date.now()-j.t0)/1000)):-1,d=dealOf(j),bd=d&&d.bid?d:null,url=j.url&&/^https:\/\//.test(j.url)?j.url:'';
+    return '<article class="job"><div><h3>'+esc(j.t)+'</h3><p>'+esc(j.d)+'</p><div class="meta">'+(age>=0&&age<6?'<span class="badge">New</span>':'')+'<span>'+esc(j.c)+'</span><span>'+esc(j.s)+'</span>'+(j.sim?'<span>Sample</span>':'')+(j.loc?'<span>'+esc(j.loc)+'</span>':'')+(age>=0?'<span>'+(age<60?age+'s ago':age<3600?Math.floor(age/60)+' min ago':Math.floor(age/3600)+' h ago')+'</span>':'')+'</div>'+mt(j)+jobDetails(j)+'</div>'+
+      '<div class="side"><div class="price">'+esc(fmtB(j))+'</div><div class="acts"><button class="btn" type="button" data-bid="'+j.id+'">'+(bd?'Bid placed: '+esc(fmtB(bd,bd.bid)):'Place Bid')+'</button>'+
+      '<button class="ib'+(d?' on':'')+'" type="button" data-save="'+j.id+'" title="'+(d?'Saved to your pipeline':'Save Lead')+'" aria-label="Save lead">'+IC.mark+'</button>'+
+      (url?'<a class="ib" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="Open Original Link" aria-label="Open original link">'+IC.ext+'</a>':'')+'</div>'+
+      '<button class="cpp" type="button" data-cpp="'+j.id+'">'+IC.copy+'<span>1-Click Copy Proposal</span></button><button class="btn alt sm" type="button" data-apply="'+j.id+'" title="Writes the proposal, saves it to your pipeline, copies it and opens the original job"><span>Apply in 1 click</span></button></div></article>';
+  }
+  function list(force){
+    if(!force&&$('jl').querySelector('details.jd[open]')){dirty=true;return}
+    dirty=false;
+    var t=$('q').value.toLowerCase(),c=$('cat').value,sf=$('srcf').value;
+    var out=jobs.filter(function(j){return catOk(j,c)&&(sf==='All sources'||j.s===sf)&&(!t||(j.t+' '+j.d).toLowerCase().indexOf(t)>-1)}).slice(0,50);
+    $('jl').innerHTML=out.length?out.map(jobCard).join(''):'<p style="color:var(--muted)">No leads match yet. New ones appear here as they are found. Try another type, or use the board buttons above.</p>';
+    dash();
+  }
+  function proposalFor(j){fillSel();$('pj').value=j.id;gen();return $('po').textContent.replace(/^Subject:[^\n]*\n\n/,'')}
+  function dcard(p,i){
+    return '<div class="lead" draggable="true" data-card="'+p.id+'"><b>'+esc(p.t)+'</b><span class="ls">'+(p.c?esc(p.c)+' · ':'')+esc(p.s||'Manual')+'</span><span class="lv">'+(p.b||p.bid?esc(fmtB(p,p.bid||p.b)):'No value set')+'</span>'+
+      (p.bid&&p.days?'<span class="ls">Bid placed · '+p.days+' days</span>':p.sent?'<span class="ls">Proposal sent</span>':'')+(p.note?'<span class="ls">'+esc(p.note)+'</span>':'')+
+      '<div class="la">'+(i>0?'<button class="btn alt sm" data-mv="'+p.id+':-1" aria-label="Move back">←</button>':'')+(i<3?'<button class="btn sm" data-mv="'+p.id+':1" aria-label="Move forward">→</button>':'')+'<button class="btn alt sm" data-edit="'+p.id+'">Edit</button><button class="btn alt sm" data-rm="'+p.id+'">Remove</button></div></div>';
+  }
+  function board(){
+    var open=pipe.filter(function(p){return p.stage<3}),won=pipe.filter(function(p){return p.stage===3});
+    $('rev').innerHTML=[['Total Pipeline Value',money(sum(open)),'Open deals, fixed prices'],['Active Deals',open.length,'Follow Up, Closing and In Progress'],['Won Revenue',money(sum(won)),won.length+' completed']].map(function(r){return '<div class="rc"><span>'+r[0]+'</span><b>'+r[1]+'</b><small>'+r[2]+'</small></div>'}).join('');
+    $('board').innerHTML=stages.map(function(s,i){
+      var items=pipe.filter(function(p){return p.stage===i}),tot=sum(items);
+      return '<div class="col" data-st="'+i+'" style="border-top:3px solid '+SCOL[i]+'"><h3>'+s+' <span class="cn">'+items.length+'</span>'+(tot?'<small>'+money(tot)+'</small>':'')+'</h3>'+(items.length?items.map(function(p){return dcard(p,i)}).join(''):'<p class="note" style="margin:0">No deals here yet.</p>')+'</div>';
+    }).join('');
+    stats();dash();
+  }
+  function mvDeal(id,st){
+    var p=pipe.filter(function(z){return z.id===id})[0];if(!p||st<0||st>3||p.stage===st)return;
+    p.stage=st;if(st===3&&!p.done)p.done=Date.now();save();board();
+  }
+  function dash(){
+    var nj=jobs.slice(0,5);
+    $('dnew').innerHTML=nj.length?nj.map(function(j){return '<div class="dr"><div><b>'+esc(j.t.slice(0,70))+'</b><span class="note" style="display:block;margin:0">'+esc(j.c)+' · '+esc(j.s)+'</span></div><span class="dv">'+esc(fmtB(j))+'</span></div>'}).join(''):'<p class="note">New leads appear here as they are found.</p>';
+    $('dpipe').innerHTML=stages.map(function(s,i){var it=pipe.filter(function(p){return p.stage===i}),t=sum(it);return '<div class="dr"><span><i class="sw" style="background:'+SCOL[i]+'"></i>'+s+'</span><span class="dv">'+it.length+(t?' · '+money(t):'')+'</span></div>'}).join('');
+  }
+  function bars(rows,fm){
+    var mx=Math.max.apply(null,rows.map(function(r){return r[1]}).concat([1]));
+    return rows.length?rows.map(function(r){return '<div class="brow"><span title="'+esc(r[0])+'">'+esc(r[0])+'</span><div class="bt"><i style="width:'+Math.round(r[1]/mx*100)+'%"></i></div><b>'+(fm?fm(r[1]):r[1])+'</b></div>'}).join(''):'<p class="note">Nothing to show yet.</p>';
+  }
+  function renderAna(){
+    var n=pipe.length,won=pipe.filter(function(p){return p.stage===3}),wv=sum(won),sent=pipe.filter(function(p){return p.sent}).length;
+    var tiles=[['Deals tracked',n],['Proposals sent',sent],['Win rate',n?Math.round(won.length/n*100)+'%':'0%'],['Average won deal',won.length?money(Math.round(wv/won.length)):'$0']];
+    var wk=[],now=Date.now(),W=6048e5;
+    for(var i=7;i>=0;i--){var a=now-(i+1)*W,b=now-i*W;wk.push([i===0?'This week':i+' wk ago',pipe.filter(function(p){return p.at&&p.at>a&&p.at<=b}).length])}
+    var src={};pipe.forEach(function(p){var k=p.s||'Manual';src[k]=(src[k]||0)+1});
+    var cat={};jobs.forEach(function(j){cat[j.c]=(cat[j.c]||0)+1});
+    var byS=Object.keys(src).sort(function(x,y){return src[y]-src[x]}).map(function(k){return [k,src[k]]});
+    var byC=Object.keys(cat).sort(function(x,y){return cat[y]-cat[x]}).map(function(k){return [k,cat[k]]});
+    $('anb').innerHTML='<div class="stats">'+tiles.map(function(t){return '<div class="stat"><b>'+t[1]+'</b><span>'+t[0]+'</span></div>'}).join('')+'</div>'+
+      '<div class="ana2"><section class="card"><h3>Deals by stage</h3>'+bars(stages.map(function(s,i){return [s,pipe.filter(function(p){return p.stage===i}).length]}))+'</section>'+
+      '<section class="card"><h3>Value by stage</h3>'+bars(stages.map(function(s,i){return [s,sum(pipe.filter(function(p){return p.stage===i}))]}),money)+'</section>'+
+      '<section class="card"><h3>Deals added per week</h3>'+bars(wk)+'</section>'+
+      '<section class="card"><h3>Where your deals come from</h3>'+bars(byS)+'</section>'+
+      '<section class="card"><h3>Live leads by type ('+jobs.length+' now)</h3>'+bars(byC)+'</section>'+
+      '<section class="card"><h3>Notes</h3><p class="note" style="margin:0">Win rate is completed deals divided by all deals tracked. Hourly rates and yearly salaries are not added into value totals. Deals saved before this version have no date, so they are left out of the weekly chart.</p></section></div>';
+  }
+  function renderCourses(){
+    $('crl').innerHTML=GUIDES.map(function(g,i){return '<article class="cc"><span class="badge2" style="margin:0">Lesson '+(i+1)+'</span><h3>'+esc(g[0])+'</h3><p class="note">'+g[1].length+' key points</p><button class="btn alt sm" type="button" data-guide="'+i+'">Open lesson</button></article>'}).join('');
+  }
+  var ddEdit=null;
+  function ddOpen(id){
+    ddEdit=id||null;var p=id?pipe.filter(function(z){return z.id===id})[0]:null;
+    $('dd_st').innerHTML=stages.map(function(s,i){return '<option value="'+i+'">'+s+'</option>'}).join('');
+    $('dd_lead').innerHTML='<option value="">Manual entry</option>'+jobs.slice(0,60).map(function(j){return '<option value="'+j.id+'">'+esc(j.t.slice(0,60))+' ('+esc(fmtB(j))+')</option>'}).join('');
+    $('dd_lw').hidden=!!p;$('dd_ttl').textContent=p?'Edit deal':'Add deal';$('dd_m').textContent='';
+    $('dd_t').value=p?p.t:'';$('dd_c').value=p?(p.c||''):'';$('dd_v').value=p?(p.bid||p.b||''):'';$('dd_bt').value=p&&p.bt==='hr'?'hr':'fixed';
+    var so=$('dd_s');so.value=p&&Array.prototype.some.call(so.options,function(o){return o.value===p.s})?p.s:'Manual';
+    $('dd_st').value=p?p.stage:0;$('dd_n').value=p?(p.note||''):'';
+    $('dd_d').showModal();
+  }
+  function ddSave(){
+    var t=$('dd_t').value.trim();if(!t){$('dd_m').textContent='Enter a deal name.';$('dd_t').focus();return}
+    var v=+$('dd_v').value||0,st=+$('dd_st').value,f={t:t.slice(0,140),c:$('dd_c').value.trim().slice(0,80),b:v,bt:$('dd_bt').value,s:$('dd_s').value,note:$('dd_n').value.trim().slice(0,300)},e;
+    if(ddEdit){e=pipe.filter(function(z){return z.id===ddEdit})[0];if(e){Object.assign(e,f,{stage:st});if(e.bid&&v)e.bid=v}}
+    else{
+      var j=find(+$('dd_lead').value);e=j&&dealOf(j);
+      if(e)Object.assign(e,f,{stage:st});else{e=Object.assign({id:newId(),v:2,jk:j?jkey(j):'m'+Date.now(),stage:st,at:Date.now()},f);pipe.push(e)}
+    }
+    if(e&&e.stage===3&&!e.done)e.done=Date.now();
+    save();board();list(true);$('dd_d').close();
+  }
+  var people=[
+   {id:"p1",n:"Maricel D.",role:"Virtual assistant",sk:["Virtual assistant","Inbox management","Calendar","Data entry"],r:7,loc:"Philippines",av:"Available now",bio:"Runs inboxes, diaries and daily admin for small agencies.",plat:"Upwork"},
+   {id:"p2",n:"Joseph K.",role:"Customer support agent",sk:["Customer support","Zendesk","Live chat","Email support"],r:8,loc:"Kenya",av:"Available now",bio:"Chat and email support with fast, friendly replies.",plat:"Upwork"},
+   {id:"p3",n:"Ananya R.",role:"Data entry and back-office",sk:["Data entry","Back office","Excel","Order processing"],r:5,loc:"India",av:"Available now",bio:"Accurate processing of orders, records and spreadsheets.",plat:"Upwork"},
+   {id:"p4",n:"Thabo M.",role:"Customer service and call handling",sk:["Customer service","Call handling","BPO","Quality checks"],r:12,loc:"South Africa",av:"Available now",bio:"Phone and chat support, with experience coaching small teams.",plat:"Upwork"},
+   {id:"p5",n:"Ayesha F.",role:"Cold email and lead generation",sk:["Cold email","Lead generation","LinkedIn","Appointment setting"],r:10,loc:"Pakistan",av:"Part time",bio:"Builds prospect lists and writes personal outreach sequences.",plat:"Fiverr"},
+   {id:"p6",n:"Carlos P.",role:"Appointment setter",sk:["Appointment setting","Cold calling","CRM","Lead qualification"],r:9,loc:"Colombia",av:"Available now",bio:"Books qualified meetings for service businesses.",plat:"Upwork"},
+   {id:"p7",n:"Rina S.",role:"Admin assistant and bookkeeper",sk:["Administrative support","Bookkeeping","QuickBooks","Invoicing"],r:11,loc:"Philippines",av:"Available now",bio:"Monthly bookkeeping, invoicing and admin support.",plat:"Upwork"},
+   {id:"p8",n:"Mohamed A.",role:"Support and moderation agent",sk:["Customer support","Content moderation","Chat support","Helpdesk"],r:6,loc:"Egypt",av:"Available now",bio:"Handles tickets and community moderation across time zones.",plat:"Upwork"},
+   {id:"p9",n:"Grace W.",role:"Executive virtual assistant",sk:["Executive assistant","Travel booking","Email","Scheduling"],r:14,loc:"Uganda",av:"Part time",bio:"Supports founders with scheduling, travel and correspondence.",plat:"Upwork"},
+   {id:"p10",n:"Sana H.",role:"Social media and inbox assistant",sk:["Virtual assistant","Social media","Canva","Customer replies"],r:8,loc:"Bangladesh",av:"Available now",bio:"Posts, replies and basic graphics for online shops.",plat:"Fiverr"},
+   {id:"p11",n:"Jorge L.",role:"E-commerce order processing",sk:["Order processing","Shopify admin","Data entry","Inventory"],r:10,loc:"Mexico",av:"Available now",bio:"Daily order handling and stock updates for online stores.",plat:"Upwork"},
+   {id:"p12",n:"Lerato N.",role:"Customer support and help desk",sk:["Customer support","Email support","Help desk","Saved replies"],r:9,loc:"South Africa",av:"Available now",bio:"Clear, calm email support using your saved replies.",plat:"Upwork"}
+  ],team=[],mine=[],onb={};
+  try{if(window.SD_APP)throw 0;team=JSON.parse(localStorage.getItem('sd_team')||'[]');mine=JSON.parse(localStorage.getItem('sd_free')||'[]');onb=JSON.parse(localStorage.getItem('sd_onb')||'{}')||{}}catch(e){team=[];mine=[];onb={}}
+  function saveF(){if(window.SD_APP){sync();return}try{localStorage.setItem('sd_team',JSON.stringify(team));localStorage.setItem('sd_free',JSON.stringify(mine));localStorage.setItem('sd_onb',JSON.stringify(onb))}catch(e){}}
+  var LBL={available:'Available now',busy:'Busy',offline:'Offline'};
+  var REP={p1:[4.9,86,98],p2:[4.8,64,97],p3:[4.8,142,99],p4:[4.9,58,96],p5:[4.7,47,95],p6:[4.7,39,94],p7:[4.9,73,99],p8:[4.6,95,96],p9:[4.9,52,100],p10:[4.6,31,93],p11:[4.8,66,97],p12:[4.8,44,98]};
+  function stOf(p){return p.st||(p.av==='Part time'?'busy':'available')}
+  function rep(p){var r=REP[p.id]||[0,0,0];return {rating:r[0],n:r[1],pct:r[2],bayes:(5*4+r[0]*r[1])/(5+r[1])}}
+  function catOf(p){var k=p.sk.join(' ').toLowerCase();return /cold|lead gen|appointment|linkedin/.test(k)?'Cold Outreach':/support|customer service|help ?desk|live chat/.test(k)?'Customer Support':/virtual|executive|assistant|admin|bookkeep/.test(k)?'Virtual Assistant':/data entry|back office|order proc|bpo/.test(k)?'BPO':/unity|godot|game/.test(k)?'Games':/flutter|ios|android/.test(k)?'Mobile apps':/wordpress|shopify|figma|landing|seo/.test(k)?'Websites':/chatbot|openai|automation/.test(k)?'AI and automation':'Web apps'}
+  function scoreCand(j,p){
+    var text=(j.t+' '+(j.d||'')).toLowerCase(),hits=p.sk.filter(function(x){return text.indexOf(x.toLowerCase())>-1}).length;
+    var skill=Math.min(1,hits/2),cat=catOf(p)===j.c?1:0,st=stOf(p),av=st==='available'?1:st==='busy'?.3:0,r=rep(p);
+    var hr=jbt(j)==='hr'?j.b:(j.b?j.b/(dl(j.b)*6):0),price=!hr?.5:Math.max(0,Math.min(1,1-Math.max(0,p.r-hr)/hr));
+    var sc=.35*skill+.20*cat+.20*av+.15*(r.bayes/5)+.10*price,why=[];
+    if(hits)why.push(hits+' matching skill'+(hits>1?'s':''));if(cat)why.push('right job type');why.push(LBL[st].toLowerCase());if(r.n)why.push('rated '+r.rating);
+    return {score:Math.round(sc*100),why:why};
+  }
+  function ratingLine(p){var r=rep(p);return r.n?'★ '+r.rating.toFixed(1)+' · '+r.n+' jobs · '+r.pct+'% completed':'New on ScaleDesk'}
+  function mt(j){
+    var top=null;
+    mine.concat(people).forEach(function(p){if(stOf(p)==='offline')return;var m=scoreCand(j,p);if(!top||m.score>top.m.score)top={p:p,m:m}});
+    return top?'<p style="margin-top:8px;font-size:13px">Best match: <b>'+esc(top.p.n)+'</b> · '+top.m.score+'% · $'+top.p.r+'/hr · <span style="color:#fbbf24">'+esc(ratingLine(top.p))+'</span> <button class="btn alt sm" data-rank="'+j.id+'" style="margin-left:6px">See all matches</button></p>':'';
+  }
+  function fillMj(want){
+    var v=want||$('fmj').value,l=jobs.slice(0,30),sel=find(+v);
+    if(sel&&l.indexOf(sel)<0)l.unshift(sel);
+    $('fmj').innerHTML='<option value="">Rank by job: none</option>'+l.map(function(j){return '<option value="'+j.id+'">'+esc(j.t.slice(0,48))+'</option>'}).join('');
+    if(sel)$('fmj').value=v;
+  }
+  function extUrl(p){
+    if(p.url&&/^https:\/\//.test(p.url))return p.url;
+    var q=encodeURIComponent(p.sk[0]);
+    return p.plat==='Fiverr'?'https://www.fiverr.com/search/gigs?query='+q:'https://www.upwork.com/nx/search/talent/?q='+q;
+  }
+  function cand(id){return mine.concat(people).filter(function(z){return z.id===id})[0]}
+  var tc={outreach:0,outreachTotal:0,saved:0,savedTotal:0},tl={out:{},saved:{}};
+  function tShow(){$('s5').textContent=tc.outreach;$('s6').textContent=tc.saved;if($('fc').dataset.base!==undefined)$('fc').textContent=$('fc').dataset.base+' Active outreach: '+tc.outreach+'. Saved talent: '+tc.saved+'.'}
+  function tEvent(type,id){
+    if(APP&&me){sApi('/api/me/talent',{method:'POST',body:{type:type,id:String(id)}}).then(function(d){tc=d;tShow()}).catch(function(){})}
+    else{
+      if(type==='message'){tl.out[id]=1;tc.outreachTotal++}else if(type==='save'){if(!tl.saved[id])tc.savedTotal++;tl.saved[id]=1}else delete tl.saved[id];
+      tc.outreach=Object.keys(tl.out).length;tc.saved=Object.keys(tl.saved).length;tShow();
+    }
+  }
+  function openThread(p){
+    var T=$('tmsg');
+    if(!APP||!me){T.textContent='Message threads open in the signed-in app on your server.';return}
+    T.textContent='Opening the conversation…';
+    mgLoadList().then(function(){
+      var rid=onb[p.id];
+      if(rid&&rid!==1&&mg.rooms.some(function(r){return r.id===rid})){T.textContent='';tab('msg');return mgOpen(rid)}
+      return sApi('/api/rooms',{method:'POST',body:{kind:'quote',title:'Chat with '+p.n,clientName:p.n,freelancerId:String(p.id),brief:'Direct conversation with '+p.n+' ('+p.role+').',email:p.email||'',subject:'Message from '+($('pb').value||'ScaleDesk'),message:'Hello '+p.n.split(' ')[0]+',\n\nI would like to talk to you about some work. Open your private link to reply:\n{link}'}}).then(function(d){
+        onb[p.id]=d.id;mg.links[d.id]=location.origin+'/r#t='+d.tokens.developer;saveF();T.textContent='';tab('msg');
+        return mgLoadList().then(function(){return mgOpen(d.id)});
+      });
+    }).catch(function(e){T.textContent='Could not open the conversation: '+e.message});
+  }
+  function flist(){
+    var t=$('fq').value.toLowerCase(),a=$('fa').value,mj=find(+$('fmj').value);
+    var out=mine.concat(people).filter(function(p){return (a==='Any availability'||LBL[stOf(p)]===a)&&(!t||(p.n+' '+p.role+' '+p.sk.join(' ')).toLowerCase().indexOf(t)>-1)}).map(function(p){return {p:p,m:mj?scoreCand(mj,p):null}});
+    if(mj)out.sort(function(x,y){return y.m.score-x.m.score});
+    $('fc').dataset.base=out.length+' remote freelancer'+(out.length===1?'':'s')+(mj?' ranked for "'+mj.t+'"':' looking for work')+'. Sample profiles show how live availability will work.';
+    tShow();
+    $('fl').innerHTML=out.map(function(o){
+      var p=o.p,f=team.indexOf(p.id)>-1,st=stOf(p),own=String(p.id).charAt(0)==='m',ob=!!onb[p.id];
+      return '<article class="person"><h3>'+esc(p.n)+(o.m?' <span class="badge2">'+o.m.score+'% match</span>':'')+'</h3><p>'+esc(p.role)+' · '+esc(p.loc)+'</p><p class="rt">'+esc(ratingLine(p))+'</p><p>'+esc(p.bio)+'</p>'+(o.m?'<p><i>'+esc(o.m.why.join(', '))+'</i></p>':'')+
+        '<div class="meta">'+p.sk.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+(own?'':'<span>Sample profile</span>')+(ob?'<span class="badge">Onboarded</span>':'')+'</div>'+
+        '<div class="row"><span><b>$'+p.r+'/hr</b> · <span class="st '+st+'">● '+LBL[st]+'</span></span></div>'+
+        '<div class="tacts"><button class="btn sm" data-tmsg="'+p.id+'" type="button">Message</button><button class="btn sm" data-troom="'+p.id+'" type="button">Start Project Room</button><button class="btn alt sm" data-msg="'+p.id+'" type="button">Request quote</button><button class="btn sm'+(f?'':' alt')+'" data-fav="'+p.id+'" type="button">'+(f?'Saved ✓':'Save')+'</button><button class="btn alt sm" data-onb="'+p.id+'" type="button">'+(ob?'Onboarded ✓':'Mark onboarded')+'</button>'+(own?'<button class="btn alt sm" data-st="'+p.id+'" type="button">Set status</button>':'')+'</div></article>';
+    }).join('')||'<p style="color:var(--muted)">No freelancers match. Try another skill.</p>';
+  }
+  var nid=100,paused=false,lastUp=Date.now();
+  var G={
+   "Websites":[["Website for a {x}",["bakery","law firm","yoga studio","car dealer","travel agency","school"],250,2500,"Pages, contact form and basic SEO."],["WordPress site for a {x}",["clinic","church","salon","charity"],200,1200,"Theme setup, booking form and speed tuning."]],
+   "Games":[["{x} game in Unity",["Puzzle","Racing","Card","Endless runner"],1000,6000,"Gameplay, menus and store release."],["Godot {x} prototype",["platformer","shooter","farming"],600,3000,"Playable prototype with core mechanics."]],
+   "Web apps":[["{x} web app",["Booking","Inventory","Invoicing","CRM"],1500,7000,"Login, admin panel and payments."],["React dashboard for {x}",["sales data","fleet tracking","clinic reports"],900,4000,"Charts and filters over an API."]],
+   "Mobile apps":[["Flutter app for a {x}",["delivery startup","gym","tutoring service"],1800,6000,"Ordering, accounts and push notifications."]],
+   "AI and automation":[["{x} chatbot",["Support","Sales","Booking"],700,3500,"Connect a language model to your tools."],["Automate {x}",["invoice entry","lead follow-up","report emails"],300,1800,"Workflow automation with API integrations."]]
+   ,"BPO":[["Back-office {x} support",["order processing","invoice processing","document handling","data cleaning"],8,18,"Daily processing to a checklist with accuracy checks.","hr"]],
+   "Virtual Assistant":[["Virtual assistant for a {x}",["real-estate agent","coach","e-commerce store","law firm"],6,16,"Inbox, calendar and admin support.","hr"],["{x} data entry",["Product","CRM","Spreadsheet"],80,400,"One-off data entry with a deadline.","fixed"]],
+   "Customer Support":[["Customer support agent for a {x}",["SaaS startup","online shop","travel company"],8,20,"Email and chat support with saved replies.","hr"]],
+   "Cold Outreach":[["Cold email outreach for a {x}",["B2B agency","software company","recruiter"],250,1200,"Prospect list, first emails and follow-ups.","fixed"],["Appointment setter for a {x}",["dental group","solar installer","home-services firm"],8,18,"Call and message leads to book meetings.","hr"]]
+  };
+  var CK=Object.keys(G),SR=["Freelancer","Remotive","RemoteOK"],CT=["USA","UK","Canada","Australia","UAE","Germany","South Africa","India","Brazil","Singapore"];
+  function pick(a){return a[Math.floor(Math.random()*a.length)]}
+  function newJob(){
+    var c=pick(CK),g=pick(G[c]);
+    return {id:++nid,t:g[0].replace("{x}",pick(g[1])),c:c,s:pick(SR),b:g[5]==='hr'?Math.round(g[2]+Math.random()*(g[3]-g[2])):Math.round((g[2]+Math.random()*(g[3]-g[2]))/50)*50,bt:g[5]||'fixed',d:g[4],loc:pick(CT),t0:Date.now(),sim:true};
+  }
+  /* Swap this function for a call to your own server once live job collection exists. */
+  function fetchNew(n){var a=[];for(var i=0;i<n;i++)a.push(newJob());return a}
+  function status(){
+    $('ls').textContent=(paused?'Paused':'Live')+(live?' from server':'')+' · updated '+new Date(lastUp).toLocaleTimeString()+' · '+jobs.length+' jobs'+(dirty?' · new jobs appear when you close the open description':'');
+    $('ld').style.background=paused?'#9aa5c4':'#0a9f62';
+  }
+  function ingest(n){jobs=fetchNew(n).concat(jobs).slice(0,100);lastUp=Date.now();list();status()}
+  function fillSel(){
+    var v=$('pj').value;
+    $('pj').innerHTML=jobs.map(function(j){return '<option value="'+j.id+'">'+esc(j.t)+'</option>'}).join('');
+    if(find(+v))$('pj').value=v;
+  }
+  function tab(n){
+    ['dash','jobs','prop','pipe','free','crs','calc','ana','pout','prof','msg','how'].forEach(function(x){$(x).hidden=x!==n});
+    if(n==='dash'){dash();if(APP&&me)mgLoadList()}
+    if(n==='ana')renderAna();
+    if(n==='pout')renderPays();
+    if(n==='prof')profOpen();
+    if(n==='msg'){$('mg_off').hidden=!!APP;$('mg_on').hidden=!APP;if(APP){mgLoadList().then(function(){if(mg.cur)mgPoll()})}}
+    if(n==='jobs')list(true);
+    Array.prototype.forEach.call(document.querySelectorAll('.nv'),function(b){b.setAttribute('aria-selected',b.dataset.t===n)});
+    document.body.classList.remove('sbo');
+  }
+  var DEL={"Websites":["Responsive design for phone and desktop","Contact form and basic SEO setup","Speed optimisation and testing","Handover with a short training video"],"Games":["Playable build with the core mechanics","Menus, levels and sound","Testing on target devices","Source code and release support"],"Web apps":["Secure login and admin panel","Core features built to your brief","Testing and bug fixing","Deployment and documentation"],"Mobile apps":["App for iOS and Android","Accounts and push notifications","Testing on real devices","Store submission support"],"AI and automation":["Integration with your tools and data","Prompt and workflow design","Testing with real examples","Documentation and handover"],"BPO":["Work done to your written checklist","Accuracy checks on every batch","Weekly report of tasks completed","Backup person for time off"],"Virtual Assistant":["Inbox, calendar and admin support","Data entry and research","Daily or weekly updates","Hours that suit your time zone"],"Customer Support":["Replies within the agreed response time","Your help-desk tool and saved replies","Weekly ticket summary","Clear escalation to you"],"Cold Outreach":["Targeted prospect list","Personal emails with follow-ups","Replies passed on the same day","Weekly results report"]};
+  function dl(b){return b<500?5:b<1500?10:b<3500?21:35}
+  function dlj(j){return jbt(j)==='hr'?7:5}
+  function splitText(a){return a.length===1?'100% before the final files are released':a.length===2?'two stages: '+a[0]+'% upfront, '+a[1]+'% on delivery':'three milestones: '+a[0]+'% to start, '+a[1]+'% at the midpoint, '+a[2]+'% on delivery'}
+  function gen(){
+    var j=find(+$('pj').value)||jobs[0];if(!j){$('po').textContent='No jobs yet. Jobs appear here as they are collected.';return}
+    if(cpJob!==j.id){cpJob=j.id;$('cq').value=jbt(j)==='fixed'?(j.b||''):''}
+    var n=$('pn').value||'Your Name',s=$('ps').value.trim(),c=$('pc').value.trim(),tn=$('pt').value,t=jbt(j),hr=t==='hr',yr=t==='yr';
+    var pr=ov?ov.price:(yr?0:j.b),days=ov&&ov.days?ov.days:5,dv=(DEL[j.c]||DEL.Websites).slice(0,3);
+    var fn=n.trim().split(/\s+/)[0]||'Your Name',dur=days===5?'3–5 business days':days+' business days';
+    var plan=ov&&ov.split?splitText(ov.split):'two stages: 50% upfront, 50% on delivery';
+    var pt=pr?(hr?money(pr)+' / hr':money(pr)):'a price to be agreed',sub='Proposal: '+j.t;
+    var greet=tn==='pro'?'Hello, I am writing about "'+j.t+'" and would be glad to help.':'Hi there, I saw your post "'+j.t+'" and I would be glad to help.';
+    var cta='Reply here or connect via my ScaleDesk workspace to confirm details.'+(c?'\nContact: '+c:'')+'\n\nBest regards,\n'+fn+' | ScaleDesk',body;
+    if(tn==='short'){
+      body=greet+'\n\n'+(hr?'Rate: '+pt+', starting right away.':pt+' in '+dur+', paid in '+plan+'.')+'\n\n'+cta;
+    }else{
+      body=greet+'\n\nAbout me\n'+s+'\n\nWhat you will receive\n'+dv.map(function(x){return '• '+x}).join('\n')+'\n\nTimeline and milestones\n'+
+        (hr?'• Start: right away, with a short progress update each week\n• Rate: '+pt+', billed weekly for the hours worked':'• Delivery: '+dur+'\n• Price: '+pt+', paid in '+plan)+'\n\n'+cta;
+    }
+    $('po').textContent='Subject: '+sub+'\n\n'+body;
+    $('em').href='mailto:?subject='+encodeURIComponent(sub)+'&body='+encodeURIComponent(body);
+    $('wa').href='https://wa.me/?text='+encodeURIComponent(body);
+  }
+  var live=false,es=null,seen={},base0='',key0='';
+  try{$('srv').value=localStorage.getItem('sd_srv')||'';$('key').value=localStorage.getItem('sd_key')||''}catch(e){}
+  function addServer(arr){
+    if(paused)return;
+    var add=[];
+    arr.forEach(function(x){if(seen[x.key])return;seen[x.key]=1;add.push({id:++nid,key:x.key,bt:x.bt,t:x.t,c:x.c,s:x.s,b:x.b||0,d:x.d,loc:x.loc,t0:x.t0,url:x.url,full:x.full,skills:x.skills})});
+    if(!add.length)return;
+    add.sort(function(a,b){return b.t0-a.t0});
+    jobs=add.concat(jobs).slice(0,200);lastUp=Date.now();list();status();
+  }
+  function pull(){
+    fetch(base0+'/api/jobs'+key0,{headers:hd()}).then(function(r){return r.json()}).then(addServer).catch(function(){$('ls').textContent='Could not refresh from the server.'});
+  }
+  function connect(){
+    var base=$('srv').value.trim().replace(/\/+$/,''),key=$('key').value.trim();
+    if(!/^https:\/\/|^http:\/\/localhost/i.test(base)){$('ls').textContent='Enter the server address, starting with https://';return}
+    try{localStorage.setItem('sd_srv',base);localStorage.setItem('sd_key',key)}catch(e){}
+    if(es)es.close();
+    base0=base;key0=key?'?key='+encodeURIComponent(key):'';
+    $('ls').textContent='Connecting…';
+    fetch(base0+'/api/jobs'+key0,{headers:hd()}).then(function(r){if(!r.ok)throw new Error(r.status);return r.json()}).then(function(arr){
+      live=true;jobs=[];seen={};addServer(arr);
+      es=new EventSource(base0+'/api/stream'+key0);
+      es.onmessage=function(e){try{addServer(JSON.parse(e.data))}catch(x){}};
+      es.onerror=function(){$('ls').textContent='Reconnecting to the server…'};
+      $('cn').textContent='Connected';
+    }).catch(function(){$('ls').textContent='Could not reach the server. Check the address and key. If you opened this from the Claude link, use the downloaded file instead, because the link blocks outside connections.'});
+  }
+  var bj=null,ov=null;
+  function bidMsg(){
+    ov={price:+$('ba').value||(jbt(bj)==='yr'?0:bj.b),days:+$('bdays').value||dlj(bj)};
+    fillSel();$('pj').value=bj.id;gen();ov=null;
+    $('bp').value=$('po').textContent.replace(/^Subject:[^\n]*\n\n/,'');
+  }
+  function openBid(id){
+    bj=find(id);if(!bj)return;
+    $('bdt').textContent='Bid on: '+bj.t;
+    $('bdm').textContent='Client budget '+fmtB(bj)+' · '+bj.s+(bj.loc?' · '+bj.loc:'');
+    $('ba').value=jbt(bj)==='yr'?'':(bj.b||'');$('bdays').value=dlj(bj);$('bal').textContent=jbt(bj)==='hr'?'Your hourly rate (USD per hour)':'Your bid (USD)';
+    bidMsg();$('bd').showModal();
+  }
+  function submitBid(){
+    var a=+$('ba').value,d=+$('bdays').value,m=$('bp').value.trim();
+    if(!(a>0)){$('ba').focus();return}
+    if(!(d>0)){$('bdays').focus();return}
+    if(!m){$('bp').focus();return}
+    lead(bj,0,{bid:a,days:d,msg:m,sent:true,bt:jbt(bj)==='hr'?'hr':'fixed'});list(true);
+    $('bd').close();
+  }
+  var tgt=null;
+  function best(p){var m=null,sc=-1;jobs.slice(0,50).forEach(function(j){var x=scoreCand(j,p).score;if(x>sc){sc=x;m=j}});return m||jobs[0]}
+  function fBody(j,link,mode){
+    var n=$('pn').value||'',biz=$('pb').value,c=$('pc').value;
+    return 'Hi '+tgt.n.split(' ')[0]+',\n\nI am '+n+(biz?' from '+biz:'')+'. I have a new project that matches your skills ('+tgt.sk.join(', ')+').\n\nProject: '+j.t+'\nType: '+j.c+'\n\nWhat the client wants:\n'+fullOf(j)+'\n\nPlease send me a quotation with:\n• Your price for the whole project\n• How many days you need\n• Two examples of similar work\n\n'+(mode==='chat'?'Please send your quotation using the form on this page. You can also reply to me here in the chat.':(link?'See the full brief, chat with me and send your quotation here:\n'+link:'Reply to this message with your quotation.'))+'\n\nBest regards,\n'+n+(biz?'\n'+biz:'')+(c?'\n'+c:'');
+  }
+  function fMsg(){
+    if(!tgt)return;
+    var j=find(+$('fj').value)||jobs[0];if(!j)return;
+    var body=fBody(j,qInv[tgt.id+':'+j.id]);
+    $('fo').textContent=body;
+    $('fem').href='mailto:'+encodeURIComponent($('fe').value.trim())+'?subject='+encodeURIComponent('Quotation request: '+j.t)+'&body='+encodeURIComponent(body);
+    $('fwa').href='https://wa.me/?text='+encodeURIComponent(body);
+  }
+  document.addEventListener('click',function(e){
+    ['gdd','add'].forEach(function(i){var d=$(i);if(d&&d.open&&!d.contains(e.target))d.open=false});
+    var b=e.target.closest('button');if(!b)return;
+    if(b.dataset.t){tab(b.dataset.t);if(b.dataset.t==='prop'){fillSel();gen()}if(b.dataset.t==='free'){fillMj();flist()}}
+    if(b.id==='rf'){if(live)pull();else ingest(3);b.textContent='Refreshing…';b.disabled=true;setTimeout(function(){b.textContent='Refresh';b.disabled=false},600)}
+    if(b.id==='pz'){paused=!paused;b.textContent=paused?'Resume live':'Pause live';status()}
+    if(b.dataset.cpd){var cd1=find(+b.dataset.cpd);if(cd1)copyText(fullOf(cd1),b,'Copy description')}
+    if(b.dataset.cpb){var cd2=find(+b.dataset.cpb);if(cd2)copyText(briefText(cd2),b,'Copy brief for freelancer')}
+    if(b.dataset.save){lead(+b.dataset.save,0);list(true)}
+    if(b.dataset.chip){$('cat').value=b.dataset.chip;chipsSync();feeds();list(true)}
+    if(b.dataset.apply){var aj=find(+b.dataset.apply);if(aj){var at=proposalFor(aj),ap=jbt(aj)==='yr'?0:(aj.b||0),ao={days:5,msg:at,sent:true};if(ap){ao.bid=ap;ao.bt=jbt(aj)==='hr'?'hr':'fixed'}lead(aj,0,ao);copyText(at,b,'Apply in 1 click');var au=aj.url&&/^https:\/\//.test(aj.url)?aj.url:'';if(au)window.open(au,'_blank','noopener');setTimeout(function(){list(true)},2000)}}
+    if(b.dataset.cpp){var cj0=find(+b.dataset.cpp);if(cj0)copyText(proposalFor(cj0),b,'1-Click Copy Proposal')}
+    if(b.dataset.edit)ddOpen(+b.dataset.edit);
+    if(b.id==='adl'||b.id==='adl2')ddOpen();
+    if(b.id==='dd_save')ddSave();
+    if(b.id==='dd_x')$('dd_d').close();
+    if(b.dataset.write){fillSel();$('pj').value=b.dataset.write;gen();tab('prop')}
+    if(b.dataset.mv){var a=b.dataset.mv.split(':');var pp=pipe.filter(function(z){return z.id===+a[0]})[0];if(pp)mvDeal(pp.id,pp.stage+ +a[1])}
+    if(b.dataset.rm){pipe=pipe.filter(function(z){return z.id!==+b.dataset.rm});save();board();list(true)}
+    if(b.dataset.fav){var i=team.indexOf(b.dataset.fav);if(i>-1){team.splice(i,1);tEvent('unsave',b.dataset.fav)}else{team.push(b.dataset.fav);tEvent('save',b.dataset.fav)}saveF();flist()}
+    if(b.dataset.onb){if(onb[b.dataset.onb])delete onb[b.dataset.onb];else onb[b.dataset.onb]=1;saveF();flist()}
+    if(b.dataset.troom){var rp=cand(b.dataset.troom);if(rp){tEvent('message',rp.id);openThread(rp)}}
+    if(b.dataset.tmsg){var tp=cand(b.dataset.tmsg);if(tp){tEvent('message',tp.id);if(onb[tp.id])openThread(tp);else{$('tmsg').textContent='Opened '+tp.n+' on '+(tp.url?'their profile page':(tp.plat||'Upwork')+' (search results for '+tp.sk[0]+')')+'.';window.open(extUrl(tp),'_blank','noopener')}}}
+    if(b.id==='fadd'){
+      var nm=$('fn').value.trim(),sk=$('fs').value.split(',').map(function(s){return s.trim()}).filter(Boolean),rt=+$('fr').value;
+      if(!nm||!sk.length||!rt){(nm?(sk.length?$('fr'):$('fs')):$('fn')).focus();return}
+      mine.unshift({id:"m"+Date.now(),n:nm,email:$('fe2').value.trim(),url:/^https:\/\//i.test($('fu').value.trim())?$('fu').value.trim().slice(0,300):'',role:"New on ScaleDesk",sk:sk,r:rt,loc:"Worldwide",av:"Available now",bio:"Looking for new projects."});
+      $('fn').value=$('fs').value=$('fr').value=$('fe2').value=$('fu').value='';saveF();flist();
+    }
+    if(b.dataset.msg){
+      tgt=mine.concat(people).filter(function(z){return z.id===b.dataset.msg})[0];
+      $('fmt').textContent='Message to '+tgt.n;
+      if(!jobs.length){$('fj').innerHTML='';$('fo').textContent='No jobs have been collected yet. When jobs appear, press Message again to write your message.';$('fsw').hidden=true;$('fm').hidden=false;return}
+      $('fsw').hidden=!APP;
+      $('fj').innerHTML=jobs.map(function(j){return '<option value="'+j.id+'">'+esc(j.t)+'</option>'}).join('');
+      $('fj').value=best(tgt).id;
+      $('fe').value=tgt.email||'';$('fst').textContent='';$('fm').hidden=false;fMsg();$('fm').scrollIntoView({behavior:'smooth',block:'start'});
+    }
+    if(b.id==='fcl')$('fm').hidden=true;
+    if(b.id==='fcp'){try{navigator.clipboard.writeText($('fo').textContent);b.textContent='Copied'}catch(x){b.textContent='Select and copy manually'}setTimeout(function(){b.textContent='Copy message'},1800)}
+    if(b.dataset.rank){tab('free');fillMj(b.dataset.rank);flist();window.scrollTo(0,0)}
+    if(b.dataset.st){var q=mine.filter(function(z){return z.id===b.dataset.st})[0];if(q){q.st={available:'busy',busy:'offline',offline:'available'}[stOf(q)];saveF();flist()}}
+    if(b.id==='rooms'){var ru=(base0||$('srv').value.trim()).replace(/\/+$/,'');if(/^https:\/\/|^http:\/\/localhost/i.test(ru))window.open(ru+'/rooms','_blank','noopener');else $('rn').textContent='Enter your server address on the Live Job Leads tab first.'}
+    if(b.id==='cn')connect();
+    if(b.dataset.bid)openBid(+b.dataset.bid);
+    if(b.id==='bc')$('bd').close();
+    if(b.id==='bs')submitBid();
+    if(b.id==='bcp'){try{navigator.clipboard.writeText($('bp').value);b.textContent='Copied'}catch(x){b.textContent='Select and copy manually'}setTimeout(function(){b.textContent='Copy message'},1800)}
+    if(b.id==='gen')gen();
+    if(b.id==='ap'){lead(+$('pj').value,0,{sent:true});list(true)}
+    if(b.id==='cp'){try{navigator.clipboard.writeText($('po').textContent);b.textContent='Copied'}catch(x){b.textContent='Select and copy manually'}}
+  });
+  /* ---------- Guides dropdown ---------- */
+  var GUIDES=[
+   ["Land your first job",["Pick one service you do well, such as WordPress sites or Unity prototypes, and say it in your first line.","Start with small jobs that have a clear scope. Clients say yes faster to something simple.","Reply in the first hour after a job is posted. Early, specific replies get noticed.","Show two or three examples of similar work, even personal projects.","Ask one smart question about the brief to prove you read it.","After each job, ask for a review. Your first three reviews matter most."]],
+   ["Write a proposal that gets replies",["Open with their project, not with your life story.","Restate their goal in one sentence so they know you understood.","Say what you will deliver, by when, and for how much.","Keep it under 200 words in short paragraphs.","End with a clear next step, such as: Shall we start this week?","Always change the project name and details. Use the proposal writer, then edit it."]],
+   ["Price your work and ask for quotations",["List every part of the job, estimate the hours, and multiply by your hourly rate.","Add 15 to 20 percent for revisions and surprises.","Quote a fixed price when the scope is clear, and hourly when it is open-ended.","Split bigger jobs into milestones, for example 30, 40 and 30 percent.","Write down what is included and what costs extra.","When you ask freelancers for quotations, ask for price, days and examples. Compare scope, not only price."]],
+   ["Spot scams and bad clients",["Be careful when someone wants to move chat and payment off the platform before the work is agreed.","Never pay to get a job, and never accept an overpayment and refund the difference.","Check the client's payment method is verified before you start.","Do not do large unpaid test work. Offer a small paid trial instead.","Vague scope, a rush deadline and a tiny budget together are a warning sign.","Keep every agreement in writing."]],
+   ["Build a profile that gets invited",["Write a clear headline: what you do and who you do it for.","Use a real photo or logo and a short, friendly bio.","List the skills clients actually search for.","Show results in your portfolio: what changed for the client.","Keep your availability status current. Available freelancers are matched first.","Collect reviews and show your best ones."]],
+   ["Keep clients and win repeat work",["Agree when you will send updates, and keep to it.","Send previews early so there are no surprises.","Deliver a little ahead of the deadline when you can.","At the end, ask for feedback and offer maintenance or a next phase.","Use a project room: one private place for chat, files and approval."]],
+   ["Using ScaleDesk in five steps",["Open Live Job Leads and pick a type, such as BPO or Virtual Assistant.","Press the bookmark icon to save a lead, or 1-Click Copy Proposal to copy a ready proposal.","Press Place Bid to record your bid. It appears in Lead Pipeline under Follow Up.","Move each deal along the pipeline: Follow Up, Closing, In Progress, Completed.","When a client says yes, open a project room. Invite freelancers to send quotations in the app."]]
+   ,["Start a BPO or virtual assistant business",["Pick one niche, for example customer support or admin help for estate agents.","Sell a clear result each month, such as 'inbox cleared every day', not just hours.","Place one reliable worker first and test them on a small paid task.","Work out your margin: what the client pays minus what you pay the worker and your costs. The Calculator tab does this.","Put scope, hours, notice period and replacement terms in writing.","Never promise results or income you do not control."]],
+   ["Cold outreach that gets replies",["Spend two minutes on each prospect and mention something real about them.","Lead with their problem, not your services.","Keep the email under 100 words and ask one simple question.","Follow up two or three times, a few days apart.","Respect unsubscribe requests and the anti-spam rules where your prospect lives (POPIA, GDPR, CAN-SPAM).","Log every reply as a deal in Lead Pipeline, starting at Follow Up."]],
+   ["Win customer support contracts",["Offer a short paid trial week with agreed hours and response-time targets.","Ask for their help-desk tool and saved replies so staff can start fast.","Send a weekly report: tickets handled, response time, common questions.","Have a backup person for holidays and sick days.","Agree in writing what the agent may say, refund or escalate."]]
+  ];
+
+  /* ---------- Accounts (used when the page is served by your own server) ---------- */
+  var cpJob=0;
+  var APP=!!window.SD_APP,SES='',me=null,syncT=null,qInv={},amode='in',planInfo={},payTries=0,RESET='';
+  function hd(){return APP?{'x-session':SES}:{}}
+  function sApi(path,opt){
+    opt=opt||{};opt.headers=Object.assign({'Content-Type':'application/json','x-session':SES},opt.headers||{});
+    if(opt.body&&typeof opt.body!=='string')opt.body=JSON.stringify(opt.body);
+    return fetch(path,opt).then(function(r){return r.json().then(function(d){if(!r.ok){var e=new Error(d.error||('Error '+r.status));e.status=r.status;throw e}return d})});
+  }
+  function sync(){
+    if(!APP||!me||me.access==='expired'||me.access==='blocked')return;
+    clearTimeout(syncT);syncP=true;
+    syncT=setTimeout(pushNow,700);
+  }
+  var syncP=false;
+  function pushNow(){
+    if(!syncP||!APP||!me)return;syncP=false;
+    sApi('/api/me/data',{method:'PUT',keepalive:true,body:{pipe:pipe,team:team,mine:mine,onb:onb,pays:pays,sender:{n:$('pn').value,b:$('pb').value,c:$('pc').value,s:$('ps').value}}}).catch(function(){syncP=true;setTimeout(pushNow,5000)});
+  }
+  window.addEventListener('pagehide',function(){clearTimeout(syncT);pushNow()});
+  document.addEventListener('visibilitychange',function(){if(document.hidden){clearTimeout(syncT);pushNow()}});
+  function aboutDef(b){return (b||'Our agency')+' is a BPO and virtual assistant agency providing back-office, administrative, customer support and data entry services. Our trained remote team works to written checklists with quality checks and regular progress reports, so you can hand work over with confidence.'}
+  function daysLeft(t){return Math.max(0,Math.ceil((t-Date.now())/864e5))}
+  function planText(u){
+    if(u.access==='owner')return 'Owner account';
+    if(u.access==='active')return 'Subscription active until '+new Date(u.paidUntil).toLocaleDateString();
+    if(u.access==='trial'){var d=daysLeft(u.trialUntil);return 'Free trial: '+d+' day'+(d===1?'':'s')+' left'}
+    return 'No active plan';
+  }
+  function authMode(m){
+    amode=m;var pe=$('au_p');if(pe&&pe.type==='text'){var eb=document.querySelector('[data-eye=au_p]');if(eb)eb.click()}$('au_in').setAttribute('aria-selected',m==='in');$('au_up').setAttribute('aria-selected',m==='up');
+    $('au_f').hidden=$('au_cw').hidden=m!=='up';$('au_ew').hidden=m==='rs';$('au_pw').hidden=m==='fg';$('au_fw').hidden=m!=='in';
+    $('au_pl').textContent=m==='rs'?'Choose a new password (8 or more characters)':'Password (8 or more characters)';
+    $('au_go').textContent={in:'Sign in',up:'Create account',fg:'Send reset link',rs:'Set new password'}[m];$('au_swb').textContent=m==='up'?'Already have an account? Log in':m==='in'?'New here? Create an account':'Back to log in';$('au_m').textContent='';$('au_m').style.color='#c0392b';
+  }
+  function showAuth(){document.body.classList.remove('pre');$('auth').hidden=false;$('lock').hidden=true;authMode(amode)}
+  function showLock(u,pl,manage){
+    document.body.classList.remove('pre');$('auth').hidden=true;$('lock').hidden=false;
+    var never=!u.trialUntil&&!u.paidUntil,blocked=u.access==='blocked',ok=u.access!=='expired'&&!blocked;
+    $('lt').textContent=manage?'Your plan':blocked?'Account paused':never?'Waiting to be unlocked':'Your plan has ended';
+    $('lm').textContent=(manage?planText(u)+'. ':'')+(blocked?'Please contact support.':never&&!manage?'Your account will be unlocked soon. If you have an invite code, sign out and create your account with it.':'Subscribe to keep using ScaleDesk. Your clients and leads stay saved.')+(pl.price?' Price: '+pl.price+'.':'')+(pl.support?' Support: '+pl.support:'');
+    var s=$('lsub');s.hidden=!pl.subscribeUrl||blocked||!!pl.billing;if(pl.subscribeUrl)s.href=pl.subscribeUrl;
+    $('lpay').hidden=!(pl.billing&&!blocked&&u.access!=='owner');$('lmanage').hidden=!(pl.billing&&!blocked&&u.access==='active');
+    $('lback').hidden=!ok;
+  }
+  function openStream(){
+    if(es)es.close();
+    sApi('/api/stream-ticket').then(function(d){
+      es=new EventSource('/api/stream?ticket='+encodeURIComponent(d.ticket));
+      es.onmessage=function(e){try{addServer(JSON.parse(e.data))}catch(x){}};
+      es.onerror=function(){es.close();$('ls').textContent='Reconnecting…';setTimeout(openStream,3000)};
+    }).catch(function(e){if(e.status===401||e.status===402)boot();else setTimeout(openStream,5000)});
+  }
+  function enter(d){
+    me=d.user;planInfo=d.plan||{};
+    document.body.classList.add('app');document.body.classList.remove('pre');
+    $('sdwarn').hidden=!(me.access==='owner'&&planInfo.storage==='temporary');$('abo').hidden=me.access!=='owner';$('add').hidden=false;$('asum').textContent=me.name||me.email;$('ainfo').textContent=me.email+' · '+planText(me);
+    $('auth').hidden=true;
+    $('vbar').hidden=me.verified||!planInfo.email;
+    $('aib').hidden=!planInfo.ai;$('mg_ai').hidden=$('mg_sum').hidden=!planInfo.ai;
+    if(me.access==='expired'&&/billing=success/.test(location.search)&&payTries++<20){showLock(me,planInfo);$('lm').textContent='Payment received. Activating your plan…';setTimeout(boot,3000);return}
+    if(me.access==='expired'||me.access==='blocked'){showLock(me,planInfo);return}
+    if(/billing=/.test(location.search))history.replaceState(null,'',location.pathname);
+    $('lock').hidden=true;
+    var x=d.data||{},sd=x.sender||{};
+    pipe=x.pipe||[];team=x.team||[];mine=x.mine||[];onb=x.onb||{};pays=x.pays||[];tc=me.talent||tc;
+    $('pn').value=sd.n||me.name||'';$('pb').value=sd.b||me.business||'';$('pc').value=sd.c||me.email||'';
+    $('ps').value=(!sd.s||/^Write a short summary|^Scale Desk delivers websites/.test(sd.s))?aboutDef(sd.b||me.business):sd.s;
+    if(migrate(pipe))save();
+    tShow();if((tc.saved||0)!==team.length)team.forEach(function(id){tEvent('save',id)});
+    $('fchat').hidden=false;$('fsend').hidden=false;$('fsw').hidden=false;$('sendc').hidden=false;
+    jobs=[];seen={};live=true;base0=location.origin;
+    board();stats();flist();list();gen();status();tab('dash');
+    fetch('/api/jobs',{headers:hd()}).then(function(r){return r.json()}).then(addServer).catch(function(){});
+    openStream();mgStart();
+  }
+  function boot(){
+    try{SES=localStorage.getItem('sd_session')||''}catch(e){SES=''}
+    var rm=/[?&]reset=([\w.-]+)/.exec(location.search);
+    if(rm){RESET=rm[1];history.replaceState(null,'',location.pathname);amode='rs';showAuth();return}
+    if(!SES){showAuth();return}
+    sApi('/api/me').then(function(d){$('net').hidden=true;enter(d)}).catch(function(e){
+      if(e&&e.status===401){SES='';try{localStorage.removeItem('sd_session')}catch(x){}$('net').hidden=true;showAuth();return}
+      /* server asleep, offline or busy: keep the saved sign-in and try again */
+      $('net').hidden=false;setTimeout(boot,4000)});
+  }
+  function submitAuth(){
+    var body={email:$('au_e').value.trim().toLowerCase(),password:$('au_p').value.trim()};
+    if(amode==='up'){body.name=$('au_n').value;body.business=$('au_b').value;body.code=$('au_c').value;body.terms=$('au_t').checked}
+    if(amode==='rs'){body={token:RESET,password:$('au_p').value.trim()}}
+    $('au_m').textContent='';$('au_go').disabled=true;
+    if(amode==='fg'){
+      fetch('/api/auth/forgot',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:body.email})})
+        .then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||'Something went wrong');return d})})
+        .then(function(){$('au_m').style.color='inherit';$('au_m').textContent='If that email has an account, a reset link is on its way. Check your inbox (and spam).'})
+        .catch(function(e){$('au_m').textContent=e.message}).then(function(){$('au_go').disabled=false});
+      return;
+    }
+    fetch('/api/auth/'+(amode==='in'?'login':amode==='rs'?'reset':'signup'),{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)})
+      .then(function(r){return r.json().then(function(d){if(!r.ok){var er=new Error(d.error||'Something went wrong');er.status=r.status;throw er}return d})})
+      .then(function(d){SES=d.token;try{localStorage.setItem('sd_session',SES)}catch(e){}$('au_p').value='';return sApi('/api/me').then(enter)})
+      .catch(function(e){var m0=e.message;if(e.status===409){authMode('in');$('au_e').value=body.email}$('au_m').textContent=m0}).then(function(){$('au_go').disabled=false});
+  }
+  function signOut(){
+    sApi('/api/auth/logout',{method:'POST'}).catch(function(){}).then(function(){try{localStorage.removeItem('sd_session')}catch(e){}location.reload()});
+  }
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    if(b.dataset.guide!==undefined){var g=GUIDES[+b.dataset.guide];$('gdt').textContent=g[0];$('gdb').innerHTML='<ul>'+g[1].map(function(x){return '<li>'+esc(x)+'</li>'}).join('')+'</ul>';$('gd').showModal()}
+    if(b.id==='gdc')$('gd').close();
+    if(b.dataset.eye){var pf=$(b.dataset.eye),sh=pf.type==='password';pf.type=sh?'text':'password';b.setAttribute('aria-pressed',sh);b.setAttribute('aria-label',sh?'Hide password':'Show password');b.innerHTML=sh?'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10 10 0 0112 5c6.4 0 10 7 10 7a17 17 0 01-3.2 4.1M6.6 6.6C3.7 8.4 2 12 2 12s3.6 7 10 7c1.7 0 3.2-.4 4.5-1M9.9 9.9a3 3 0 004.2 4.2"/></svg>':'<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>';return}
+    if(b.id==='au_swb')authMode(amode==='in'?'up':'in');
+    if(b.id==='au_in')authMode('in');
+    if(b.id==='au_forgot')authMode('fg');
+    if(b.id==='ai_go'){
+      var pt0=$('po').textContent;if(!pt0||/^Your proposal will appear/.test(pt0)){$('ai_m').textContent='Generate a proposal first.';return}
+      b.disabled=true;$('ai_m').textContent='Thinking…';
+      sApi('/api/ai',{method:'POST',body:{task:'proposal',text:pt0,ask:$('ai_q').value||'Improve the wording and keep it concise.'}}).then(function(d){$('ai_o').textContent=d.text;$('ai_o').hidden=false;$('ai_cp').hidden=false;$('ai_m').textContent='Draft ready. Read it before you use it.'}).catch(function(er){$('ai_m').textContent=er.message}).then(function(){b.disabled=false});
+    }
+    if(b.id==='ai_cp')copyText($('ai_o').textContent,b,'Copy the AI version');
+    if(b.id==='mg_ai'||b.id==='mg_sum'){
+      var thread=$('mg_msgs').innerText.slice(-4000);if(!thread.trim()){$('mg_err').textContent='There are no messages to work from yet.';return}
+      b.disabled=true;$('mg_err').textContent='Thinking…';
+      sApi('/api/ai',{method:'POST',body:{task:b.id==='mg_ai'?'reply':'summary',text:thread}}).then(function(d){
+        if(b.id==='mg_ai'){$('mg_txt').value=d.text;$('mg_err').textContent='Draft added. Edit it, then press Send.'}
+        else{$('mg_info').textContent=d.text;$('mg_err').textContent=''}
+      }).catch(function(er){$('mg_err').textContent=er.message}).then(function(){b.disabled=false});
+    }
+    if(b.id==='vsend'){sApi('/api/auth/resend',{method:'POST'}).then(function(){$('vmsg').textContent='Sent.'}).catch(function(er){$('vmsg').textContent=er.message})}
+    if(b.id==='au_up')authMode('up');
+    if(b.id==='au_go')submitAuth();
+    if(b.id==='aout'||b.id==='lout')signOut();
+    if(b.id==='abo'){location.href='/admin';return}
+    if(b.id==='aplan'){$('add').open=false;showLock(me,planInfo,true)}
+    if(b.id==='lback')$('lock').hidden=true;
+    if(b.id==='lpay'||b.id==='lmanage'){sApi(b.id==='lpay'?'/api/billing/subscribe':'/api/billing/portal',{method:'POST',body:{}}).then(function(d){if(d.fields){var f=document.createElement('form');f.method='POST';f.action=d.url;Object.keys(d.fields).forEach(function(k){var i=document.createElement('input');i.type='hidden';i.name=k;i.value=d.fields[k];f.appendChild(i)});document.body.appendChild(f);f.submit()}else location.href=d.url}).catch(function(er){$('lm').textContent=er.message})}
+    if(b.id==='csend'){
+      var cj=find(+$('pj').value);if(!cj)return;
+      var cprice=+$('cq').value,cem=$('ce').value.trim(),cnm=$('cc').value.trim();
+      if(!cnm||!(cprice>0)){$('cs').textContent='Enter the client name and your price.';return}
+      b.disabled=true;$('cs').textContent='Sending…';
+      sApi('/api/rooms',{method:'POST',body:{kind:'project',offer:true,offerText:cbody,title:cj.t,clientName:cnm,amount:cprice,split:csplit,currency:$('cu').value||'USD',email:cem,subject:'Proposal: '+cj.t,message:'Hello '+cnm.split(' ')[0]+',\n\nHere is my proposal for "'+cj.t+'".\n\n'+cbody+'\n\nOpen your private link to read it, accept the offer, chat with me and follow the work:\n{link}'}}).then(function(d){
+        mg.links[d.id]=location.origin+'/r#t='+d.tokens.client;mg.offerRoom=d.id;$('copen').hidden=false;$('clink').value=location.origin+'/r#t='+d.tokens.client;$('clink').hidden=!!d.emailed;
+        $('cs').textContent=d.emailed?'Sent to '+cem+'. The project room is in your rooms list.':(d.emailError?d.emailError+'. ':'')+'Copy the link below and send it to your client yourself.';
+        lead(cj,0,{bid:cprice,days:5,sent:true,bt:'fixed'});list(true);
+      }).catch(function(er){$('cs').textContent='Could not send: '+er.message}).then(function(){b.disabled=false});
+    }
+    if(b.id==='fsend'&&tgt){
+      var fj=find(+$('fj').value)||jobs[0],fem=$('fe').value.trim();if(!fj)return;
+      if(!fem){$('fst').textContent='Enter the freelancer email address.';return}
+      b.disabled=true;$('fst').textContent='Sending…';
+      sApi('/api/rooms',{method:'POST',body:{kind:'quote',title:'Quote request: '+fj.t,clientName:tgt.n,brief:fj.t+'\n\n'+fullOf(fj),email:fem,subject:'Quotation request: '+fj.t,message:fBody(fj,'{link}')}}).then(function(d){
+        qInv[tgt.id+':'+fj.id]=location.origin+'/r#t='+d.tokens.developer;fMsg();
+        tEvent('message',tgt.id);$('fst').textContent=d.emailed?'Message sent to '+fem+'. Their quotation will appear in your rooms list.':(d.emailError?d.emailError+'. ':'')+'The message above now has their private link. Copy it or send it by WhatsApp.';
+      }).catch(function(er){$('fst').textContent='Could not send: '+er.message}).then(function(){b.disabled=false});
+    }
+    if(b.id==='fchat'&&tgt){
+      var cj3=find(+$('fj').value)||jobs[0];if(!cj3)return;
+      var cem=$('fe').value.trim();
+      b.disabled=true;$('fst').textContent='Starting the chat…';
+      sApi('/api/rooms',{method:'POST',body:{kind:'quote',title:'Quote request: '+cj3.t,clientName:tgt.n,brief:cj3.t+'\n\n'+fullOf(cj3),email:cem,subject:'Quotation request: '+cj3.t,message:fBody(cj3,'{link}')}}).then(function(d){
+        mg.links[d.id]=location.origin+'/r#t='+d.tokens.developer;
+        return sApi('/api/rooms/'+d.id+'/messages',{method:'POST',body:{body:fBody(cj3,null,'chat')}}).then(function(){return d});
+      }).then(function(d){
+        tEvent('message',tgt.id);$('fst').textContent='';tab('msg');
+        return mgLoadList().then(function(){return mgOpen(d.id)}).then(function(){
+          $('mg_info').textContent=d.emailed?'Email sent to '+cem+' with their private link.':(d.emailError?d.emailError+'. ':'')+'Send the private link below to the freelancer so they can read your message and reply.';
+        });
+      }).catch(function(er){$('fst').textContent='Could not start the chat: '+er.message}).then(function(){b.disabled=false});
+    }
+    if(b.id==='copen'&&mg.offerRoom){tab('msg');mgLoadList().then(function(){return mgOpen(mg.offerRoom)})}
+    if(b.dataset.mg)mgOpen(b.dataset.mg);
+    if(b.id==='mg_del'&&mg.room){
+      var fn=prompt('Which freelancer is this task for? (name)');if(!fn)return;
+      var tb=prompt('Describe the task for the freelancer. Leave out the client name and contact details.',mg.room.title);if(!tb)return;
+      sApi('/api/rooms/'+mg.cur+'/delegate',{method:'POST',body:{freelancerName:fn,brief:tb}}).then(function(d){
+        var lk=location.origin+'/r#t='+d.token;mg.links[d.id]=lk;mgLoadList();
+        prompt('Task created. Send this private link to '+fn+' (copy with Ctrl+C). They see only the task text, and the client never sees them:',lk);
+      }).catch(function(er){$('mg_err').textContent=er.message});
+    }
+    if(b.id==='mg_send')mgSend();
+    if(b.id==='mg_copy')copyText($('mg_url').value,b,'Copy link');
+    if(b.id==='mg_link'&&mg.cur){
+      if(mg.links[mg.cur]){$('mg_share').hidden=!$('mg_share').hidden}
+      else if(confirm('Create a new private link? Any link you sent before will stop working.')){
+        sApi('/api/rooms/'+mg.cur+'/relink',{method:'POST',body:{role:mg.room&&mg.room.kind==='quote'?'developer':'client'}}).then(function(d){mg.links[mg.cur]=location.origin+'/r#t='+d.token;mgShare(mg.cur)}).catch(function(er){$('mg_err').textContent=er.message});
+      }
+    }
+    if(b.dataset.mgq&&mg.cur){sApi('/api/rooms/'+mg.cur+'/decide',{method:'POST',body:{quoteId:b.dataset.mgq,decision:b.dataset.mgd}}).then(function(r){mg.room=r;mgHead();mgPoll()}).catch(function(er){$('mg_err').textContent=er.message})}
+  });
+  /* ---------- Payouts: what you owe freelancers ---------- */
+  function pfmt(n,c){return (Math.round(n*100)/100).toFixed(2)+' '+c}
+  function renderPays(){
+    var by={};pays.forEach(function(p){var b=p.a-p.paid;by[p.c]=by[p.c]||{owed:0,paid:0};by[p.c].owed+=Math.max(0,b);by[p.c].paid+=p.paid});
+    var keys=Object.keys(by);
+    $('po_sum').textContent=keys.length?keys.map(function(c){return 'Still to pay: '+pfmt(by[c].owed,c)+' · Paid so far: '+pfmt(by[c].paid,c)}).join('   |   '):'Nothing recorded yet.';
+    var today=new Date().toISOString().slice(0,10);
+    var rows=pays.slice().sort(function(a,b){var da=(a.a-a.paid)<=0,db=(b.a-b.paid)<=0;if(da!==db)return da?1:-1;var x=a.due||'9',y=b.due||'9';return x<y?-1:x>y?1:0});
+    $('po_list').innerHTML=rows.map(function(p){
+      var bal=p.a-p.paid,done=bal<=0.005,late=!done&&p.due&&p.due<today;
+      return '<div class="lead"><b>'+esc(p.who)+'</b> · '+esc(p.job||'')+'<br>Owed '+pfmt(p.a,p.c)+' · Paid '+pfmt(p.paid,p.c)+' · '+(done?'<b>Settled</b>':'Balance '+pfmt(bal,p.c))+(p.due?' · Due '+esc(p.due):'')+(late?' <b style="color:#c0392b">(overdue)</b>':'')+
+        (p.hist&&p.hist.length?'<br><span class="note">Payments: '+p.hist.map(function(h){return pfmt(h.a,p.c)+' on '+esc(h.on)}).join(', ')+'</span>':'')+
+        '<div style="margin-top:6px">'+(done?'':'<button class="btn alt sm" data-pp="pay:'+p.id+'" type="button">Record a payment</button> ')+'<button class="btn alt sm" data-pp="del:'+p.id+'" type="button">Delete</button></div></div>';
+    }).join('');
+  }
+
+  var pfW=[],pfSlug='',pfPrev={},pfLoaded=false;
+  function pfEsc(x){return String(x==null?'':x).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+  function pfSnap(){Array.prototype.forEach.call(document.querySelectorAll('#pf_work .pfw'),function(el){var i=+el.dataset.i;if(!pfW[i])return;pfW[i].title=el.querySelector('.wt').value;pfW[i].desc=el.querySelector('.wd').value;pfW[i].link=el.querySelector('.wl').value})}
+  function pfDraw(){
+    $('pf_work').innerHTML=pfW.map(function(w,i){
+      var src=w.img||(w.keep&&pfSlug?'/p/'+pfSlug+'/img/'+i+'?'+Date.now():'');
+      return '<div class="pfw" data-i="'+i+'"><label>Title</label><input class="wt" maxlength="100" value="'+pfEsc(w.title)+'" placeholder="For example: Website for a bakery">'+
+      '<label>What you did and the result</label><textarea class="wd" maxlength="800" style="min-height:80px" placeholder="Rough notes are fine. The AI can tidy them.">'+pfEsc(w.desc)+'</textarea>'+
+      '<p class="pfr"><button class="btn alt sm pfai" data-w="'+i+'" data-task="work" type="button">Write with AI</button><span class="note pfs"></span></p>'+
+      '<label>Link to the live project (optional, https only)</label><input class="wl" maxlength="300" value="'+pfEsc(w.link)+'" placeholder="https://">'+
+      '<label>Picture (optional)</label><input class="wf" type="file" accept="image/*">'+(src?'<img src="'+pfEsc(src)+'" alt="Preview of this example">':'')+
+      '<p><button class="btn alt sm" data-wdel="'+i+'" type="button">Remove this example</button></p></div>'}).join('');
+    $('pf_addw').hidden=pfW.length>=6;
+  }
+  function pfFill(p){
+    p=p||{};pfSlug=p.slug||'';
+    $('pf_name').value=p.name||(me&&(me.business||me.name))||'';$('pf_loc').value=p.location||'';$('pf_rate').value=p.rate||'';$('pf_mail').value=p.email||'';
+    $('pf_head').value=p.headline||'';$('pf_about').value=p.about||'';$('pf_serv').value=(p.services||[]).join('\n');$('pf_pub').checked=!!p.public;
+    pfW=(p.work||[]).map(function(w){return {title:w.title,desc:w.desc,link:w.link,img:'',keep:!!w.hasImg}});pfDraw();pfLinks();
+  }
+  function pfLinks(){var on=!!pfSlug&&$('pf_pub').checked;$('pf_view').hidden=$('pf_copy').hidden=!on;if(on)$('pf_view').href='/p/'+pfSlug}
+  function profOpen(){
+    $('pf_off').hidden=!!APP;$('pf_on').hidden=!APP;if(!APP)return;
+    $('pf_aino').hidden=!!planInfo.ai;Array.prototype.forEach.call(document.querySelectorAll('.pfai'),function(b){b.hidden=!planInfo.ai});
+    if(pfLoaded)return;
+    sApi('/api/me/profile').then(function(d){pfLoaded=true;pfFill(d.profile)}).catch(function(e){$('pf_msg').textContent=e.message});
+  }
+  function pfShrink(file,cb){
+    var r=new FileReader();r.onload=function(){var im=new Image();im.onload=function(){
+      var m=900,k=Math.min(1,m/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);
+      c.getContext('2d').drawImage(im,0,0,c.width,c.height);var q=.8,u=c.toDataURL('image/jpeg',q);while(u.length>380000&&q>.35){q-=.1;u=c.toDataURL('image/jpeg',q)}
+      cb(u.length<=400000?u:'')};im.onerror=function(){cb('')};im.src=r.result};r.onerror=function(){cb('')};r.readAsDataURL(file);
+  }
+  document.addEventListener('change',function(e){
+    var t=e.target;if(t.id==='pf_pub'){pfLinks();return}
+    if(!t.classList||!t.classList.contains('wf')||!t.files[0])return;
+    var box=t.closest('.pfw'),i=+box.dataset.i;pfSnap();
+    pfShrink(t.files[0],function(u){if(!u){$('pf_msg').textContent='That picture could not be used. Try a JPG or PNG.';return}pfW[i].img=u;pfW[i].keep=false;pfDraw();$('pf_msg').textContent=''});
+  });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b||!APP)return;
+    if(b.id==='pf_addw'){pfSnap();if(pfW.length<6){pfW.push({title:'',desc:'',link:'',img:'',keep:false});pfDraw()}return}
+    if(b.dataset.wdel!==undefined){pfSnap();pfW.splice(+b.dataset.wdel,1);pfDraw();return}
+    if(b.dataset.undo){var f=$(b.dataset.undo);if(f&&pfPrev[b.dataset.undo]!==undefined){f.value=pfPrev[b.dataset.undo];b.parentNode.textContent='Undone.'}return}
+    if(b.classList.contains('pfai')){
+      var fld,st,key;
+      if(b.dataset.w!==undefined){pfSnap();var el=document.querySelector('#pf_work .pfw[data-i="'+b.dataset.w+'"]');fld=el.querySelector('.wd');st=b.parentNode.querySelector('.pfs');key=null}
+      else{fld=$(b.dataset.f);st=$(b.dataset.f+'_s');key=b.dataset.f}
+      var notes=fld.value.trim();
+      if(!notes&&b.dataset.task!=='headline'){st.textContent='Type a few rough notes first, then press the button.';return}
+      if(b.dataset.task==='headline')notes=($('pf_about').value+'\n'+$('pf_serv').value+'\n'+fld.value).trim();
+      if(!notes){st.textContent='Fill in the About box or services first.';return}
+      var prev=fld.value;st.textContent='Writing…';b.disabled=true;
+      sApi('/api/ai',{method:'POST',body:{task:b.dataset.task,text:notes}}).then(function(d){
+        if(key)pfPrev[key]=prev;fld.value=d.text;st.innerHTML='AI draft added. Read it and make sure it is true. '+(key?'<button class="btn alt sm" data-undo="'+key+'" type="button">Undo</button>':'')}).catch(function(er){st.textContent=er.message}).then(function(){b.disabled=false});
+      return;
+    }
+    if(b.id==='pf_copy'){var u=location.origin+'/p/'+pfSlug;if(navigator.clipboard)navigator.clipboard.writeText(u).then(function(){$('pf_msg').textContent='Link copied.'});else $('pf_msg').textContent=u;return}
+    if(b.id==='pf_save'){
+      pfSnap();$('pf_msg').textContent='Saving…';
+      var body={name:$('pf_name').value,location:$('pf_loc').value,rate:$('pf_rate').value,email:$('pf_mail').value,headline:$('pf_head').value,about:$('pf_about').value,
+        services:$('pf_serv').value.split('\n'),public:$('pf_pub').checked,work:pfW.map(function(w){return {title:w.title,desc:w.desc,link:w.link,img:w.img,keep:w.keep}})};
+      sApi('/api/me/profile',{method:'PUT',body:body}).then(function(d){pfFill(d.profile);$('pf_msg').textContent=d.profile.public?'Saved. Your page is public.':'Saved. Your page is private until you tick the box.'}).catch(function(er){$('pf_msg').textContent=er.message});
+    }
+  });
+  document.addEventListener('click',function(e){
+    var b=e.target.closest('button');if(!b)return;
+    if(b.id==='po_add'){
+      var who=$('po_who').value.trim(),amt=+$('po_amt').value;
+      if(!who||!(amt>0)){$('po_err').textContent='Enter the freelancer and the amount.';return}
+      $('po_err').textContent='';
+      pays.push({id:Date.now()+Math.floor(Math.random()*1000),who:who.slice(0,80),job:$('po_job').value.trim().slice(0,120),a:amt,c:($('po_cur').value||'USD').toUpperCase().slice(0,3),due:$('po_due').value||'',paid:0,hist:[]});
+      $('po_who').value=$('po_job').value=$('po_amt').value=$('po_due').value='';save();renderPays();
+    }
+    if(b.dataset.pp){
+      var pr=b.dataset.pp.split(':'),it=pays.filter(function(x){return String(x.id)===pr[1]})[0];if(!it)return;
+      if(pr[0]==='del'){if(confirm('Delete this payout record?')){pays=pays.filter(function(x){return x!==it});save();renderPays()}}
+      else{var v=prompt('Amount paid now ('+it.c+'). Balance is '+pfmt(it.a-it.paid,it.c));var n=+v;
+        if(v&&n>0){it.paid=Math.round((it.paid+n)*100)/100;(it.hist=it.hist||[]).push({a:n,on:new Date().toISOString().slice(0,10)});save();renderPays()}}
+    }
+    if(b.id==='po_csv'){
+      var q=function(x){return '"'+String(x==null?'':x).replace(/"/g,'""')+'"'};
+      var csv=['Freelancer,Job,Currency,Owed,Paid,Balance,Due'].concat(pays.map(function(p){return [q(p.who),q(p.job),q(p.c),p.a,p.paid,Math.round((p.a-p.paid)*100)/100,q(p.due)].join(',')})).join('\n');
+      var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='freelancer-payouts.csv';a.click();setTimeout(function(){URL.revokeObjectURL(a.href)},2000);
+    }
+  });
+  /* ---------- Messages: chat with freelancers and clients ---------- */
+  var mg={rooms:[],cur:null,last:0,room:null,links:{},offerRoom:null,t1:null,t2:null};
+  function mgMoney(c,cur){return (c/100).toFixed(2)+' '+cur}
+  function mgWhen(t){var d=new Date(t),n=new Date();return d.toDateString()===n.toDateString()?d.toLocaleTimeString([],{hour:'2-digit',minute:'2-digit'}):d.toLocaleDateString([],{day:'numeric',month:'short'})}
+  function mgBadge(){
+    var n=mg.rooms.reduce(function(a,r){return a+((r.id===mg.cur&&!$('msg').hidden)?0:r.unread)},0);
+    $('mbadge').textContent=n;$('mbadge').hidden=!n;
+  }
+  function mgRenderList(){
+    var l=mg.rooms.slice().sort(function(a,b){return b.lastAt-a.lastAt});
+    $('mg_list').innerHTML=l.length?l.map(function(r){
+      var showUnread=r.unread&&!(r.id===mg.cur&&!$('msg').hidden);
+      return '<button class="mgi'+(r.id===mg.cur?' sel':'')+'" data-mg="'+r.id+'" type="button"><b>'+esc(r.clientName)+(showUnread?' <span class="badge2">'+r.unread+' new</span>':'')+'</b><span class="mgs">'+esc(r.title)+'</span><span class="mgs">'+(r.lastMsg?esc((r.lastRole==='owner'?'You: ':'')+r.lastMsg):'No messages yet')+'</span><span class="mgs">'+(r.kind==='quote'?'Quote request':'Project room')+' · '+esc(r.status)+' · '+mgWhen(r.lastAt)+'</span></button>';
+    }).join(''):'<p class="note" style="margin:8px">No conversations yet.</p>';
+    mgBadge();
+  }
+  var WL={pending:'Pending Bid',progress:'In Progress',review:'In Review',completed:'Completed'};
+  function rvSum(m){var k=Object.keys(m).filter(function(c){return m[c]>0});return k.length?k.map(function(c){return mgMoney(m[c],c)}).join(' · '):'0.00'}
+  function rvRender(){
+    var P=mg.rooms.filter(function(r){return r.kind==='project'}),E={},A={},X={},n=0;
+    P.forEach(function(r){var c=r.currency;if(r.work==='completed'){E[c]=(E[c]||0)+r.paidCents;n++}else if(r.work==='progress')A[c]=(A[c]||0)+r.amountCents;else if(r.work==='pending')X[c]=(X[c]||0)+r.amountCents});
+    $('rv').innerHTML=[['Total Revenue Earned',rvSum(E),'Paid on Completed jobs'],['Active Work Value',rvSum(A),'Jobs In Progress'],['Expected Pipeline Value',rvSum(X),'Pending Bids'],['Completed Jobs',n,'Finished projects']].map(function(r){return '<div class="rc"><span>'+r[0]+'</span><b>'+r[1]+'</b><small>'+r[2]+'</small></div>'}).join('');
+    P.sort(function(a,b){return b.createdAt-a.createdAt});
+    $('rvt').innerHTML=P.length?'<table class="rtb"><thead><tr><th>Project</th><th>Client</th><th>Status</th><th>Value</th><th>Paid</th><th>Review</th></tr></thead><tbody>'+P.map(function(r){
+      return '<tr><td>'+esc(r.title)+'</td><td>'+esc(r.clientName)+'</td><td><select data-rvs="'+r.id+'" aria-label="Status">'+Object.keys(WL).map(function(k){return '<option value="'+k+'"'+(r.work===k?' selected':'')+'>'+WL[k]+'</option>'}).join('')+'</select></td><td>'+mgMoney(r.amountCents,r.currency)+'</td><td>'+mgMoney(r.paidCents,r.currency)+'</td><td>'+(r.review?'<span class="stars">'+'★'.repeat(r.review.rating)+'☆'.repeat(5-r.review.rating)+'</span>'+(r.review.comment?'<br><span class="note" style="margin:0">'+esc(r.review.comment)+'</span>':''):(r.work==='completed'?'<span class="note" style="margin:0">Waiting for the client</span>':'<span class="note" style="margin:0">After completion</span>'))+'</td></tr>'}).join('')+'</tbody></table>':'<p class="note">No projects yet. When a client accepts an offer you send, it appears here.</p>';
+  }
+  document.addEventListener('change',function(e){
+    var t=e.target;if(!t.dataset||!t.dataset.rvs)return;
+    var r=mg.rooms.filter(function(z){return z.id===t.dataset.rvs})[0];if(!r)return;
+    var old=r.work;r.work=t.value;rvRender();
+    sApi('/api/rooms/'+r.id+'/status',{method:'POST',body:{status:t.value}}).catch(function(er){r.work=old;rvRender();alert(er.message)});
+  });
+  function mgLoadList(){return sApi('/api/rooms').then(function(a){mg.rooms=a;mgRenderList();rvRender()}).catch(function(){})}
+  function mgShare(id){
+    var url=mg.links[id];$('mg_share').hidden=!url;if(!url)return;
+    var title=(mg.room&&mg.room.title)||'';
+    var text='Hello, this is your private link to chat with me'+(title?' about "'+title+'"':'')+':\n'+url;
+    $('mg_url').value=url;
+    $('mg_wa').href='https://wa.me/?text='+encodeURIComponent(text);
+    $('mg_em').href='mailto:?subject='+encodeURIComponent('Your private link'+(title?': '+title:''))+'&body='+encodeURIComponent(text);
+  }
+  function mgHead(){
+    var r=mg.room;if(!r)return;
+    var open=r.status==='open';
+    $('mg_del').hidden=r.kind!=='project';
+    $('mg_title').textContent=r.clientName;
+    $('mg_sub').textContent=r.title+' · '+(r.kind==='quote'?'Quote request':'Project room')+' · '+r.status;
+    $('mg_txt').disabled=$('mg_send').disabled=!open;
+    $('mg_q').innerHTML=(r.quotes&&r.quotes.length)?'<b>Quotations</b>'+r.quotes.map(function(q){
+      return '<div class="mgq"><span><b>'+mgMoney(q.cents,r.currency)+'</b> in '+q.days+' days<span class="pillm">'+esc(q.status)+'</span>'+(q.note?'<br><span class="note" style="margin:0">'+esc(q.note)+'</span>':'')+'</span>'+(open&&q.status==='sent'?'<span style="display:flex;gap:6px"><button class="btn sm" data-mgq="'+q.id+'" data-mgd="accepted" type="button">Accept</button><button class="btn alt sm" data-mgq="'+q.id+'" data-mgd="declined" type="button">Decline</button></span>':'')+'</div>';
+    }).join(''):'';
+  }
+  function mgOpen(id){
+    mg.cur=id;mg.last=0;mg.room=null;
+    $('mg_box').hidden=false;$('mg_empty').hidden=true;$('mg_msgs').innerHTML='';$('mg_err').textContent='';$('mg_info').textContent='';$('mg_q').innerHTML='';
+    $('mg_open').href='/rooms/'+encodeURIComponent(id);
+    mgShare(id);mgRenderList();
+    return sApi('/api/rooms/'+id).then(function(r){if(id!==mg.cur)return;mg.room=r;mgHead();mgShare(id);return mgPoll()}).catch(function(e){$('mg_err').textContent=e.message});
+  }
+  function mgPoll(){
+    var id=mg.cur;if(!id)return Promise.resolve();
+    return sApi('/api/rooms/'+id+'/messages?since='+mg.last).then(function(a){
+      if(id!==mg.cur||!a.length)return;
+      var box=$('mg_msgs'),first=mg.last===0,near=box.scrollTop+box.clientHeight>=box.scrollHeight-40;
+      a.forEach(function(m){mg.last=Math.max(mg.last,m.id);box.insertAdjacentHTML('beforeend','<div class="mgmsg'+(m.role==='owner'?' me':'')+'"><b>'+(m.role==='owner'?'You':esc(m.name))+'</b> <span class="note" style="margin:0">'+mgWhen(m.at)+'</span><div>'+esc(m.body)+'</div></div>')});
+      if(first||near)box.scrollTop=box.scrollHeight;
+    }).catch(function(){});
+  }
+  function mgSend(){
+    var t=$('mg_txt').value.trim();if(!t||!mg.cur)return;
+    $('mg_send').disabled=true;$('mg_err').textContent='';
+    sApi('/api/rooms/'+mg.cur+'/messages',{method:'POST',body:{body:t}}).then(function(){$('mg_txt').value='';return mgPoll()}).catch(function(e){$('mg_err').textContent=e.message}).then(function(){$('mg_send').disabled=!(mg.room&&mg.room.status==='open')});
+  }
+  function mgStart(){
+    clearInterval(mg.t1);clearInterval(mg.t2);
+    mgLoadList();
+    mg.t1=setInterval(function(){if(!document.hidden&&!$('msg').hidden&&mg.cur)mgPoll()},3000);
+    mg.t2=setInterval(function(){
+      if(document.hidden)return;
+      mgLoadList().then(function(){if(!$('msg').hidden&&mg.cur)sApi('/api/rooms/'+mg.cur).then(function(r){mg.room=r;mgHead()}).catch(function(){})});
+    },10000);
+  }
+  $('mg_txt').addEventListener('keydown',function(e){if((e.ctrlKey||e.metaKey)&&e.key==='Enter'){e.preventDefault();mgSend()}});
+  ['pn','pb','pc','ps'].forEach(function(i){$(i).addEventListener('change',sync)});
+  if(APP){
+    document.body.classList.add('pre');
+    fetch('/api/plan').then(function(r){return r.json()}).then(function(p){
+      $('au_price').textContent=(p.price?p.price+'. ':'')+(p.trialDays?p.trialDays+'-day free trial.':'Accounts are unlocked by invitation. Use an invite code to start.');
+    }).catch(function(){});
+    boot();
+    if(location.hash==='#signup'){if(!SES)authMode('up');history.replaceState(null,'',location.pathname+location.search)}
+  }
+  $('q').oninput=$('cat').oninput=$('srcf').oninput=list;
+  $('cat').addEventListener('change',function(){chipsSync();feeds();list(true)});
+  $('fq').oninput=$('fa').oninput=flist;
+  $('fmj').addEventListener('input',flist);
+  ['ba','bdays'].forEach(function(i){$(i).addEventListener('input',bidMsg)});
+  ['pj','pn','pb','pc','ps','pt'].forEach(function(i){$(i).addEventListener('input',gen)});
+  ['fj','pn','pb','pc'].forEach(function(i){$(i).addEventListener('input',fMsg)});
+  function mobile(){return window.matchMedia('(max-width:820px)').matches}
+  try{if(localStorage.getItem('sd_sbc')==='1')document.body.classList.add('sbc')}catch(e){}
+  $('sbt').addEventListener('click',function(){
+    if(mobile()){var o=document.body.classList.toggle('sbo');this.setAttribute('aria-expanded',o)}
+    else{var c=document.body.classList.toggle('sbc');this.setAttribute('aria-expanded',!c);try{localStorage.setItem('sd_sbc',c?'1':'0')}catch(e){}}
+  });
+  function clearOver(){Array.prototype.forEach.call(document.querySelectorAll('.col.over'),function(x){x.classList.remove('over')})}
+  document.addEventListener('dragstart',function(e){var c=e.target.closest&&e.target.closest('[data-card]');if(c&&e.dataTransfer){e.dataTransfer.setData('text/plain',c.dataset.card);e.dataTransfer.effectAllowed='move'}});
+  document.addEventListener('dragover',function(e){var c=e.target.closest&&e.target.closest('.col');if(c){e.preventDefault();clearOver();c.classList.add('over')}});
+  document.addEventListener('drop',function(e){var c=e.target.closest&&e.target.closest('.col');clearOver();if(!c||!e.dataTransfer)return;e.preventDefault();var id=+e.dataTransfer.getData('text/plain');if(id)mvDeal(id,+c.dataset.st)});
+  document.addEventListener('dragend',clearOver);
+  migrate(pipe);
+  list();board();stats();flist();status();gen();chipsSync();feeds();renderCourses();tab('dash');
+  setInterval(function(){if(!paused&&!live&&!document.hidden)ingest(1)},1000);
+  setInterval(function(){if(document.hidden)return;var p=people[Math.floor(Math.random()*people.length)];p.st=['available','available','busy','offline'][Math.floor(Math.random()*4)];if(!$('free').hidden)flist()},5000);
+})();
+</script>
+</body>
+</html>

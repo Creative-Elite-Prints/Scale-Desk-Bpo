@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex">
+<title>ScaleDesk: rooms and customers</title>
+<style>
+:root{--bg:#0F172A;--s:#1E293B;--ink:#e6edf7;--mut:#94a3b8;--acc:#06B6D4;--on:#032a33;--line:rgba(148,163,184,.22);--ok:#4ade9a;--warn:#f6c453;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:radial-gradient(800px 480px at 5% -10%,rgba(6,182,212,.15),transparent 60%),radial-gradient(700px 480px at 100% 0,rgba(99,102,241,.15),transparent 60%),var(--bg);background-attachment:fixed;color:var(--ink);font:16px/1.55 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;padding:env(safe-area-inset-top,0) 0 env(safe-area-inset-bottom,0)}
+.w{max-width:940px;margin:0 auto;padding:20px}
+.c{background:var(--s);border:1px solid var(--line);border-radius:12px;padding:18px;margin-bottom:14px}
+h1{font-size:26px;margin:0 0 12px}h2{font-size:17px;margin:0 0 10px}
+.m{color:var(--mut);font-size:14px}
+.g{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media (max-width:640px){.g{grid-template-columns:1fr}}
+label{font-size:14px;font-weight:600;display:block;margin:4px 0 2px}
+input,select,textarea{width:100%;font:inherit;padding:10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--ink)}
+button,a.b{font:700 14px inherit;background:var(--acc);color:var(--on);border:0;border-radius:8px;padding:9px 14px;cursor:pointer;text-decoration:none;display:inline-block}
+button.alt,a.b.alt{background:none;color:var(--ink);border:1.5px solid var(--line)}
+.r{border-top:1px solid var(--line);padding:12px 0}
+.bt{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{font-size:12px;border:1px solid var(--line);border-radius:99px;padding:1px 9px;margin-left:6px}
+.open,.active,.trial,.owner{color:var(--ok)}.closed,.expired,.blocked{color:var(--warn)}
+#err{color:#c0392b;min-height:20px}
+:focus-visible{outline:3px solid var(--acc);outline-offset:2px}
+</style>
+</head>
+<body>
+<div class="w">
+  <div id="sw" hidden style="background:#fde5e2;color:#7a1d12;border-radius:10px;padding:12px;margin-bottom:12px;font-weight:600">Warning: your accounts are on temporary storage and will be erased when Render restarts. Add a Render Disk or an Upstash backup (see the README).</div>
+  <h1>Rooms and customers</h1>
+  <div class="c" id="login">
+    <label for="key">Admin key</label>
+    <span style="position:relative;display:block"><input id="key" type="password" autocomplete="off" style="padding-right:46px"><button type="button" class="alt" data-eye="key" aria-label="Show password" style="position:absolute;right:4px;top:50%;transform:translateY(-50%);padding:6px 8px;border:0"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg></button></span>
+    <p><button id="go" type="button">Sign in</button></p>
+    <p class="m">Signed in to ScaleDesk already? Open this page from the app instead and you will not need a key.</p>
+  </div>
+  <div id="main" hidden>
+    <div class="c">
+      <h2>New room or quote request</h2>
+      <div class="g">
+        <div><label for="kind">Type</label><select id="kind"><option value="project">Project room (client and developer)</option><option value="quote">Quote request (ask a freelancer for a quotation)</option></select></div>
+        <div><label for="t">Title</label><input id="t"></div>
+        <div><label for="cn" id="cnl">Client name</label><input id="cn"></div>
+        <div id="amw"><label for="am">Total price</label><input id="am" type="number" min="1" step="0.01"></div>
+        <div><label for="cur">Currency (3 letters)</label><input id="cur" value="USD" maxlength="3"></div>
+        <div id="puw"><label for="pu">Payment link (optional, https)</label><input id="pu" placeholder="https://..."></div>
+        <div><label for="dy">Open for (days)</label><input id="dy" type="number" min="1" value="60"></div>
+        <div id="bfw" hidden><label for="bf">Brief for the freelancer (no budget)</label><textarea id="bf" rows="3"></textarea></div>
+      </div>
+      <p><button id="mk" type="button">Create</button></p>
+      <div id="links"></div>
+    </div>
+    <div class="c"><h2>Revenue and projects</h2><div id="rvs" class="g" style="margin:10px 0"></div><div id="rvh" style="overflow:auto"></div></div>
+    <div class="c"><h2>Your rooms and requests</h2><div id="list"></div></div>
+    <div class="c" id="cust" hidden>
+      <h2>Customers</h2>
+      <p class="m">People who signed up to use ScaleDesk. Unlock a trial, record a paid month, or pause an account.</p>
+      <div id="stats" class="g" style="margin:10px 0"></div>
+      <div id="users"></div>
+      <h2 style="margin-top:18px">Invite codes (free trial for people you choose)</h2>
+      <div class="g"><div><label for="id">Trial days</label><input id="id" type="number" min="1" value="14"></div><div><label for="iu">People who can use it</label><input id="iu" type="number" min="1" max="100000" value="1"><label style="display:flex;gap:8px;align-items:center;margin-top:6px"><input type="checkbox" id="iun" style="width:auto"> Unlimited uses</label></div></div>
+      <p><button id="ic" type="button">Create invite code</button></p>
+      <div id="inv"></div>
+    </div>
+  </div>
+  <div id="err" role="alert"></div>
+</div>
+<script>
+(function(){
+var $=function(i){return document.getElementById(i)},K=null,S=null;
+try{K=sessionStorage.getItem('ak');S=localStorage.getItem('sd_session')}catch(e){}
+function esc(s){return String(s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function money(c,cur){return (c/100).toFixed(2)+' '+cur}
+function day(t){return t?new Date(t).toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}):'none'}
+function hdr(){var h={'Content-Type':'application/json'};if(K)h['x-admin-key']=K;else if(S)h['x-session']=S;return h}
+function call(url,method,body){
+  return fetch(url,{method:method||'GET',headers:hdr(),body:body?JSON.stringify(body):undefined}).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.error||('Error '+r.status));return d})});
+}
+function api(path,method,body){return call('/api/rooms'+path,method,body)}
+function fail(e){$('err').textContent=e.message}
+function linkRow(label,token){return '<p><b>'+label+'</b><br><input readonly value="'+esc(location.origin+'/r#t='+token)+'" onclick="this.select()"></p>'}
+function kindUI(){var q=$('kind').value==='quote';$('amw').hidden=$('puw').hidden=q;$('bfw').hidden=!q;$('cnl').textContent=q?'Freelancer name':'Client name'}
+var WL={pending:'Pending Bid',progress:'In Progress',review:'In Review',completed:'Completed'};
+function rvSum(m){var k=Object.keys(m).filter(function(c){return m[c]>0});return k.length?k.map(function(c){return money(m[c],c)}).join(' · '):'0.00'}
+function rvDraw(a){
+  var P=a.filter(function(r){return r.kind!=='quote'}),E={},A={},X={},n=0;
+  P.forEach(function(r){var c=r.currency;if(r.work==='completed'){E[c]=(E[c]||0)+r.paidCents;n++}else if(r.work==='progress')A[c]=(A[c]||0)+r.amountCents;else if(r.work==='pending')X[c]=(X[c]||0)+r.amountCents});
+  var b=function(l,v){return '<div class="c" style="margin:0"><span class="m">'+l+'</span><div style="font:800 22px inherit">'+v+'</div></div>'};
+  $('rvs').innerHTML=b('Total Revenue Earned',rvSum(E))+b('Active Work Value',rvSum(A))+b('Expected Pipeline Value',rvSum(X))+b('Completed Jobs',n);
+  $('rvh').innerHTML=P.length?'<table style="width:100%;border-collapse:collapse;font-size:14px;min-width:560px"><tr class="m"><td>Project</td><td>Client</td><td>Status</td><td>Value</td><td>Review</td></tr>'+P.map(function(r){
+    return '<tr style="border-top:1px solid var(--line)"><td>'+esc(r.title)+'</td><td>'+esc(r.clientName)+'</td><td><select data-ws="'+r.id+'">'+Object.keys(WL).map(function(k){return '<option value="'+k+'"'+(r.work===k?' selected':'')+'>'+WL[k]+'</option>'}).join('')+'</select></td><td>'+money(r.amountCents,r.currency)+'</td><td>'+(r.review?'<span style="color:#d4a017">'+'★'.repeat(r.review.rating)+'☆'.repeat(5-r.review.rating)+'</span> '+esc(r.review.comment||''):'<span class="m">'+(r.work==='completed'?'Waiting for the client':'-')+'</span>')+'</td></tr>'}).join('')+'</table>':'<p class="m">No projects yet.</p>';
+}
+document.addEventListener('change',function(e){var t=e.target;if(t.dataset&&t.dataset.ws)api('/'+t.dataset.ws+'/status','POST',{status:t.value}).then(loadRooms).catch(fail)});
+function loadRooms(){
+  api('').then(function(a){
+    $('login').hidden=true;$('main').hidden=false;
+    rvDraw(a);
+    $('list').innerHTML=a.length?a.map(function(r){
+      var open=r.status==='open',q=r.kind==='quote';
+      return '<div class="r"><b>'+esc(r.title)+'</b> <span class="pill">'+(q?'Quote request':'Project room')+'</span><span class="pill '+r.status+'">'+r.status+'</span>'+(r.offer?'<span class="pill">Offer '+r.offer+'</span>':'')+'<br><span class="m">'+esc(r.clientName)+' · '+(q?r.quotes+' quotation'+(r.quotes===1?'':'s'):'paid '+money(r.paidCents,r.currency)+' of '+money(r.amountCents,r.currency)+' · client '+(r.approved?'approved':'not approved yet'))+' · '+(open?'open until '+day(r.expiresAt):'closed: '+esc(r.reason))+'</span>'+
+      '<div class="bt"><a class="b" href="/r?id='+r.id+'">Open</a>'+(q?'':'<button class="alt" data-a="payment" data-id="'+r.id+'" data-c="'+r.currency+'" type="button">Record payment</button>')+
+      (open?'<button class="alt" data-a="extend" data-id="'+r.id+'" type="button">Add 14 days</button><button class="alt" data-a="close" data-id="'+r.id+'" type="button">Close now</button>':'<button class="alt" data-a="extend" data-id="'+r.id+'" type="button">Reopen</button>')+
+      '<button class="alt" data-a="relink" data-r="'+(q?'developer':'client')+'" data-id="'+r.id+'" type="button">New '+(q?'freelancer':'client')+' link</button>'+(q?'':'<button class="alt" data-a="relink" data-r="developer" data-id="'+r.id+'" type="button">New developer link</button>')+
+      '<button class="alt" data-a="purge" data-id="'+r.id+'" type="button">Delete files now</button></div><div id="l'+r.id+'"></div></div>';
+    }).join(''):'<p class="m">Nothing yet.</p>';
+    loadCust();
+  }).catch(function(e){$('login').hidden=false;$('main').hidden=true;fail(e)});
+}
+function loadCust(){
+  $('cust').hidden=false;
+  call('/api/admin/stats').then(function(t){
+    var b=function(l,v){return '<div class="c" style="margin:0"><span class="m">'+l+'</span><div style="font:800 26px inherit">'+v+'</div></div>'};
+    $('stats').innerHTML=b('Monthly recurring revenue (MRR)',esc(t.currency)+' '+t.mrr.toLocaleString('en-US'))+b('Paid subscribers',t.paid)+b('On free trial',t.trial)+b('Expired',t.expired);
+  }).catch(function(){});
+  call('/api/admin/users').then(function(a){
+    $('users').innerHTML=a.length?a.map(function(u){
+      var plan=u.access==='owner'?'owner':u.access==='active'?'subscribed until '+day(u.paidUntil):u.access==='trial'?'trial until '+day(u.trialUntil):u.access==='blocked'?'paused':'no active plan';
+      return '<div class="r"><b>'+esc(u.name)+'</b> <span class="pill '+u.access+'">'+({trial:'Free Trial',active:'Paid',owner:'Owner',expired:'Expired',blocked:'Paused'}[u.access]||u.access)+'</span><br><span class="m">'+esc(u.email)+(u.business?' · '+esc(u.business):'')+' · '+plan+' · joined '+day(u.createdAt)+'</span>'+
+      '<div class="bt"><button data-u="grant" data-id="'+u.id+'" type="button">Extend trial</button><button class="alt" data-u="settrial" data-id="'+u.id+'" type="button">Set trial length</button><button class="alt" data-u="paid" data-id="'+u.id+'" type="button">Add paid month</button><button class="alt" data-u="cancel" data-id="'+u.id+'" type="button">End plan</button><button class="alt" data-u="block" data-b="'+(u.access==='blocked'?'0':'1')+'" data-id="'+u.id+'" type="button">'+(u.access==='blocked'?'Unpause':'Pause')+'</button><button class="alt" data-u="resetlink" data-id="'+u.id+'" type="button">Reset link</button><button class="alt" data-u="password" data-id="'+u.id+'" type="button">Set password</button><button class="alt" data-u="delete" data-id="'+u.id+'" type="button">Delete</button></div></div>';
+    }).join(''):'<p class="m">No customers yet.</p>';
+  }).catch(function(e){if(!K){$('cust').hidden=true}else fail(e)});
+  call('/api/admin/invites').then(function(o){
+    var k=Object.keys(o);$('inv').innerHTML=k.length?k.map(function(c){return '<p><b>'+esc(c)+'</b> <span class="m">'+o[c].days+' days, '+(o[c].unlimited?'unlimited uses':o[c].uses+' use'+(o[c].uses===1?'':'s')+' left')+'</span> <button class="alt" data-dc="'+esc(c)+'" type="button">Delete code</button></p>'}).join(''):'<p class="m">No codes yet.</p>';
+  }).catch(fail);
+}
+document.addEventListener('click',function(e){
+  var b=e.target.closest('button');if(!b)return;$('err').textContent='';
+  if(b.id==='go'){K=$('key').value.trim();try{sessionStorage.setItem('ak',K)}catch(x){}loadRooms()}
+  if(b.id==='mk'){
+    var q=$('kind').value==='quote';
+    api('','POST',{kind:q?'quote':'project',title:$('t').value,clientName:$('cn').value,amount:+$('am').value,currency:$('cur').value,payUrl:$('pu').value,days:+$('dy').value,brief:$('bf').value}).then(function(d){
+      $('links').innerHTML='<p class="m">Copy these now. They are shown only once. Anyone with a link can enter.</p>'+(q?linkRow('Freelancer link',d.tokens.developer):linkRow('Client link',d.tokens.client)+linkRow('Developer link',d.tokens.developer));
+      $('t').value=$('cn').value=$('am').value=$('pu').value=$('bf').value='';loadRooms();
+    }).catch(fail);
+  }
+  if(b.id==='ic')call('/api/admin/invites','POST',{days:+$('id').value,uses:+$('iu').value,unlimited:$('iun').checked}).then(function(d){$('inv').insertAdjacentHTML('afterbegin','<p><b>New code: '+esc(d.code)+'</b></p>');loadCust()}).catch(fail);
+  if(b.dataset.eye){var f=$(b.dataset.eye);f.type=f.type==='password'?'text':'password';b.setAttribute('aria-pressed',f.type==='text');return}
+  if(b.dataset.dc){if(confirm('Delete invite code '+b.dataset.dc+'?'))call('/api/admin/invites/'+encodeURIComponent(b.dataset.dc)+'/delete','POST',{}).then(loadCust).catch(fail);return}
+  var u=b.dataset.u;
+  if(u){
+    var id=b.dataset.id,body={};
+    if(u==='grant'){var v=prompt('How many trial days?','14');if(!v)return;body.days=+v}
+    if(u==='settrial'){var v2=prompt('Trial ends this many days from today (0 ends it)?','14');if(v2===null||v2==='')return;body.days=+v2}
+    if(u==='paid'){var m=prompt('How many paid months to add?','1');if(!m)return;body.months=+m}
+    if(u==='block')body.blocked=b.dataset.b==='1';
+    if(u==='password'){var p=prompt('New password (8 or more characters)');if(!p)return;body.password=p}
+    if((u==='cancel'||u==='delete')&&!confirm('Are you sure?'))return;
+    call('/api/admin/users/'+id+'/'+u,'POST',body).then(function(r){if(r&&r.link){prompt('Send this one-time link to the customer. They open it and choose a new password. It works for '+r.hours+' hours (copy it with Ctrl+C):',r.link)}loadCust()}).catch(fail);
+  }
+  var a=b.dataset.a,id2=b.dataset.id;if(!a)return;
+  if(a==='payment'){var v2=prompt('Amount received ('+b.dataset.c+')');if(v2)api('/'+id2+'/payment','POST',{amount:+v2}).then(loadRooms).catch(fail)}
+  if(a==='extend')api('/'+id2+'/extend','POST',{days:14}).then(loadRooms).catch(fail);
+  if(a==='close'&&confirm('Close this now?'))api('/'+id2+'/close','POST').then(loadRooms).catch(fail);
+  if(a==='purge'&&confirm('Delete all files and messages? This cannot be undone.'))api('/'+id2+'/purge','POST').then(loadRooms).catch(fail);
+  if(a==='relink')api('/'+id2+'/relink','POST',{role:b.dataset.r}).then(function(d){$('l'+id2).innerHTML=linkRow('New link (the old one stops working)',d.token)}).catch(fail);
+});
+$('kind').addEventListener('change',kindUI);
+fetch('/api/health').then(function(r){return r.json()}).then(function(d){$('sw').hidden=d.storage!=='temporary'}).catch(function(){});
+if(K||S)loadRooms();
+})();
+</script>
+</body>
+</html>
