@@ -53,6 +53,7 @@ button.alt,a.b.alt{background:none;color:var(--ink);border:1.5px solid var(--lin
       <p><button id="mk" type="button">Create</button></p>
       <div id="links"></div>
     </div>
+    <div class="c"><h2>Revenue and projects</h2><div id="rvs" class="g" style="margin:10px 0"></div><div id="rvh" style="overflow:auto"></div></div>
     <div class="c"><h2>Your rooms and requests</h2><div id="list"></div></div>
     <div class="c" id="cust" hidden>
       <h2>Customers</h2>
@@ -82,9 +83,21 @@ function api(path,method,body){return call('/api/rooms'+path,method,body)}
 function fail(e){$('err').textContent=e.message}
 function linkRow(label,token){return '<p><b>'+label+'</b><br><input readonly value="'+esc(location.origin+'/r#t='+token)+'" onclick="this.select()"></p>'}
 function kindUI(){var q=$('kind').value==='quote';$('amw').hidden=$('puw').hidden=q;$('bfw').hidden=!q;$('cnl').textContent=q?'Freelancer name':'Client name'}
+var WL={pending:'Pending Bid',progress:'In Progress',review:'In Review',completed:'Completed'};
+function rvSum(m){var k=Object.keys(m).filter(function(c){return m[c]>0});return k.length?k.map(function(c){return money(m[c],c)}).join(' · '):'0.00'}
+function rvDraw(a){
+  var P=a.filter(function(r){return r.kind!=='quote'}),E={},A={},X={},n=0;
+  P.forEach(function(r){var c=r.currency;if(r.work==='completed'){E[c]=(E[c]||0)+r.paidCents;n++}else if(r.work==='progress')A[c]=(A[c]||0)+r.amountCents;else if(r.work==='pending')X[c]=(X[c]||0)+r.amountCents});
+  var b=function(l,v){return '<div class="c" style="margin:0"><span class="m">'+l+'</span><div style="font:800 22px inherit">'+v+'</div></div>'};
+  $('rvs').innerHTML=b('Total Revenue Earned',rvSum(E))+b('Active Work Value',rvSum(A))+b('Expected Pipeline Value',rvSum(X))+b('Completed Jobs',n);
+  $('rvh').innerHTML=P.length?'<table style="width:100%;border-collapse:collapse;font-size:14px;min-width:560px"><tr class="m"><td>Project</td><td>Client</td><td>Status</td><td>Value</td><td>Review</td></tr>'+P.map(function(r){
+    return '<tr style="border-top:1px solid var(--line)"><td>'+esc(r.title)+'</td><td>'+esc(r.clientName)+'</td><td><select data-ws="'+r.id+'">'+Object.keys(WL).map(function(k){return '<option value="'+k+'"'+(r.work===k?' selected':'')+'>'+WL[k]+'</option>'}).join('')+'</select></td><td>'+money(r.amountCents,r.currency)+'</td><td>'+(r.review?'<span style="color:#d4a017">'+'★'.repeat(r.review.rating)+'☆'.repeat(5-r.review.rating)+'</span> '+esc(r.review.comment||''):'<span class="m">'+(r.work==='completed'?'Waiting for the client':'-')+'</span>')+'</td></tr>'}).join('')+'</table>':'<p class="m">No projects yet.</p>';
+}
+document.addEventListener('change',function(e){var t=e.target;if(t.dataset&&t.dataset.ws)api('/'+t.dataset.ws+'/status','POST',{status:t.value}).then(loadRooms).catch(fail)});
 function loadRooms(){
   api('').then(function(a){
     $('login').hidden=true;$('main').hidden=false;
+    rvDraw(a);
     $('list').innerHTML=a.length?a.map(function(r){
       var open=r.status==='open',q=r.kind==='quote';
       return '<div class="r"><b>'+esc(r.title)+'</b> <span class="pill">'+(q?'Quote request':'Project room')+'</span><span class="pill '+r.status+'">'+r.status+'</span>'+(r.offer?'<span class="pill">Offer '+r.offer+'</span>':'')+'<br><span class="m">'+esc(r.clientName)+' · '+(q?r.quotes+' quotation'+(r.quotes===1?'':'s'):'paid '+money(r.paidCents,r.currency)+' of '+money(r.amountCents,r.currency)+' · client '+(r.approved?'approved':'not approved yet'))+' · '+(open?'open until '+day(r.expiresAt):'closed: '+esc(r.reason))+'</span>'+

@@ -62,7 +62,10 @@ const labelsFor = n => n === 1 ? ['Full payment'] : n === 2 ? ['Deposit', 'Deliv
 const windowOpen = r => r.status === 'open' || now() < r.closedAt + DOWNLOAD_DAYS * DAY;
 function closeRoom(r, why) { r.status = 'closed'; r.closedAt = now(); r.reason = why; r.log.push([now(), 'closed: ' + why]); save(); }
 function refresh(r) { if (r.status === 'open' && now() > r.expiresAt) closeRoom(r, 'expired'); }
+const WORK = ['pending', 'progress', 'review', 'completed'];
+const workOf = r => (r.kind === 'quote' ? '' : (r.work || (r.offer && !r.offer.accepted ? 'pending' : (r.approved && paidFull(r) ? 'completed' : 'progress'))));
 function maybeClose(r) {
+  if (r.kind !== 'quote' && r.approved && paidFull(r)) r.work = 'completed';
   if (r.status === 'open' && r.approved && paidFull(r)) closeRoom(r, 'approved and paid in full'); else save();
 }
 function purgeRoom(r) {
@@ -102,7 +105,7 @@ function view(r, role) {
   return {
     id: r.id, ownerLabel: r.ownerLabel || '', kind: r.kind || 'project', brief: r.brief || '', quotes: r.quotes || [], title: r.title, clientName: r.clientName, currency: r.currency, role,
     amountCents: r.amountCents, paidCents: r.paidCents, approved: r.approved,
-    status: r.status, reason: r.reason || '', expiresAt: r.expiresAt,
+    status: r.status, work: workOf(r), review: r.review || null, canReview: role === 'client' && workOf(r) === 'completed', reason: r.reason || '', expiresAt: r.expiresAt,
     downloadsUntil: r.status === 'closed' ? r.closedAt + DOWNLOAD_DAYS * DAY : 0,
     canApprove: role === 'client' && r.kind !== 'quote' && r.status === 'open' && !r.approved && (!r.offer || r.offer.accepted),
     canAccept: role === 'client' && r.status === 'open' && !!r.offer && !r.offer.accepted,
@@ -179,7 +182,7 @@ async function run(req, res, u) {
     if (m === 'GET') {
       return send(res, 200, Object.values(db.rooms).filter(r => r.status !== 'purged' && canOwn(a, r)).map(r => ({
         id: r.id, kind: r.kind || 'project', quotes: (r.quotes || []).length, offer: r.offer ? (r.offer.accepted ? 'accepted' : 'waiting') : '', title: r.title, clientName: r.clientName, status: r.status, reason: r.reason || '', approved: r.approved,
-        amountCents: r.amountCents, paidCents: r.paidCents, currency: r.currency, expiresAt: r.expiresAt, closedAt: r.closedAt || 0,
+        freelancerId: r.freelancerId || '', parentId: r.parentId || '', delegated: (r.tasks || []).length, work: workOf(r), review: r.review || null, amountCents: r.amountCents, paidCents: r.paidCents, currency: r.currency, expiresAt: r.expiresAt, closedAt: r.closedAt || 0,
         createdAt: r.createdAt, msgCount: r.messages.length, lastMsg: r.messages.length ? r.messages[r.messages.length - 1].body.slice(0, 90) : '',
         lastAt: r.messages.length ? r.messages[r.messages.length - 1].at : r.createdAt,
         lastRole: r.messages.length ? r.messages[r.messages.length - 1].role : '',
@@ -202,7 +205,7 @@ async function run(req, res, u) {
       const id = rid(), tk = { client: secret(), developer: secret() };
       db.rooms[id] = {
         id, kind: quote ? 'quote' : 'project', brief: clip(d.brief, 4000), quotes: [], ownerId: a.uid, ownerLabel: a.label,
-        title: clip(d.title, 120), clientName: clip(d.clientName, 80),
+        title: clip(d.title, 120), clientName: clip(d.clientName, 80), freelancerId: clip(d.freelancerId, 40),
         currency: cur, offer: !quote && d.offer ? { text: clip(d.offerText, 6000), accepted: false } : null, amountCents: Math.round(amount * 100), paidCents: 0, payments: [],
         plan: quote ? undefined : split.map((pct, i) => ({ label: lab[i], pct })), released: 1,
         payUrl, approved: false, status: 'open', createdAt: now(), expiresAt: now() + days * DAY,
@@ -327,7 +330,7 @@ async function run(req, res, u) {
   if (act === 'offer' && m === 'POST') {
     if (role !== 'client' || !r.offer || r.offer.accepted || !open) return send(res, 403, { error: 'Not allowed' });
     const d = await json(req);
-    if (d && d.decision === 'accept') { r.offer.accepted = true; sys(r, 'client', 'Offer accepted.'); save(); return send(res, 200, view(r, role)); }
+    if (d && d.decision === 'accept') { r.offer.accepted = true; if (r.work === 'pending') r.work = 'progress'; sys(r, 'client', 'Offer accepted.'); save(); return send(res, 200, view(r, role)); }
     if (d && d.decision === 'decline') { sys(r, 'client', 'Offer declined.'); closeRoom(r, 'offer declined'); return send(res, 200, view(r, role)); }
     return send(res, 400, { error: 'Choose accept or decline' });
   }
@@ -352,13 +355,38 @@ async function run(req, res, u) {
     if (r.kind === 'quote') return send(res, 400, { error: 'Not used for quote requests' });
     if (r.offer && !r.offer.accepted) return send(res, 400, { error: 'The offer has not been accepted yet' });
     if (!open) return send(res, 403, { error: 'This room is closed' });
-    r.approved = true; r.log.push([now(), 'client approved']); maybeClose(r);
+    r.approved = true; if (!paidFull(r) && r.work !== 'completed') r.work = 'review'; r.log.push([now(), 'client approved']); maybeClose(r);
     return send(res, 200, view(r, role));
   }
 
+  if (act === 'review' && m === 'POST') {
+    if (role !== 'client') return send(res, 403, { error: 'Only the client can leave a review' });
+    if (workOf(r) !== 'completed') return send(res, 400, { error: 'You can review a project once it is marked Completed' });
+    const d = (await json(req)) || {}, n = Math.round(+d.rating);
+    if (!(n >= 1 && n <= 5)) return send(res, 400, { error: 'Choose a rating from 1 to 5 stars' });
+    r.review = { rating: n, comment: clip(d.comment, 1000), at: now() }; r.log.push([now(), 'client review ' + n + ' stars']); save();
+    return send(res, 200, view(r, role));
+  }
   if (!owner) return send(res, 403, { error: 'Not allowed' });   // everything below is for you only
   if (m !== 'POST') return send(res, 405, { error: 'Method not allowed' });
   const d = (await json(req)) || {};
+  if (act === 'delegate') {
+    // White-label hand-off: the freelancer gets their own private room that holds only the task text you write. No client name, email or messages are copied.
+    if (r.kind === 'quote') return send(res, 400, { error: 'Delegate from a project room' });
+    const fname = clip(d.freelancerName, 80), brief = clip(d.brief, 4000);
+    if (!fname || !brief) return send(res, 400, { error: 'Enter the freelancer name and the task description' });
+    const nid = rid(), tk = secret();
+    db.rooms[nid] = { id: nid, kind: 'quote', brief, quotes: [], ownerId: r.ownerId || 'admin', ownerLabel: r.ownerLabel, title: 'Task: ' + clip(d.title || r.title, 110), clientName: fname, freelancerId: clip(d.freelancerId, 40), currency: r.currency,
+      offer: null, amountCents: 0, paidCents: 0, payments: [], released: 1, payUrl: '', approved: false, status: 'open', createdAt: now(), expiresAt: now() + ROOM_DAYS * DAY,
+      ownerEmail: r.ownerEmail || '', partyEmail: '', ownerSeen: 0, notified: {}, parentId: r.id, tokens: { client: sha(secret()), developer: sha(tk) }, messages: [], files: [], log: [[now(), 'delegated from ' + r.id]] };
+    (r.tasks = r.tasks || []).push({ id: nid, freelancer: fname, at: now() }); r.log.push([now(), 'task delegated to ' + fname]); save();
+    return send(res, 201, { id: nid, token: nid + '.' + tk });
+  }
+  if (act === 'status') {
+    if (r.kind === 'quote') return send(res, 400, { error: 'Not used for quote requests' });
+    if (!WORK.includes(d.status)) return send(res, 400, { error: 'Unknown status' });
+    r.work = d.status; r.log.push([now(), 'status: ' + d.status]); save(); return send(res, 200, { work: workOf(r) });
+  }
   if (act === 'decide') {
     const q = (r.quotes || []).find(x => x.id === d.quoteId);
     if (!q || !['accepted', 'declined'].includes(d.decision)) return send(res, 400, { error: 'Choose a quotation and a decision' });
@@ -409,6 +437,7 @@ exports.recordPayment = (roomId, amount, ref, currency) => {
 };
 exports.handle = (req, res, u) => {
   const p = u.pathname.replace(/\/+$/, '') || '/';
+  { const rm0 = /^\/rooms\/(\w+)$/.exec(p); if (rm0 && req.method === 'GET') { res.writeHead(302, { Location: '/r?id=' + rm0[1], 'Cache-Control': 'no-store' }); res.end(); return true; } }
   if (pages[p] && req.method === 'GET') {
     res.writeHead(200, Object.assign({ 'Content-Type': 'text/html; charset=utf-8',
       'Content-Security-Policy': "default-src 'self'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src 'self' blob: data:; frame-ancestors 'none'" }, SEC));

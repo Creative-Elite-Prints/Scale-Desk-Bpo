@@ -265,3 +265,15 @@ Emails are compared without caring about capital letters or extra spaces, on sig
 ## Invite codes and password eye
 - Invite codes can be single-use, a custom limit up to 100000, or unlimited, and each has a Delete code button. They are saved with the accounts, so they are backed up to Upstash.
 - The sign-in, sign-up and reset password box has an eye button to show or hide the password.
+
+## Project status, revenue counters and reviews
+- Each project room has a status: Pending Bid (offer sent, not accepted), In Progress (offer accepted), In Review (client approved but not fully paid, or you set it), Completed (approved and paid in full, or you set it). Change it from the Project history table on your Dashboard or on /admin. Counters update at once.
+- Counters: Total Revenue Earned = money paid on Completed projects. Active Work Value = In Progress projects. Expected Pipeline Value = Pending Bid projects. Completed Jobs = count. Amounts are shown per currency.
+- When a project is Completed, the client can leave a 1 to 5 star rating and a comment on their room page. It shows in the Project history table (Dashboard and /admin).
+- These statuses belong to project rooms. The Lead Pipeline board (Follow Up, Closing, In Progress, Completed) is a separate sales board and is unchanged.
+
+## Project rooms with freelancers, How It Works, task delegation, one-click apply
+- Find Talent cards have Start Project Room: it creates (or reopens) a private room tied to that freelancer's ID and opens it in Messages. The room also opens at /rooms/ROOM-ID. Freelancer profiles are samples until real people join, so you send the freelancer their private link yourself.
+- New How It Works tab: client and freelancer steps, plus the delegation and job-feed notes.
+- Delegate task (in Messages, on a project room): you write the task, name the freelancer and send them a private link. Nothing from the client's room is copied, so neither side sees the other's name or contact details.
+- Live Job Leads come from ScaleDesk's own server, so users never enter marketplace keys. Apply in 1 click writes the proposal, saves it to the pipeline as sent, copies it and opens the original job. ScaleDesk cannot place the bid on Freelancer or Upwork itself, because those sites only accept bids from the bidder's own account.

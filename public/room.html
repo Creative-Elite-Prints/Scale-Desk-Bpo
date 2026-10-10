@@ -44,6 +44,7 @@ input[type=text],input[type=number],textarea{width:100%;font:inherit;padding:10p
     <div id="ms"></div>
     <p id="acts"></p>
   </div>
+  <div class="c" id="rvc" hidden><h2>Review</h2><div id="rvb"></div></div>
   <div class="c" id="ocard" hidden><h2>Proposal</h2><p id="otext" style="white-space:pre-wrap"></p><p id="oacts"></p></div>
   <div class="c" id="qcard" hidden>
     <h2>Project brief</h2>
@@ -109,6 +110,10 @@ function render(){
   $('acts').innerHTML=qk?'':(r.canPay?(r.payMethods||[]).map(function(m){return '<button class="paycard" data-p="'+m+'" type="button">'+(m==='payfast'?'Pay '+money(r.dueCents,r.currency)+' with PayFast (card or EFT)':m==='paypal'?'Pay '+money(r.dueCents,r.currency)+' with PayPal (PayPal or card)':'Pay '+money(r.dueCents,r.currency)+' with card')+'</button> '}).join(''):'')+(r.canRelease?'<button id="rel" type="button" class="alt">Request next payment</button> ':'')+'<button id="inv" type="button" class="alt">Invoice (PDF)</button> '+(r.canApprove?'<button id="appr" type="button">I am happy with the work: approve</button> ':'')+(client&&r.payUrl?'<a class="b" href="'+esc(r.payUrl)+'" target="_blank" rel="noopener noreferrer">Pay now</a>':'');
   $('ocard').hidden=!r.offer;
   if(r.offer){$('otext').textContent=r.offer.text;$('oacts').innerHTML=r.canAccept?'<button id="oacc" type="button">Accept this offer ('+money(r.amountCents,r.currency)+')</button> <button class="alt" id="odec" type="button">Decline</button>':'<b>'+(r.offer.accepted?'Offer accepted':r.status==='open'?'Waiting for the client to accept':'Offer declined')+'</b>'}
+  var WL={pending:'Pending Bid',progress:'In Progress',review:'In Review',completed:'Completed'};
+  if(!qk)$('money').textContent+=' · Status: '+(WL[r.work]||'')
+  $('rvc').hidden=qk||r.work!=='completed';
+  if(!$('rvc').hidden)$('rvb').innerHTML=r.review?'<p style="font-size:20px;margin:0">'+'★'.repeat(r.review.rating)+'☆'.repeat(5-r.review.rating)+'</p><p style="white-space:pre-wrap">'+esc(r.review.comment||'')+'</p>':(r.canReview?'<p>The project is complete. How did it go?</p><label for="rvr">Rating</label><select id="rvr"><option value="5">5 stars</option><option value="4">4 stars</option><option value="3">3 stars</option><option value="2">2 stars</option><option value="1">1 star</option></select><label for="rvt">Comment (optional)</label><textarea id="rvt" rows="3" maxlength="1000"></textarea><p><button id="rvgo" type="button">Send review</button></p>':'<p class="m">Waiting for the client to leave a review.</p>');
   $('qcard').hidden=!qk;
   if(qk){
     $('brief').textContent=r.brief;
@@ -155,6 +160,7 @@ document.addEventListener('change',function(e){if(e.target.id==='fin')$('ck').hi
 document.addEventListener('click',function(e){
   var b=e.target.closest('button');if(!b)return;$('err').textContent='';
   if(b.id==='appr'&&confirm('Approve this work? The room closes once the full payment is also received.'))post('/approve').then(function(d){room=d;render()}).catch(fail);
+  if(b.id==='rvgo')post('/review',{rating:+$('rvr').value,comment:$('rvt').value}).then(function(d){room=d;render()}).catch(fail);
   if(b.id==='qsend')post('/quote',{amount:+$('qa').value,days:+$('qd').value,note:$('qn').value}).then(function(d){room=d;render();loadMsgs();$('qa').value=$('qd').value=$('qn').value=''}).catch(fail);
   if(b.dataset.q)post('/decide',{quoteId:b.dataset.q,decision:b.dataset.d}).then(function(d){room=d;render();loadMsgs()}).catch(fail);
   if(b.id==='oacc'||b.id==='odec')post('/offer',{decision:b.id==='oacc'?'accept':'decline'}).then(function(d){room=d;render();loadMsgs()}).catch(fail);
