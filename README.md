@@ -277,3 +277,11 @@ Emails are compared without caring about capital letters or extra spaces, on sig
 - New How It Works tab: client and freelancer steps, plus the delegation and job-feed notes.
 - Delegate task (in Messages, on a project room): you write the task, name the freelancer and send them a private link. Nothing from the client's room is copied, so neither side sees the other's name or contact details.
 - Live Job Leads come from ScaleDesk's own server, so users never enter marketplace keys. Apply in 1 click writes the proposal, saves it to the pipeline as sent, copies it and opens the original job. ScaleDesk cannot place the bid on Freelancer or Upwork itself, because those sites only accept bids from the bidder's own account.
+
+## Live bidding on Freelancer.com
+- Set `FREELANCER_ACCESS_TOKEN` on Render (a Freelancer OAuth token that has the bid scope). Then **Place Bid** (tick "Also post this bid to Freelancer.com now") and **Apply in 1 click** on a Freelancer.com card post a real bid from the server to `https://www.freelancer.com/api/projects/0.1/bids/`.
+- Sent headers: `Freelancer-Developer-Auth` and `Freelancer-OAuth-V1`, both with your token. Body: `project_id`, `bidder_id` (looked up once from `/users/0.1/self/`), `amount`, `period`, `milestone_percentage` and `description` (the proposal text; Freelancer calls this field `description`).
+- The USD amount is converted into the project's own currency before sending.
+- Success: green toast "Bid successfully posted to Freelancer.com!" and the lead is saved to the pipeline. Failure: Freelancer's own message (for example "Out of Bids" or an permissions error) is shown in red, and nothing is saved.
+- Bids go out from YOUR Freelancer account and use YOUR bid quota, so only the owner account can post. To let subscribers post through your account as well, set `FREELANCER_BID_SUBSCRIBERS=1` (check Freelancer's rules on shared accounts first).
+- Pick **Freelancer.com** in the source chips to see only projects from Freelancer's API; each card shows its project number.

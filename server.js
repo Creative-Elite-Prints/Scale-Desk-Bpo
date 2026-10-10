@@ -23,6 +23,25 @@ const PORT = process.env.PORT || 3000;
 const ACCESS_KEY = process.env.ACCESS_KEY || '';          // optional password for the feed
 const ORIGIN = process.env.ALLOWED_ORIGIN || '*';         // set to your site address once hosted
 const FL_TOKEN = process.env.FREELANCER_ACCESS_TOKEN || process.env.FREELANCER_TOKEN || '';      // optional Freelancer.com API token
+
+// ---- Placing a real bid on Freelancer.com ----
+// Bids go out from the Freelancer.com account that owns FREELANCER_ACCESS_TOKEN (yours), and use that account's bid allowance.
+// Only owner accounts may do this unless you set FREELANCER_BID_SUBSCRIBERS=1 (then subscriber proposals are posted under your account).
+const FL_BID_ALL = process.env.FREELANCER_BID_SUBSCRIBERS === '1';
+let flSelf = 0;
+const bidAllowed = sess => !!FL_TOKEN && !!sess && sess.active && (sess.access === 'owner' || FL_BID_ALL);
+const readJson = req => new Promise(ok => { let n = 0; const c = []; req.on('data', d => { n += d.length; if (n > 20000) { ok(null); req.destroy(); } else c.push(d); }); req.on('end', () => { try { ok(JSON.parse(Buffer.concat(c).toString('utf8') || '{}')); } catch (e) { ok(null); } }); req.on('error', () => ok(null)); });
+async function flCall(url, opt) {
+  const r = await fetch(url, Object.assign({ signal: AbortSignal.timeout(20000) }, opt, { headers: Object.assign({ 'Content-Type': 'application/json', 'freelancer-oauth-v1': FL_TOKEN, 'Freelancer-Developer-Auth': FL_TOKEN }, (opt && opt.headers) || {}) }));
+  const d = await r.json().catch(() => ({}));
+  if (!r.ok || d.status === 'error') { const e = new Error(d.message || ('Freelancer.com returned ' + r.status)); e.code = d.error_code || ''; e.http = r.status; throw e; }
+  return d.result;
+}
+async function placeBid(j, usd, period, text) {
+  if (!flSelf) flSelf = (await flCall('https://www.freelancer.com/api/users/0.1/self/')).id;
+  const amount = Math.round((usd / (j.rate || 1)) * 100) / 100;            // the bid must be in the project's own currency
+  return flCall('https://www.freelancer.com/api/projects/0.1/bids/', { method: 'POST', body: JSON.stringify({ project_id: j.pid, bidder_id: flSelf, amount, period, milestone_percentage: 100, description: text }) });
+}
 const SOURCES = (process.env.SOURCES || 'freelancer,remoteok').split(',').map(s => s.trim()).filter(Boolean);
 const KEYWORDS = (process.env.FREELANCER_KEYWORDS || 'virtual assistant,customer support,data entry,cold email,lead generation,appointment setting,website,wordpress,game,mobile app,web app,chatbot')
   .split(',').map(s => s.trim()).filter(Boolean);
@@ -96,6 +115,7 @@ async function freelancer() {
           skills: (p.jobs || []).map(j => j.name).slice(0, 12),
           b: Math.round(((min + max) / 2) * rate / (p.type === 'hourly' ? 1 : 10)) * (p.type === 'hourly' ? 1 : 10),
           bt: p.type === 'hourly' ? 'hr' : 'fixed',
+          pid: p.id, cur: (p.currency && p.currency.code) || 'USD', rate,
           s: 'Freelancer',
           loc: '',
           t0: (p.time_submitted ? p.time_submitted * 1000 : Date.now()),
@@ -232,6 +252,19 @@ http.createServer((req, res) => {
   const allowed = (ACCESS_KEY && u.searchParams.get('key') === ACCESS_KEY) || (sess && sess.active) ||
     (u.pathname === '/api/stream' && accounts.consumeTicket(u.searchParams.get('ticket')));
   if (!allowed) return send(res, 401, { error: 'Please sign in' });
+  if (u.pathname === '/api/freelancer/status') return send(res, 200, { enabled: bidAllowed(sess), tokenSet: !!FL_TOKEN, reason: !FL_TOKEN ? 'FREELANCER_ACCESS_TOKEN is not set on the server' : bidAllowed(sess) ? '' : 'Bids to Freelancer.com are limited to the owner account' });
+  if (u.pathname === '/api/freelancer/bid' && req.method === 'POST') {
+    if (!FL_TOKEN) return send(res, 400, { error: 'FREELANCER_ACCESS_TOKEN is not set on the server' });
+    if (!bidAllowed(sess)) return send(res, 403, { error: 'Bids to Freelancer.com are limited to the owner account' });
+    readJson(req).then(async d => {
+      const j = d && jobs.get(String(d.key || '')), amt = d && +d.amount, per = d && Math.round(+d.period), text = d && String(d.proposal || '').trim();
+      if (!j || !j.pid) return send(res, 400, { error: 'That is not a Freelancer.com project from the live feed' });
+      if (!(amt > 0 && amt < 1e7) || !(per >= 1 && per <= 365) || text.length < 30) return send(res, 400, { error: 'Enter an amount, a number of days and a proposal of at least 30 characters' });
+      try { const r = await placeBid(j, amt, per, text.slice(0, 4000)); return send(res, 200, { ok: true, bidId: r && r.id, projectId: j.pid }); }
+      catch (e) { console.error('freelancer bid:', e.message); return send(res, e.http && e.http < 500 ? 400 : 502, { error: e.message, code: e.code || '' }); }
+    });
+    return;
+  }
   if (u.pathname === '/api/jobs') {
     return send(res, 200, [...jobs.values()].sort((a, b) => b.t0 - a.t0).slice(0, 200));
   }

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head><script>window.SD_APP=true</script><link rel="manifest" href="/manifest.webmanifest"><meta name="theme-color" content="#0F172A"><link rel="apple-touch-icon" href="/icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><script>if("serviceWorker" in navigator)window.addEventListener("load",function(){navigator.serviceWorker.register("/sw.js").catch(function(){})})</script>
+
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ScaleDesk – Leads, proposals and deals</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%228%22%20fill%3D%22%230F172A%22%20stroke%3D%22%2306B6D4%22%20stroke-width%3D%221.6%22/%3E%3Cpath%20d%3D%22M21%2010.5H13.5a3%203%200%200%200%200%206h5a3%203%200%200%201%200%206H10.5%22%20fill%3D%22none%22%20stroke%3D%22%2306B6D4%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%2210.5%22%20r%3D%222%22%20fill%3D%22%2306B6D4%22/%3E%3Ccircle%20cx%3D%2210.5%22%20cy%3D%2222.5%22%20r%3D%222%22%20fill%3D%22%236366F1%22/%3E%3C/svg%3E">
@@ -84,6 +86,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 
 <div id="jobs" hidden>
   <div class="ph"><h2>Live Job Leads</h2><p class="note">BPO, virtual assistant, customer support and cold outreach leads from public job boards, plus software projects.</p></div>
+  <div class="chips" id="schips" role="group" aria-label="Source"></div>
   <div class="chips" id="chips" role="group" aria-label="Lead type"></div>
   <div class="bar"><input id="q" type="search" placeholder="Search leads, e.g. inbox, Zendesk, data entry" aria-label="Search leads"><select id="cat" aria-label="Job type"></select><select id="srcf" aria-label="Source"></select></div>
   <div class="live"><span><i class="dot" id="ld"></i><span id="ls"></span></span><span><button class="btn alt sm" id="rf" type="button">Refresh</button> <button class="btn alt sm" id="pz" type="button">Pause live</button></span></div>
@@ -430,7 +433,8 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
   <label for="ba" id="bal">Your bid (USD)</label><input id="ba" type="number" min="1">
   <label for="bdays">Delivery in (days)</label><input id="bdays" type="number" min="1">
   <label for="bp">Message to the client</label><textarea id="bp" style="min-height:230px"></textarea>
-  <p class="note">Changing the amount or days rewrites the message. This records your bid in ScaleDesk. To place it on Freelancer.com itself, copy the message there or connect their API through a server.</p>
+  <p class="note" id="bfl_w" hidden style="margin:8px 0"><label style="display:flex;gap:8px;align-items:center;margin:0"><input type="checkbox" id="bfl" checked style="width:auto"> Also post this bid to Freelancer.com now</label></p>
+  <p class="note" id="bfl_n">Changing the amount or days rewrites the message. This records your bid in ScaleDesk. To place it on the original site, copy the message there.</p>
   <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="bs" type="button">Submit bid</button><button class="btn alt" id="bcp" type="button">Copy message</button><button class="btn alt" id="bc" type="button">Cancel</button></p>
 </dialog>
 <style id="sdx">
@@ -484,6 +488,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);
 .cpp:hover{background:rgba(6,182,212,.2)}
 .rev{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:0 0 16px}.rc{padding:16px 18px}.rc span{font-size:13px;color:var(--muted)}.rc b{display:block;font:800 28px Sora,sans-serif;margin:2px 0}.rc small{color:var(--muted);font-size:12px}
 .rev4{grid-template-columns:repeat(4,minmax(0,1fr))}.rc small{display:block}
+.toast{position:fixed;right:16px;top:70px;z-index:120;max-width:min(420px,calc(100% - 32px));padding:12px 16px;border-radius:12px;font:600 14px Manrope,sans-serif;box-shadow:0 12px 30px rgba(2,6,23,.5);color:#fff}.toast.ok{background:#059669}.toast.bad{background:#b91c1c}
 .hw{display:flex;gap:12px;margin:12px 0}.hw>span{flex:none;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,#06B6D4,#6366F1);color:#fff;font:800 14px Sora,sans-serif;display:grid;place-items:center}.hw p{margin:2px 0 0}
 .rtb{width:100%;border-collapse:collapse;font-size:14px;min-width:560px}.rtb th{text-align:left;color:var(--muted);font:600 12px Manrope,sans-serif;padding:6px 8px;border-bottom:1px solid var(--line)}.rtb td{padding:9px 8px;border-bottom:1px solid var(--line);vertical-align:top}.rtb select{padding:6px 8px;width:auto;font-size:13px}.stars{color:#fbbf24;letter-spacing:1px}
 .rc:nth-child(1) b{color:#67e8f9}.rc:nth-child(2) b{color:#a5b4fc}.rc:nth-child(3) b{color:#6ee7b7}
@@ -575,7 +580,7 @@ dialog,.ddp,.authc{background:#1E293B}
   var CHIPS=["All types","BPO","Virtual Assistant","Customer Support","Cold Outreach","Software"];
   function catOk(j,c){return c==="All types"||(c==="Software"?DEV.indexOf(j.c)>-1:j.c===c)}
   $('cat').innerHTML=CATL.map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
-  $('srcf').innerHTML=["All sources","Freelancer","RemoteOK","Remotive"].map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
+  $('srcf').innerHTML=["All sources","Freelancer.com","RemoteOK","Remotive"].map(function(c){return '<option>'+esc(c)+'</option>'}).join('');
   $('pj').innerHTML=jobs.map(function(j){return '<option value="'+j.id+'">'+esc(j.t)+'</option>'}).join('');
   var dirty=false,openJobs={};
   var SF={
@@ -618,6 +623,7 @@ dialog,.ddp,.authc{background:#1E293B}
   var IC={mark:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h12v18l-6-4-6 4V3z"/></svg>',ext:'<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 01-1 1H5a1 1 0 01-1-1V7a1 1 0 011-1h5"/></svg>',copy:'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="9" y="9" width="11" height="11" rx="2"/><path d="M5 15V6a2 2 0 012-2h9"/></svg>'};
   var SCOL=['#06B6D4','#6366F1','#a78bfa','#34d399'];
   function chipsSync(){$('chips').innerHTML=CHIPS.map(function(x){return '<button class="chip" type="button" data-chip="'+esc(x)+'" aria-pressed="'+($('cat').value===x)+'">'+(x==='All types'?'All leads':x==='Software'?'Software and apps':esc(x))+'</button>'}).join('')}
+  function srcChips(){$('schips').innerHTML=['All sources','Freelancer.com','RemoteOK'].map(function(x){return '<button class="chip" type="button" data-src="'+x+'" aria-pressed="'+($('srcf').value===x)+'">'+(x==='All sources'?'All boards':x)+'</button>'}).join('')}
   function feeds(){
     var c=$('cat').value,K={'BPO':['bpo back office','data-entry'],'Virtual Assistant':['virtual assistant','virtual-assistant'],'Customer Support':['customer support','customer-support'],'Cold Outreach':['cold email outreach','sales']};
     var k=K[c]||(c==='Software'?['web development','dev']:DEV.indexOf(c)>-1?[c.toLowerCase(),'dev']:['virtual assistant','virtual-assistant']),q=encodeURIComponent(k[0]);
@@ -626,7 +632,7 @@ dialog,.ddp,.authc{background:#1E293B}
   }
   function jobCard(j){
     var age=j.t0?Math.max(0,Math.round((Date.now()-j.t0)/1000)):-1,d=dealOf(j),bd=d&&d.bid?d:null,url=j.url&&/^https:\/\//.test(j.url)?j.url:'';
-    return '<article class="job"><div><h3>'+esc(j.t)+'</h3><p>'+esc(j.d)+'</p><div class="meta">'+(age>=0&&age<6?'<span class="badge">New</span>':'')+'<span>'+esc(j.c)+'</span><span>'+esc(j.s)+'</span>'+(j.sim?'<span>Sample</span>':'')+(j.loc?'<span>'+esc(j.loc)+'</span>':'')+(age>=0?'<span>'+(age<60?age+'s ago':age<3600?Math.floor(age/60)+' min ago':Math.floor(age/3600)+' h ago')+'</span>':'')+'</div>'+mt(j)+jobDetails(j)+'</div>'+
+    return '<article class="job"><div><h3>'+esc(j.t)+'</h3><p>'+esc(j.d)+'</p><div class="meta">'+(age>=0&&age<6?'<span class="badge">New</span>':'')+'<span>'+esc(j.c)+'</span><span>'+esc(j.s==='Freelancer'?'Freelancer.com':j.s)+'</span>'+(isFl(j)?'<span>Project #'+esc(j.pid)+'</span>':'')+(j.sim?'<span>Sample</span>':'')+(j.loc?'<span>'+esc(j.loc)+'</span>':'')+(age>=0?'<span>'+(age<60?age+'s ago':age<3600?Math.floor(age/60)+' min ago':Math.floor(age/3600)+' h ago')+'</span>':'')+'</div>'+mt(j)+jobDetails(j)+'</div>'+
       '<div class="side"><div class="price">'+esc(fmtB(j))+'</div><div class="acts"><button class="btn" type="button" data-bid="'+j.id+'">'+(bd?'Bid placed: '+esc(fmtB(bd,bd.bid)):'Place Bid')+'</button>'+
       '<button class="ib'+(d?' on':'')+'" type="button" data-save="'+j.id+'" title="'+(d?'Saved to your pipeline':'Save Lead')+'" aria-label="Save lead">'+IC.mark+'</button>'+
       (url?'<a class="ib" href="'+esc(url)+'" target="_blank" rel="noopener noreferrer" title="Open Original Link" aria-label="Open original link">'+IC.ext+'</a>':'')+'</div>'+
@@ -636,9 +642,15 @@ dialog,.ddp,.authc{background:#1E293B}
     if(!force&&$('jl').querySelector('details.jd[open]')){dirty=true;return}
     dirty=false;
     var t=$('q').value.toLowerCase(),c=$('cat').value,sf=$('srcf').value;
-    var out=jobs.filter(function(j){return catOk(j,c)&&(sf==='All sources'||j.s===sf)&&(!t||(j.t+' '+j.d).toLowerCase().indexOf(t)>-1)}).slice(0,50);
+    var out=jobs.filter(function(j){return catOk(j,c)&&(sf==='All sources'||(sf==='Freelancer.com'?j.s==='Freelancer':j.s===sf))&&(!t||(j.t+' '+j.d).toLowerCase().indexOf(t)>-1)}).slice(0,50);
     $('jl').innerHTML=out.length?out.map(jobCard).join(''):'<p style="color:var(--muted)">No leads match yet. New ones appear here as they are found. Try another type, or use the board buttons above.</p>';
     dash();
+  }
+  var fbOn=false,fbWhy='',tT=null;
+  function toast(msg,ok){var t=$('toast');if(!t){t=document.createElement('div');t.id='toast';t.setAttribute('role','status');document.body.appendChild(t)}t.className='toast '+(ok?'ok':'bad');t.textContent=msg;t.hidden=false;clearTimeout(tT);tT=setTimeout(function(){t.hidden=true},ok?6000:12000)}
+  function isFl(j){return !!(j&&j.pid&&/^freelancer:/.test(j.key||''))}
+  function postBid(j,amount,days,text){
+    return sApi('/api/freelancer/bid',{method:'POST',body:{key:j.key,amount:amount,period:days,proposal:text}});
   }
   function proposalFor(j){fillSel();$('pj').value=j.id;gen();return $('po').textContent.replace(/^Subject:[^\n]*\n\n/,'')}
   function dcard(p,i){
@@ -863,7 +875,7 @@ dialog,.ddp,.authc{background:#1E293B}
   function addServer(arr){
     if(paused)return;
     var add=[];
-    arr.forEach(function(x){if(seen[x.key])return;seen[x.key]=1;add.push({id:++nid,key:x.key,bt:x.bt,t:x.t,c:x.c,s:x.s,b:x.b||0,d:x.d,loc:x.loc,t0:x.t0,url:x.url,full:x.full,skills:x.skills})});
+    arr.forEach(function(x){if(seen[x.key])return;seen[x.key]=1;add.push({id:++nid,key:x.key,bt:x.bt,t:x.t,c:x.c,s:x.s,b:x.b||0,d:x.d,loc:x.loc,t0:x.t0,url:x.url,full:x.full,skills:x.skills,pid:x.pid})});
     if(!add.length)return;
     add.sort(function(a,b){return b.t0-a.t0});
     jobs=add.concat(jobs).slice(0,200);lastUp=Date.now();list();status();
@@ -897,14 +909,23 @@ dialog,.ddp,.authc{background:#1E293B}
     $('bdt').textContent='Bid on: '+bj.t;
     $('bdm').textContent='Client budget '+fmtB(bj)+' · '+bj.s+(bj.loc?' · '+bj.loc:'');
     $('ba').value=jbt(bj)==='yr'?'':(bj.b||'');$('bdays').value=dlj(bj);$('bal').textContent=jbt(bj)==='hr'?'Your hourly rate (USD per hour)':'Your bid (USD)';
-    bidMsg();$('bd').showModal();
+    var fl=isFl(bj)&&fbOn;$('bfl_w').hidden=!fl;$('bfl').checked=true;$('bfl_n').textContent=fl?'Your bid goes to Freelancer.com through the ScaleDesk server. If Freelancer refuses it, you will see their exact message and nothing is saved.':(isFl(bj)&&fbWhy?'Live posting is off: '+fbWhy+' You can still record the bid here.':'Changing the amount or days rewrites the message. This records your bid in ScaleDesk. To place it on the original site, copy the message there.');bidMsg();$('bd').showModal();
   }
   function submitBid(){
     var a=+$('ba').value,d=+$('bdays').value,m=$('bp').value.trim();
     if(!(a>0)){$('ba').focus();return}
     if(!(d>0)){$('bdays').focus();return}
     if(!m){$('bp').focus();return}
-    lead(bj,0,{bid:a,days:d,msg:m,sent:true,bt:jbt(bj)==='hr'?'hr':'fixed'});list(true);
+    var o={bid:a,days:d,msg:m,sent:true,bt:jbt(bj)==='hr'?'hr':'fixed'};
+    if(isFl(bj)&&fbOn&&$('bfl').checked){
+      if(m.length<30){toast('Write a longer message first. Freelancer needs at least 30 characters.',false);return}
+      var sb=$('bs'),jb=bj;sb.disabled=true;sb.textContent='Posting…';
+      postBid(jb,a,d,m).then(function(){o.posted=true;lead(jb,0,o);list(true);$('bd').close();toast('Bid successfully posted to Freelancer.com!',true)})
+        .catch(function(e){toast(e.message||'Freelancer.com refused the bid.',false)})
+        .then(function(){sb.disabled=false;sb.textContent='Submit bid'});
+      return;
+    }
+    lead(bj,0,o);list(true);
     $('bd').close();
   }
   var tgt=null;
@@ -930,8 +951,9 @@ dialog,.ddp,.authc{background:#1E293B}
     if(b.dataset.cpd){var cd1=find(+b.dataset.cpd);if(cd1)copyText(fullOf(cd1),b,'Copy description')}
     if(b.dataset.cpb){var cd2=find(+b.dataset.cpb);if(cd2)copyText(briefText(cd2),b,'Copy brief for freelancer')}
     if(b.dataset.save){lead(+b.dataset.save,0);list(true)}
+    if(b.dataset.src){$('srcf').value=b.dataset.src;srcChips();list(true)}
     if(b.dataset.chip){$('cat').value=b.dataset.chip;chipsSync();feeds();list(true)}
-    if(b.dataset.apply){var aj=find(+b.dataset.apply);if(aj){var at=proposalFor(aj),ap=jbt(aj)==='yr'?0:(aj.b||0),ao={days:5,msg:at,sent:true};if(ap){ao.bid=ap;ao.bt=jbt(aj)==='hr'?'hr':'fixed'}lead(aj,0,ao);copyText(at,b,'Apply in 1 click');var au=aj.url&&/^https:\/\//.test(aj.url)?aj.url:'';if(au)window.open(au,'_blank','noopener');setTimeout(function(){list(true)},2000)}}
+    if(b.dataset.apply){var aj=find(+b.dataset.apply);if(aj&&isFl(aj)&&fbOn){var fp=jbt(aj)==='yr'?0:(aj.b||0),ft=proposalFor(aj),fb=b;if(!(fp>0)){toast('This project has no fixed budget. Use Place Bid and enter your amount.',false)}else{fb.disabled=true;postBid(aj,fp,5,ft).then(function(){lead(aj,0,{bid:fp,days:5,msg:ft,sent:true,posted:true,bt:jbt(aj)==='hr'?'hr':'fixed'});list(true);toast('Bid successfully posted to Freelancer.com!',true)}).catch(function(e){toast(e.message||'Freelancer.com refused the bid.',false)}).then(function(){fb.disabled=false})}}else if(aj){var at=proposalFor(aj),ap=jbt(aj)==='yr'?0:(aj.b||0),ao={days:5,msg:at,sent:true};if(ap){ao.bid=ap;ao.bt=jbt(aj)==='hr'?'hr':'fixed'}lead(aj,0,ao);copyText(at,b,'Apply in 1 click');var au=aj.url&&/^https:\/\//.test(aj.url)?aj.url:'';if(au)window.open(au,'_blank','noopener');setTimeout(function(){list(true)},2000)}}
     if(b.dataset.cpp){var cj0=find(+b.dataset.cpp);if(cj0)copyText(proposalFor(cj0),b,'1-Click Copy Proposal')}
     if(b.dataset.edit)ddOpen(+b.dataset.edit);
     if(b.id==='adl'||b.id==='adl2')ddOpen();
@@ -1059,7 +1081,8 @@ dialog,.ddp,.authc{background:#1E293B}
     tShow();if((tc.saved||0)!==team.length)team.forEach(function(id){tEvent('save',id)});
     $('fchat').hidden=false;$('fsend').hidden=false;$('fsw').hidden=false;$('sendc').hidden=false;
     jobs=[];seen={};live=true;base0=location.origin;
-    board();stats();flist();list();gen();status();tab('dash');
+    board();stats();flist();list();gen();status();srcChips();tab('dash');
+    fbOn=false;fbWhy='';fetch('/api/freelancer/status',{headers:hd()}).then(function(r){return r.json()}).then(function(x){fbOn=!!x.enabled;fbWhy=x.reason||''}).catch(function(){});
     fetch('/api/jobs',{headers:hd()}).then(function(r){return r.json()}).then(addServer).catch(function(){});
     openStream();mgStart();
   }
@@ -1371,7 +1394,7 @@ dialog,.ddp,.authc{background:#1E293B}
     boot();
     if(location.hash==='#signup'){if(!SES)authMode('up');history.replaceState(null,'',location.pathname+location.search)}
   }
-  $('q').oninput=$('cat').oninput=$('srcf').oninput=list;
+  $('q').oninput=$('cat').oninput=$('srcf').oninput=function(){srcChips();list()};
   $('cat').addEventListener('change',function(){chipsSync();feeds();list(true)});
   $('fq').oninput=$('fa').oninput=flist;
   $('fmj').addEventListener('input',flist);
@@ -1390,7 +1413,7 @@ dialog,.ddp,.authc{background:#1E293B}
   document.addEventListener('drop',function(e){var c=e.target.closest&&e.target.closest('.col');clearOver();if(!c||!e.dataTransfer)return;e.preventDefault();var id=+e.dataTransfer.getData('text/plain');if(id)mvDeal(id,+c.dataset.st)});
   document.addEventListener('dragend',clearOver);
   migrate(pipe);
-  list();board();stats();flist();status();gen();chipsSync();feeds();renderCourses();tab('dash');
+  list();board();stats();flist();status();gen();chipsSync();srcChips();feeds();renderCourses();tab('dash');
   setInterval(function(){if(!paused&&!live&&!document.hidden)ingest(1)},1000);
   setInterval(function(){if(document.hidden)return;var p=people[Math.floor(Math.random()*people.length)];p.st=['available','available','busy','offline'][Math.floor(Math.random()*4)];if(!$('free').hidden)flist()},5000);
 })();
