@@ -4,6 +4,10 @@
 
 
 
+
+
+
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>ScaleDesk – Leads, proposals and deals</title><link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20x%3D%222%22%20y%3D%222%22%20width%3D%2228%22%20height%3D%2228%22%20rx%3D%228%22%20fill%3D%22%230F172A%22%20stroke%3D%22%2306B6D4%22%20stroke-width%3D%221.6%22/%3E%3Cpath%20d%3D%22M21%2010.5H13.5a3%203%200%200%200%200%206h5a3%203%200%200%201%200%206H10.5%22%20fill%3D%22none%22%20stroke%3D%22%2306B6D4%22%20stroke-width%3D%222.4%22%20stroke-linecap%3D%22round%22/%3E%3Ccircle%20cx%3D%2221%22%20cy%3D%2210.5%22%20r%3D%222%22%20fill%3D%22%2306B6D4%22/%3E%3Ccircle%20cx%3D%2210.5%22%20cy%3D%2222.5%22%20r%3D%222%22%20fill%3D%22%236366F1%22/%3E%3C/svg%3E">
@@ -58,7 +62,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 <div class="wrap">
 <header class="top">
   <button class="ibt" id="sbt" type="button" aria-label="Show or hide the menu" aria-expanded="true"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
-  <a class="brand" href="/app" aria-label="ScaleDesk home"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#6366F1"/></linearGradient><filter id="lgf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="2" y="2" width="28" height="28" rx="8" fill="#0F172A" stroke="url(#lgg)" stroke-width="1.5"/><path d="M21 10.5H13.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H10.5" fill="none" stroke="url(#lgg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#lgf)"/><circle cx="21" cy="10.5" r="2" fill="#06B6D4"/><circle cx="10.5" cy="22.5" r="2" fill="#6366F1"/></svg><b>ScaleDesk</b></a>
+  <a class="brand" href="/app" aria-label="ScaleDesk home"><svg viewBox="0 0 32 32" aria-hidden="true"><defs><linearGradient id="lgg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#06B6D4"/><stop offset="1" stop-color="#6366F1"/></linearGradient><filter id="lgf" x="-30%" y="-30%" width="160%" height="160%"><feGaussianBlur stdDeviation="1.1" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect x="2" y="2" width="28" height="28" rx="8" fill="#0F172A" stroke="url(#lgg)" stroke-width="1.5"/><path d="M21 10.5H13.5a3 3 0 0 0 0 6h5a3 3 0 0 1 0 6H10.5" fill="none" stroke="url(#lgg)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" filter="url(#lgf)"/><circle cx="21" cy="10.5" r="2" fill="#06B6D4"/><circle cx="10.5" cy="22.5" r="2" fill="#6366F1"/></svg><b>ScaleDesk <span style="color:#06B6D4">BPO</span></b></a>
   <span class="grow"></span>
   <details class="dd" id="add" hidden><summary id="asum">Account</summary><div class="ddp"><p class="note" id="ainfo" style="margin:4px 8px 10px"></p><div style="display:flex;gap:6px;padding:0 6px 6px"><button class="btn alt sm" id="abo" type="button" hidden>Back office</button><button class="btn alt sm" id="aplan" type="button">Plan</button><button class="btn alt sm" id="aout" type="button">Sign out</button></div></div></details>
 </header>
@@ -394,7 +398,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
 <div id="net" role="status" hidden style="position:fixed;top:0;left:0;right:0;z-index:99;background:#fff1d6;color:#5c3b00;text-align:center;padding:8px;font-size:14px">Can't reach ScaleDesk right now. You are still signed in. Trying again…</div>
 <div class="ov" id="auth" hidden>
   <div class="authc">
-    <h1 style="font-size:30px;margin-bottom:4px">ScaleDesk</h1>
+    <h1 style="font-size:30px;margin-bottom:4px">ScaleDesk <span style="color:#06B6D4">BPO</span></h1>
     <p class="note" id="au_price" style="margin:0 0 14px"></p>
     <div class="tabs"><button class="tab" id="au_in" role="tab" aria-selected="true" type="button">Sign in</button><button class="tab" id="au_up" role="tab" aria-selected="false" type="button">Create account</button></div>
     <div id="au_f" hidden><label for="au_n">Your name</label><input id="au_n" autocomplete="name"><label for="au_b">Business name</label><input id="au_b" autocomplete="organization"></div>
@@ -424,6 +428,7 @@ label{font-size:14px;font-weight:500;display:block;margin:12px 0 4px}
   <div><label for="dd_v">Value (USD)</label><input id="dd_v" type="number" min="0" step="0.01"></div>
   <div><label for="dd_bt">Value is</label><select id="dd_bt"><option value="fixed">A fixed total</option><option value="hr">A rate per hour</option></select></div>
   <div><label for="dd_st">Stage</label><select id="dd_st"></select></div></div>
+  <label for="dd_u">Link to the job or profile (optional, https)</label><input id="dd_u" type="url" maxlength="300" placeholder="https://www.upwork.com/freelancers/~...">
   <label for="dd_n">Note (optional)</label><input id="dd_n" maxlength="300">
   <p class="note" id="dd_m" role="alert" style="color:#f87171;min-height:20px;margin:8px 0 0"></p>
   <p style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="dd_save" type="button">Save deal</button><button class="btn alt" id="dd_x" type="button">Cancel</button></p>
@@ -467,6 +472,7 @@ input,select,textarea{background:rgba(15,23,42,.65);border-color:var(--line)}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(6,182,212,.22)}
 .btn{box-shadow:0 0 0 rgba(6,182,212,0);transition:box-shadow .15s,filter .15s}.btn:hover{box-shadow:0 0 16px rgba(6,182,212,.45)}
 .btn.alt{background:rgba(15,23,42,.45);color:var(--ink);border-color:var(--line)}.btn.alt:hover{border-color:var(--accent);box-shadow:none}
+.upn{margin:8px 0 0;font-size:13px}.upn a{font-weight:700;color:#67e8f9}.upb{display:block;margin-top:6px;padding:4px 10px;border-radius:10px;font-size:11.5px;line-height:1.5;color:#94a3b8;border:1px solid rgba(148,163,184,.35)}
 .badge2,.meta .badge{background:var(--ind);color:#fff}
 .meta span{background:rgba(6,182,212,.12);color:#a5f3fc}
 .stats6{grid-template-columns:repeat(3,1fr)}@media (max-width:820px){.stats6{grid-template-columns:1fr 1fr}}.tacts{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}.person .rt{color:#fbbf24;font-weight:600}
@@ -565,7 +571,7 @@ dialog,.ddp,.authc{background:#1E293B}
   function lead(j,stage,extra){
     if(typeof j==='number')j=find(j);if(!j)return null;
     var e=dealOf(j);
-    if(e){if(stage>e.stage)e.stage=stage}else{e={id:newId(),v:2,jk:jkey(j),t:j.t,b:j.b||0,bt:jbt(j),s:j.s,stage:stage,at:Date.now()};pipe.push(e)}
+    if(e){if(stage>e.stage)e.stage=stage}else{e={id:newId(),v:2,jk:jkey(j),t:j.t,b:j.b||0,bt:jbt(j),s:j.s,stage:stage,at:Date.now(),url:/^https:\/\//.test(j.url||'')?j.url:''};pipe.push(e)}
     if(extra)Object.assign(e,extra);
     if(e.stage===3&&!e.done)e.done=Date.now();
     save();board();return e;
@@ -656,7 +662,7 @@ dialog,.ddp,.authc{background:#1E293B}
   function proposalFor(j){fillSel();$('pj').value=j.id;gen();return $('po').textContent.replace(/^Subject:[^\n]*\n\n/,'')}
   function dcard(p,i){
     return '<div class="lead" draggable="true" data-card="'+p.id+'"><b>'+esc(p.t)+'</b><span class="ls">'+(p.c?esc(p.c)+' · ':'')+esc(p.s||'Manual')+'</span><span class="lv">'+(p.b||p.bid?esc(fmtB(p,p.bid||p.b)):'No value set')+'</span>'+
-      (p.bid&&p.days?'<span class="ls">Bid placed · '+p.days+' days</span>':p.sent?'<span class="ls">Proposal sent</span>':'')+(p.note?'<span class="ls">'+esc(p.note)+'</span>':'')+
+      (p.bid&&p.days?'<span class="ls">Bid placed · '+p.days+' days</span>':p.sent?'<span class="ls">Proposal sent</span>':'')+(p.note?'<span class="ls">'+esc(p.note)+'</span>':'')+(p.url&&/^https:\/\//.test(p.url)?'<span class="ls"><a href="'+esc(p.url)+'" target="_blank" rel="noopener noreferrer" style="color:#67e8f9">'+(/upwork\.com/i.test(p.url)?'Open on Upwork':'Open original')+' ↗</a></span>':'')+
       '<div class="la">'+(i>0?'<button class="btn alt sm" data-mv="'+p.id+':-1" aria-label="Move back">←</button>':'')+(i<3?'<button class="btn sm" data-mv="'+p.id+':1" aria-label="Move forward">→</button>':'')+'<button class="btn alt sm" data-edit="'+p.id+'">Edit</button><button class="btn alt sm" data-rm="'+p.id+'">Remove</button></div></div>';
   }
   function board(){
@@ -709,12 +715,12 @@ dialog,.ddp,.authc{background:#1E293B}
     $('dd_lw').hidden=!!p;$('dd_ttl').textContent=p?'Edit deal':'Add deal';$('dd_m').textContent='';
     $('dd_t').value=p?p.t:'';$('dd_c').value=p?(p.c||''):'';$('dd_v').value=p?(p.bid||p.b||''):'';$('dd_bt').value=p&&p.bt==='hr'?'hr':'fixed';
     var so=$('dd_s');so.value=p&&Array.prototype.some.call(so.options,function(o){return o.value===p.s})?p.s:'Manual';
-    $('dd_st').value=p?p.stage:0;$('dd_n').value=p?(p.note||''):'';
+    $('dd_st').value=p?p.stage:0;$('dd_n').value=p?(p.note||''):'';$('dd_u').value=p?(p.url||''):'';
     $('dd_d').showModal();
   }
   function ddSave(){
     var t=$('dd_t').value.trim();if(!t){$('dd_m').textContent='Enter a deal name.';$('dd_t').focus();return}
-    var v=+$('dd_v').value||0,st=+$('dd_st').value,f={t:t.slice(0,140),c:$('dd_c').value.trim().slice(0,80),b:v,bt:$('dd_bt').value,s:$('dd_s').value,note:$('dd_n').value.trim().slice(0,300)},e;
+    var v=+$('dd_v').value||0,st=+$('dd_st').value,f={t:t.slice(0,140),c:$('dd_c').value.trim().slice(0,80),b:v,bt:$('dd_bt').value,s:$('dd_s').value,note:$('dd_n').value.trim().slice(0,300),url:/^https:\/\//i.test($('dd_u').value.trim())?$('dd_u').value.trim().slice(0,300):''},e;
     if(ddEdit){e=pipe.filter(function(z){return z.id===ddEdit})[0];if(e){Object.assign(e,f,{stage:st});if(e.bid&&v)e.bid=v}}
     else{
       var j=find(+$('dd_lead').value);e=j&&dealOf(j);
@@ -764,11 +770,14 @@ dialog,.ddp,.authc{background:#1E293B}
     $('fmj').innerHTML='<option value="">Rank by job: none</option>'+l.map(function(j){return '<option value="'+j.id+'">'+esc(j.t.slice(0,48))+'</option>'}).join('');
     if(sel)$('fmj').value=v;
   }
+  var UPRO=/^https:\/\/(www\.)?upwork\.com\/(freelancers|fl)\/~?[A-Za-z0-9_%.-]+\/?(\?[^\s]*)?$/i;
+  function isUp(p){return p.plat==='Upwork'||!!(p.url&&/^https:\/\/(www\.)?upwork\.com\//i.test(p.url))}
   function extUrl(p){
-    if(p.url&&/^https:\/\//.test(p.url))return p.url;
-    var q=encodeURIComponent(p.sk[0]);
-    return p.plat==='Fiverr'?'https://www.fiverr.com/search/gigs?query='+q:'https://www.upwork.com/nx/search/talent/?q='+q;
+    if(p.url&&/^https:\/\//.test(p.url)&&(!isUp(p)||UPRO.test(p.url)))return p.url;
+    if(p.plat==='Fiverr')return 'https://www.fiverr.com/search/gigs?query='+encodeURIComponent(p.sk[0]);
+    return 'https://www.upwork.com/nx/search/talent/?q='+encodeURIComponent(p.n)+'_'+encodeURIComponent(p.sk[0]);
   }
+  function upHow(p){return p.url&&UPRO.test(p.url)?'their Upwork profile':'Upwork (a search for '+p.n+' and '+p.sk[0]+')'}
   function cand(id){return mine.concat(people).filter(function(z){return z.id===id})[0]}
   var tc={outreach:0,outreachTotal:0,saved:0,savedTotal:0},tl={out:{},saved:{}};
   function tShow(){$('s5').textContent=tc.outreach;$('s6').textContent=tc.saved;if($('fc').dataset.base!==undefined)$('fc').textContent=$('fc').dataset.base+' Active outreach: '+tc.outreach+'. Saved talent: '+tc.saved+'.'}
@@ -802,7 +811,7 @@ dialog,.ddp,.authc{background:#1E293B}
       var p=o.p,f=team.indexOf(p.id)>-1,st=stOf(p),own=String(p.id).charAt(0)==='m',ob=!!onb[p.id];
       return '<article class="person"><h3>'+esc(p.n)+(o.m?' <span class="badge2">'+o.m.score+'% match</span>':'')+'</h3><p>'+esc(p.role)+' · '+esc(p.loc)+'</p><p class="rt">'+esc(ratingLine(p))+'</p><p>'+esc(p.bio)+'</p>'+(o.m?'<p><i>'+esc(o.m.why.join(', '))+'</i></p>':'')+
         '<div class="meta">'+p.sk.map(function(x){return '<span>'+esc(x)+'</span>'}).join('')+(own?'':'<span>Sample profile</span>')+(ob?'<span class="badge">Onboarded</span>':'')+'</div>'+
-        '<div class="row"><span><b>$'+p.r+'/hr</b> · <span class="st '+st+'">● '+LBL[st]+'</span></span></div>'+
+        (isUp(p)&&!ob?'<p class="upn"><a href="'+esc(extUrl(p))+'" target="_blank" rel="noopener noreferrer">'+(p.url&&UPRO.test(p.url)?'View Upwork profile':'Find on Upwork')+' ↗</a> <span class="upb" title="Upwork does not allow other apps to send direct messages">Opens directly on Upwork (Upwork API restricts external direct messaging)</span></p>':'')+'<div class="row"><span><b>$'+p.r+'/hr</b> · <span class="st '+st+'">● '+LBL[st]+'</span></span></div>'+
         '<div class="tacts"><button class="btn sm" data-tmsg="'+p.id+'" type="button">Message</button><button class="btn sm" data-troom="'+p.id+'" type="button">Start Project Room</button><button class="btn alt sm" data-msg="'+p.id+'" type="button">Request quote</button><button class="btn sm'+(f?'':' alt')+'" data-fav="'+p.id+'" type="button">'+(f?'Saved ✓':'Save')+'</button><button class="btn alt sm" data-onb="'+p.id+'" type="button">'+(ob?'Onboarded ✓':'Mark onboarded')+'</button>'+(own?'<button class="btn alt sm" data-st="'+p.id+'" type="button">Set status</button>':'')+'</div></article>';
     }).join('')||'<p style="color:var(--muted)">No freelancers match. Try another skill.</p>';
   }
@@ -954,7 +963,7 @@ dialog,.ddp,.authc{background:#1E293B}
     if(b.dataset.save){lead(+b.dataset.save,0);list(true)}
     if(b.dataset.src){$('srcf').value=b.dataset.src;srcChips();list(true)}
     if(b.dataset.chip){$('cat').value=b.dataset.chip;chipsSync();feeds();list(true)}
-    if(b.dataset.apply){var aj=find(+b.dataset.apply);if(aj&&isFl(aj)&&fbOn){var fp=jbt(aj)==='yr'?0:(aj.b||0),ft=proposalFor(aj),fb=b;if(!(fp>0)){toast('This project has no fixed budget. Use Place Bid and enter your amount.',false)}else{fb.disabled=true;postBid(aj,fp,3,ft).then(function(){lead(aj,0,{bid:fp,days:3,msg:ft,sent:true,posted:true,bt:jbt(aj)==='hr'?'hr':'fixed'});list(true);toast('Bid placed live on Freelancer.com!',true)}).catch(function(e){toast(e.message||'Freelancer.com refused the bid.',false)}).then(function(){fb.disabled=false})}}else if(aj){var at=proposalFor(aj),ap=jbt(aj)==='yr'?0:(aj.b||0),ao={days:5,msg:at,sent:true};if(ap){ao.bid=ap;ao.bt=jbt(aj)==='hr'?'hr':'fixed'}lead(aj,0,ao);copyText(at,b,'Apply in 1 click');var au=aj.url&&/^https:\/\//.test(aj.url)?aj.url:'';if(au)window.open(au,'_blank','noopener');setTimeout(function(){list(true)},2000)}}
+    if(b.dataset.apply){var aj=find(+b.dataset.apply);if(aj&&isFl(aj)&&fbOn){var fp=jbt(aj)==='yr'?0:(aj.b||0),ft=proposalFor(aj),fb=b;if(!(fp>0)){toast('This project has no fixed budget. Use Place Bid and enter your amount.',false)}else{fb.disabled=true;postBid(aj,fp,3,ft).then(function(){lead(aj,0,{bid:fp,days:3,msg:ft,sent:true,posted:true,bt:jbt(aj)==='hr'?'hr':'fixed'});list(true);toast('Bid placed live on Freelancer.com!',true)}).catch(function(e){toast(e.message||'Freelancer.com refused the bid.',false)}).then(function(){fb.disabled=false})}}else if(aj){var at=proposalFor(aj),ap=jbt(aj)==='yr'?0:(aj.b||0),ao={days:5,msg:at,sent:true};if(ap){ao.bid=ap;ao.bt=jbt(aj)==='hr'?'hr':'fixed'}lead(aj,0,ao);copyText(at,b,'Apply in 1 click');var au=aj.url&&/^https:\/\//.test(aj.url)?aj.url:'';if(au)window.open(au,'_blank','noopener,noreferrer');setTimeout(function(){list(true)},2000)}}
     if(b.dataset.cpp){var cj0=find(+b.dataset.cpp);if(cj0)copyText(proposalFor(cj0),b,'1-Click Copy Proposal')}
     if(b.dataset.edit)ddOpen(+b.dataset.edit);
     if(b.id==='adl'||b.id==='adl2')ddOpen();
@@ -966,7 +975,7 @@ dialog,.ddp,.authc{background:#1E293B}
     if(b.dataset.fav){var i=team.indexOf(b.dataset.fav);if(i>-1){team.splice(i,1);tEvent('unsave',b.dataset.fav)}else{team.push(b.dataset.fav);tEvent('save',b.dataset.fav)}saveF();flist()}
     if(b.dataset.onb){if(onb[b.dataset.onb])delete onb[b.dataset.onb];else onb[b.dataset.onb]=1;saveF();flist()}
     if(b.dataset.troom){var rp=cand(b.dataset.troom);if(rp){tEvent('message',rp.id);openThread(rp)}}
-    if(b.dataset.tmsg){var tp=cand(b.dataset.tmsg);if(tp){tEvent('message',tp.id);if(onb[tp.id])openThread(tp);else{$('tmsg').textContent='Opened '+tp.n+' on '+(tp.url?'their profile page':(tp.plat||'Upwork')+' (search results for '+tp.sk[0]+')')+'.';window.open(extUrl(tp),'_blank','noopener')}}}
+    if(b.dataset.tmsg){var tp=cand(b.dataset.tmsg);if(tp){tEvent('message',tp.id);if(onb[tp.id])openThread(tp);else{$('tmsg').textContent='Opened '+tp.n+' on '+(isUp(tp)?upHow(tp):tp.url?'their profile page':(tp.plat||'Upwork')+' (search results for '+tp.sk[0]+')')+'.';window.open(extUrl(tp),'_blank','noopener,noreferrer')}}}
     if(b.id==='fadd'){
       var nm=$('fn').value.trim(),sk=$('fs').value.split(',').map(function(s){return s.trim()}).filter(Boolean),rt=+$('fr').value;
       if(!nm||!sk.length||!rt){(nm?(sk.length?$('fr'):$('fs')):$('fn')).focus();return}
@@ -986,7 +995,7 @@ dialog,.ddp,.authc{background:#1E293B}
     if(b.id==='fcp'){try{navigator.clipboard.writeText($('fo').textContent);b.textContent='Copied'}catch(x){b.textContent='Select and copy manually'}setTimeout(function(){b.textContent='Copy message'},1800)}
     if(b.dataset.rank){tab('free');fillMj(b.dataset.rank);flist();window.scrollTo(0,0)}
     if(b.dataset.st){var q=mine.filter(function(z){return z.id===b.dataset.st})[0];if(q){q.st={available:'busy',busy:'offline',offline:'available'}[stOf(q)];saveF();flist()}}
-    if(b.id==='rooms'){var ru=(base0||$('srv').value.trim()).replace(/\/+$/,'');if(/^https:\/\/|^http:\/\/localhost/i.test(ru))window.open(ru+'/rooms','_blank','noopener');else $('rn').textContent='Enter your server address on the Live Job Leads tab first.'}
+    if(b.id==='rooms'){var ru=(base0||$('srv').value.trim()).replace(/\/+$/,'');if(/^https:\/\/|^http:\/\/localhost/i.test(ru))window.open(ru+'/rooms','_blank','noopener,noreferrer');else $('rn').textContent='Enter your server address on the Live Job Leads tab first.'}
     if(b.id==='cn')connect();
     if(b.dataset.bid)openBid(+b.dataset.bid);
     if(b.id==='bc')$('bd').close();

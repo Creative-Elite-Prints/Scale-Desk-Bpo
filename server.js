@@ -54,6 +54,9 @@ for (const [url, file, type, cache] of [['/manifest.webmanifest', 'manifest.webm
   ['/icon-192.png', 'icon-192.png', 'image/png', 'public, max-age=86400'], ['/icon-512.png', 'icon-512.png', 'image/png', 'public, max-age=86400'], ['/icon-maskable.png', 'icon-maskable.png', 'image/png', 'public, max-age=86400']]) {
   try { STATIC[url] = { body: fs.readFileSync(path.join(__dirname, 'public', file)), type, cache }; } catch (e) { /* optional */ }
 }
+for (const [file, type] of [['scaledesk-bpo-logo.svg', 'image/svg+xml'], ['scaledesk-bpo-logo.png', 'image/png'], ['scaledesk-bpo-logo-square.svg', 'image/svg+xml'], ['scaledesk-bpo-logo-square.png', 'image/png']]) {
+  try { STATIC['/brand/' + file] = { body: fs.readFileSync(path.join(__dirname, 'public', 'brand', file)), type, cache: 'public, max-age=3600', name: file }; } catch (e) { /* optional */ }
+}
 const LEGAL = { '/terms': legal('terms'), '/privacy': legal('privacy') };
 const ADMIN_PAGE = (() => { try { return fs.readFileSync(path.join(__dirname, 'public', 'admin.html')); } catch (e) { return null; } })();
 let APP_PAGE = null, LANDING = null;
@@ -222,7 +225,7 @@ http.createServer((req, res) => {
   res.setHeader('Access-Control-Allow-Origin', ORIGIN);
   if (req.method === 'OPTIONS') { res.writeHead(204, { 'Access-Control-Allow-Headers': '*' }); return res.end(); }
   if (u.pathname === '/api/health') return send(res, 200, { ok: true, jobs: jobs.size, sources: SOURCES, lastRun, storage: persist.status().mode });
-  if (STATIC[u.pathname]) { const f = STATIC[u.pathname]; res.writeHead(200, { 'Content-Type': f.type, 'Cache-Control': f.cache, 'X-Content-Type-Options': 'nosniff' }); return res.end(f.body); }
+  if (STATIC[u.pathname]) { const f = STATIC[u.pathname]; const h = { 'Content-Type': f.type, 'Cache-Control': f.cache, 'X-Content-Type-Options': 'nosniff' }; if (f.name && u.searchParams.get('download')) h['Content-Disposition'] = 'attachment; filename="' + f.name + '"'; res.writeHead(200, h); return res.end(f.body); }
   if (LEGAL[u.pathname]) { res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8', 'X-Frame-Options': 'DENY', 'Content-Security-Policy': "default-src 'none'; style-src 'unsafe-inline'; frame-ancestors 'none'" }); return res.end(LEGAL[u.pathname]); }
   // Back office: the page itself is only sent to a signed-in owner. Everyone else is sent to their own dashboard.
   if (/^\/admin\/?$/.test(u.pathname)) {

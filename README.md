@@ -285,3 +285,11 @@ Emails are compared without caring about capital letters or extra spaces, on sig
 - Success: green toast "Bid placed live on Freelancer.com!" and the lead is saved to the pipeline. Failure: Freelancer's own message (for example "Out of Bids" or an permissions error) is shown in red, and nothing is saved.
 - Bids go out from YOUR Freelancer account and use YOUR bid quota, so only the owner account can post. To let subscribers post through your account as well, set `FREELANCER_BID_SUBSCRIBERS=1` (check Freelancer's rules on shared accounts first).
 - Pick **Freelancer.com** in the source chips to see only projects from Freelancer's API; each card shows its project number.
+
+## Brand logo
+The logo files are in `public/brand/` (`scaledesk-bpo-logo.png/.svg` wide, `scaledesk-bpo-logo-square.png/.svg` for profile pictures). Owners can download them from the top of the `/admin` page. The text in the SVGs is converted to shapes, so they look the same on any computer.
+
+## Upwork talent and profile links
+- A talent profile with an Upwork link in the form `https://www.upwork.com/freelancers/~<id>` opens exactly that profile. Anything else (including the built-in sample profiles, which are not real Upwork accounts) opens an Upwork talent search for `<full name>_<main skill>`.
+- Upwork cards show "Opens directly on Upwork (Upwork API restricts external direct messaging)" and a "View Upwork profile" / "Find on Upwork" link. Every external Upwork button opens in a new tab with `noopener noreferrer`.
+- Pipeline deals have an optional "Link to the job or profile" field; leads saved from the live feed keep their original link, and the deal card shows an "Open on Upwork" link.
